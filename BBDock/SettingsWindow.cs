@@ -1,18 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿using BBDock.Core;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace BBDock
 {
     public partial class SettingsWindow : Form
     {
-        public SettingsWindow()
+        private readonly Dock _dock;
+        private readonly DockGraphics _graphics;
+
+        internal SettingsWindow(Dock dock, DockGraphics graphics): base()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            _dock = dock;
+            _graphics = graphics;
+
+            foreach (var skin in _graphics.Skins)
+            {
+                SkinCombo.Items.Add(skin);
+            }
+            SkinCombo.SelectedItem = _graphics.SelectedSkin;
+        }
+
+        private void SkinCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            _graphics.UpdateSkin((DockSkin)SkinCombo.SelectedItem);
         }
     }
 }

@@ -46,5 +46,14 @@ namespace BBDock
                 Bitmap = null;
             }
         }
+
+        public override string ToString()
+        {
+            if (Name == null)
+            {
+                return "Default";
+            }
+            return Name;
+        }
     }
 }

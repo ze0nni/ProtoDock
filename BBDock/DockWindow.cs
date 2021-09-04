@@ -20,6 +20,10 @@ namespace BBDock
         private readonly DockGraphics _graphics;
         private readonly Dock _dock;
 
+        private readonly ContextMenuStrip _contextMenu = new ContextMenuStrip();
+
+        private bool _doExit;
+
         public DockWindow(): base()
         {
             this.TopMost = true;
@@ -44,7 +48,7 @@ namespace BBDock
 
             this.FormClosing += (s, e) =>
             {
-                e.Cancel = true;
+                e.Cancel = !_doExit;
             };
 
             this.FormClosed += (s, e) =>
@@ -64,6 +68,8 @@ namespace BBDock
 
                 e.Effect = DragDropEffects.Link;
             };
+
+            CreateContextMenu();
         }
 
         protected override CreateParams CreateParams
@@ -75,6 +81,13 @@ namespace BBDock
                 p.ExStyle |= (int)PInvoke.User32.WindowStylesEx.WS_EX_LAYERED;
                 return p;
             }
+        }
+
+        private void CreateContextMenu()
+        {
+            _contextMenu.Items.Add(new ToolStripButton("Settings", null, OnSettingsClick));
+            _contextMenu.Items.Add(new ToolStripSeparator());
+            _contextMenu.Items.Add(new ToolStripButton("Exit", null, OnExitClick));
         }
 
         private List<DockSkin> LoadSkins()
@@ -199,7 +212,21 @@ namespace BBDock
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
-            
+            if (e.Button == MouseButtons.Right)
+            {
+                _contextMenu.Show(this, e.Location);
+            }
+        }
+
+        private void OnSettingsClick(object sender, EventArgs e)
+        {
+            new SettingsWindow(_dock, _graphics).Show();
+        }
+
+        private void OnExitClick(object sender, EventArgs e)
+        {
+            _doExit = true;
+            Close();
         }
     }
 }

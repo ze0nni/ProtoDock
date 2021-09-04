@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
+using System.Linq;
 
 namespace BBDock
 {
@@ -31,7 +31,7 @@ namespace BBDock
         public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
 
-        private readonly List<DockSkin> _skins;
+        public readonly IReadOnlyCollection<DockSkin> Skins;
         public DockSkin SelectedSkin { get; private set; }
 
 
@@ -46,9 +46,9 @@ namespace BBDock
         {
             IconSize = iconSize;
             IconSpace = iconSpace;
-            _skins = skins;
+            Skins = skins;
 
-            UpdateSkin(_skins[0]);
+            UpdateSkin(Skins.First());
         }
 
         public void Dispose()
@@ -130,7 +130,7 @@ namespace BBDock
             _selectedIcon?.MouseEnter();
         }
 
-        private void UpdateSkin(DockSkin skin)
+        public void UpdateSkin(DockSkin skin)
         {
             SelectedSkin?.Unload();
             SelectedSkin = skin;
