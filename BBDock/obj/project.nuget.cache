@@ -1,8 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "pJpYR7WW6/VArEXCUO1a9i/jhjrsD9IrBJZpLsNMmULuDMy4gn0wi8E0XnJYaivRYx8vD/dMKfrVFG/RjDfvtg==",
+  "dgSpecHash": "OUgC56DNM/pD5FTu/JZCG3vOF/dSJmiVUv57TzPySET3mU+cyzgr2XL6wF1GKarLbvuQIgjL//8qOGQBdTWbgw==",
   "success": true,
   "projectFilePath": "D:\\Projects\\BBDock\\BBDock\\BBDock.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Евгений\\.nuget\\packages\\pinvoke.kernel32\\0.7.104\\pinvoke.kernel32.0.7.104.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\pinvoke.user32\\0.7.104\\pinvoke.user32.0.7.104.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\pinvoke.windows.core\\0.7.104\\pinvoke.windows.core.0.7.104.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\pinvoke.windows.shellscalingapi\\0.7.104\\pinvoke.windows.shellscalingapi.0.7.104.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\system.memory\\4.5.4\\system.memory.4.5.4.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
+    "C:\\Users\\Евгений\\.nuget\\packages\\validation\\2.4.15\\validation.2.4.15.nupkg.sha512"
+  ],
   "logs": []
 }
