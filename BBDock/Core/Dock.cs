@@ -8,17 +8,18 @@ namespace BBDock.Core
 {
     class Dock: IDockApi
     {
-        public IntPtr HInstance => _window.HInstance;
+        public IntPtr HInstance { get; }
         public ReadOnlyCollection<IDockPlugin> Plugins => _plugins.AsReadOnly();
 
-        private DockWindow _window;
+        private readonly DockGraphics _graphics;
         private readonly List<IDockPlugin> _plugins = new List<IDockPlugin>();
 
         private readonly List<DockPanel> _panels = new List<DockPanel>();
 
-        public Dock(DockWindow window)
+        public Dock(IntPtr hInstance, DockGraphics graphics)
         {
-            _window = window;
+            HInstance = hInstance;
+            _graphics = graphics;
 
             _plugins.Add(new TrayPlugin());
 
@@ -26,8 +27,6 @@ namespace BBDock.Core
             {
                 AddPanel(p.Create());
             }
-
-            _window.SetIconsCount(3);
         }
 
         private void AddPanel(IDockPanel panel)

@@ -10,6 +10,8 @@ namespace BBDock
 
         public IntPtr HInstance => User32.HInstance;
 
+        private readonly Timer _timer;
+
         private readonly DockGraphics _graphics;
         private readonly Dock _dock;        
 
@@ -19,17 +21,36 @@ namespace BBDock
             this.ShowInTaskbar = false;
             this.ShowIcon = false;
             this.FormBorderStyle = FormBorderStyle.None;
-            
+
+            _timer = new Timer();
+            _timer.Interval = 1000 / 60;
+            _timer.Start();
+            _timer.Tick += OnTick;
+
             _graphics = new DockGraphics(
                 64,
                 8,
-                new Padding(16, 16, 16, 8),
+                new Padding(16, 16, 16, 16),
                 new Bitmap(@"D:\Projects\BBDock\Assets\Panel.png"),
                 new Padding(32, 32, 32, 32)
             );
-            _dock = new Dock(this);
+            _dock = new Dock(HInstance, _graphics);
+            Render();
 
-            //TODO: _graphics.Dispose()
+            this.FormClosing += (s, e) =>
+            {
+                e.Cancel = true;
+            };
+
+            this.FormClosed += (s, e) =>
+            {
+                _timer.Dispose();
+                _graphics.Dispose();
+            };
+
+
+            this.MouseLeave += OnMouseLeave;
+            this.MouseMove += OnMouseMove;
         }
 
         protected override CreateParams CreateParams
@@ -45,21 +66,28 @@ namespace BBDock
 
         public const int IconSize = 64;
 
-        public void SetIconsCount(int count)
-        {
-            UpdatePosition();
-        }
-
-        public void UpdatePosition()
+        public void Render()
         {
             var screen = Screen.AllScreens[0];
             var bounds = screen.Bounds;
 
-            _graphics.Render(_dock);
+            _graphics.Render();
             SetImage(_graphics.Bitmap);
 
             this.Left = (bounds.Width - _graphics.Bitmap.Width) / 2;
-            this.Top = (bounds.Height - _graphics.Bitmap.Height);
+            switch (_graphics.Position)
+            {
+                case Position.Top:
+                    this.Top = 0;
+                    break;
+
+                case Position.Bottom:
+                    this.Top = (bounds.Height - _graphics.Bitmap.Height);
+                    break;
+
+                default:
+                    throw new ArgumentException(_graphics.Position.ToString());
+            }            
         }
 
         public void SetImage(Bitmap bitmap)
@@ -96,6 +124,24 @@ namespace BBDock
                 }
                 User32.DeleteDC(memDC);
             }
+        }
+
+        public void OnTick(Object sender, EventArgs e)
+        {
+            _graphics.Update(1 / 60f);
+
+            if (_graphics.IsDirty)
+                Render();
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            _graphics.MouseMove(e.X, e.Y);
+        }
+
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            _graphics.MouseLeave();
         }
     }
 }
