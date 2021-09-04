@@ -1,0 +1,16 @@
+{
+	"BitmapSource": "Skins/PanelDark.png",
+	"VOffset": 16,
+	"Padding": {
+		"Left": 64,
+		"Top": 0,
+		"Right": 64,
+		"Bottom": 38
+	},
+	"Scale9": {
+		"Left": 64,
+		"Top": 10,
+		"Right": 64,
+		"Bottom": 32
+	}
+}

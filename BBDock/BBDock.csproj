@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Embeded\Default.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
   </ItemGroup>
 
@@ -14,6 +18,10 @@
     <ProjectReference Include="..\BBDock.Api\BBDock.Api.csproj" />
     <ProjectReference Include="..\BBDock.Tasks\BBDock.Tasks.csproj" />
     <ProjectReference Include="..\BBDock.Tray\BBDock.Tray.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Embeded\Default.png" />
   </ItemGroup>
 
 </Project>

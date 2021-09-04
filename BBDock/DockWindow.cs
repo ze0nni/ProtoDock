@@ -1,6 +1,11 @@
 ﻿using BBDock.Core;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace BBDock
@@ -13,7 +18,7 @@ namespace BBDock
         private readonly Timer _timer;
 
         private readonly DockGraphics _graphics;
-        private readonly Dock _dock;        
+        private readonly Dock _dock;
 
         public DockWindow(): base()
         {
@@ -32,15 +37,7 @@ namespace BBDock
             _graphics = new DockGraphics(
                 64,
                 8,
-                //new Padding(16, 16, 16, 26),
-                //24
-                //new Bitmap(@"D:\Projects\BBDock\Assets\Panel.png"),
-                //new Padding(32, 32, 32, 32)
-
-                new Padding(0, 0, 0, 8),
-                16,
-                new Bitmap(@"D:\Projects\BBDock\Assets\Panel2.png"),
-                new Padding(64, 16, 64, 31)
+                LoadSkins()
             );
             _dock = new Dock(HInstance, _graphics);
             Render();
@@ -58,6 +55,8 @@ namespace BBDock
 
             this.MouseLeave += OnMouseLeave;
             this.MouseMove += OnMouseMove;
+            this.MouseDown += OnMouseDown;
+            this.MouseUp += OnMouseUp;
 
             this.DragOver += (s, e) =>
             {
@@ -78,6 +77,41 @@ namespace BBDock
             }
         }
 
+        private List<DockSkin> LoadSkins()
+        {
+            var list = new List<DockSkin>();
+
+            foreach (var r  in Assembly.GetExecutingAssembly().GetManifestResourceNames())
+            {
+                Debug.WriteLine(r);
+            }
+
+            list.Add(
+                new DockSkin(
+                    0,
+                    new Padding(16, 16, 16, 16),
+                    new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("BBDock.Embeded.Default.png")),
+                    new Padding(32, 32, 32, 32)
+                )
+            );
+
+            foreach (var file in Directory.GetFiles("./Skins/", "*.json"))
+            {
+                try
+                {
+                    var skin = JsonSerializer.Deserialize<DockSkin>(File.ReadAllText(file));
+                    skin.Name = file;
+                    list.Add(skin);
+                }
+                catch
+                {
+                    //TODO: Error
+                }
+            }
+
+            return list;
+        }
+
         public const int IconSize = 64;
 
         public void Render()
@@ -92,11 +126,11 @@ namespace BBDock
             switch (_graphics.Position)
             {
                 case Position.Top:
-                    this.Top = -_graphics.VOffset;
+                    this.Top = -_graphics.SelectedSkin.VOffset;
                     break;
 
                 case Position.Bottom:
-                    this.Top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.VOffset;
+                    this.Top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset;
                     break;
 
                 default:
@@ -156,6 +190,16 @@ namespace BBDock
         private void OnMouseLeave(object sender, EventArgs e)
         {
             _graphics.MouseLeave();
+        }
+
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            
+        }
+
+        private void OnMouseUp(object sender, MouseEventArgs e)
+        {
+            
         }
     }
 }

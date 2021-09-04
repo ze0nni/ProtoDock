@@ -26,15 +26,14 @@ namespace BBDock
 
         public readonly int IconSize;
         public readonly int IconSpace;
-        public readonly Padding Paddings;
 
         public float ActiveIconScale = 0.5f;
         public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
-        public int VOffset { get; private set; }
 
-        private readonly Bitmap _skin;
-        private readonly Padding _skin9Scale;
+        private readonly List<DockSkin> _skins;
+        public DockSkin SelectedSkin { get; private set; }
+
 
         private readonly List<DockIconGraphics> _icons = new List<DockIconGraphics>();
         private DockIconGraphics _selectedIcon;
@@ -42,20 +41,14 @@ namespace BBDock
         public DockGraphics(
             int iconSize,
             int iconSpace,
-            Padding paddings,
-            int vOffset,
-            Bitmap skin,
-            Padding skin9Scale
+            List<DockSkin> skins
         )
         {
             IconSize = iconSize;
             IconSpace = iconSpace;
-            Paddings = paddings;
+            _skins = skins;
 
-            VOffset = vOffset;
-
-            _skin = skin;
-            _skin9Scale = skin9Scale;
+            UpdateSkin(_skins[0]);
         }
 
         public void Dispose()
@@ -85,7 +78,7 @@ namespace BBDock
         {
             IsMouseOver = true;
 
-            var left = (float)Paddings.Left;
+            var left = (float)SelectedSkin.Padding.Left;
             var maxDistance = ActiveIconScaleDistance;
 
             for (var i = 0; i < _icons.Count; i++)
@@ -137,6 +130,14 @@ namespace BBDock
             _selectedIcon?.MouseEnter();
         }
 
+        private void UpdateSkin(DockSkin skin)
+        {
+            SelectedSkin?.Unload();
+            SelectedSkin = skin;
+            SelectedSkin.Load();
+            SetDirty();
+        }
+
         private void CalculateSize(out SizeF dockSize, out Size drawSize)
         {
             var iconsCount = _icons.Count;
@@ -150,8 +151,10 @@ namespace BBDock
                 maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
             }
 
-            var dockWidth = _skin9Scale.Left + Paddings.Left + iconsWidthSum + Math.Max(01, iconsCount - 1) * IconSpace + Paddings.Right + _skin9Scale.Right;
-            var dockHeight = _skin9Scale.Top + Paddings.Top + IconSize + Paddings.Bottom + _skin9Scale.Bottom;
+            var dockWidth = MathF.Max(
+                SelectedSkin.Padding.Left + iconsWidthSum + Math.Max(01, iconsCount - 1) * IconSpace + SelectedSkin.Padding.Right,
+                SelectedSkin.Scale9.Left + SelectedSkin.Scale9.Right);
+            var dockHeight = SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom;
             dockSize = new SizeF(
                 dockWidth,
                 dockHeight
@@ -165,7 +168,7 @@ namespace BBDock
 
         private DockIconGraphics IconFromPosition(float x)
         {
-            var left = (float)Paddings.Left;
+            var left = (float)SelectedSkin.Padding.Left;
 
             for (var i = 0; i < _icons.Count; i++)
             {
@@ -230,81 +233,84 @@ namespace BBDock
 
         private void RenderSkin(SizeF size)
         {
-            var centerWidth = size.Width - _skin9Scale.Left - _skin9Scale.Right;
-            var centerHeight = size.Height - _skin9Scale.Top - _skin9Scale.Bottom;
+            var s9 = SelectedSkin.Scale9;
+            var bmp = SelectedSkin.Bitmap;
 
-            var skinCenterWidth = _skin.Width - _skin9Scale.Left - _skin9Scale.Right;
-            var skinCenterHeight = _skin.Height - _skin9Scale.Top - _skin9Scale.Bottom;
+            var centerWidth = size.Width - s9.Left - s9.Right;
+            var centerHeight = size.Height - s9.Top - s9.Bottom;
+
+            var skinCenterWidth = bmp.Width - s9.Left - s9.Right;
+            var skinCenterHeight = bmp.Height - s9.Top - s9.Bottom;
 
             //Top Left
-            //_graphics.DrawImage(_skin,
-            //    new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
-            //    new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
-            //    GraphicsUnit.Pixel
-            // );
+            _graphics.DrawImage(bmp,
+                new RectangleF(0, 0, s9.Left, s9.Top),
+                new RectangleF(0, 0, s9.Left, s9.Top),
+                GraphicsUnit.Pixel
+             );
 
             //Top Middle
             if (centerWidth > 0)
             {
-                _graphics.DrawImage(_skin,
-                    new RectangleF(_skin9Scale.Left, 0, centerWidth, _skin9Scale.Top),
-                    new RectangleF(_skin9Scale.Left, 0, skinCenterWidth, _skin9Scale.Top),
+                _graphics.DrawImage(bmp,
+                    new RectangleF(s9.Left, 0, centerWidth, s9.Top),
+                    new RectangleF(s9.Left, 0, skinCenterWidth, s9.Top),
                     GraphicsUnit.Pixel
                  );
             }
 
             //Top Right
-            _graphics.DrawImage(_skin,
-                new RectangleF(size.Width - _skin9Scale.Right, 0, _skin9Scale.Right, _skin9Scale.Top),
-                new RectangleF(_skin.Width - _skin9Scale.Right, 0, _skin9Scale.Right, _skin9Scale.Top),
+            _graphics.DrawImage(bmp,
+                new RectangleF(size.Width - s9.Right, 0, s9.Right, s9.Top),
+                new RectangleF(bmp.Width - s9.Right, 0, s9.Right, s9.Top),
                 GraphicsUnit.Pixel
              );
 
             //Center left
-            _graphics.DrawImage(_skin,
-                new RectangleF(0, _skin9Scale.Top, _skin9Scale.Left, centerHeight),
-                new RectangleF(0, _skin9Scale.Top, _skin9Scale.Left, skinCenterHeight),
+            _graphics.DrawImage(bmp,
+                new RectangleF(0, s9.Top, s9.Left, centerHeight),
+                new RectangleF(0, s9.Top, s9.Left, skinCenterHeight),
                 GraphicsUnit.Pixel
              );
 
             //Center Middle
             if (centerWidth > 0)
             {
-                _graphics.DrawImage(_skin,
-                    new RectangleF(_skin9Scale.Left, _skin9Scale.Top, centerWidth, centerHeight),
-                    new RectangleF(_skin9Scale.Left, _skin9Scale.Top, skinCenterWidth, skinCenterHeight),
+                _graphics.DrawImage(bmp,
+                    new RectangleF(s9.Left, s9.Top, centerWidth, centerHeight),
+                    new RectangleF(s9.Left, s9.Top, skinCenterWidth, skinCenterHeight),
                     GraphicsUnit.Pixel
                  );
             }
 
             //Center Right
-            _graphics.DrawImage(_skin,
-                new RectangleF(size.Width - _skin9Scale.Right, _skin9Scale.Top, _skin9Scale.Right, centerHeight),
-                new RectangleF(_skin.Width - _skin9Scale.Right, _skin9Scale.Top, _skin9Scale.Right, skinCenterHeight),
+            _graphics.DrawImage(bmp,
+                new RectangleF(size.Width - s9.Right, s9.Top, s9.Right, centerHeight),
+                new RectangleF(bmp.Width - s9.Right, s9.Top, s9.Right, skinCenterHeight),
                 GraphicsUnit.Pixel
              );
 
             //Bottom Left
-            _graphics.DrawImage(_skin,
-                new RectangleF(0, size.Height - _skin9Scale.Bottom, _skin9Scale.Left, _skin9Scale.Bottom),
-                new RectangleF(0, _skin.Height - _skin9Scale.Bottom, _skin9Scale.Left, _skin9Scale.Bottom),
+            _graphics.DrawImage(bmp,
+                new RectangleF(0, size.Height - s9.Bottom, s9.Left, s9.Bottom),
+                new RectangleF(0, bmp.Height - s9.Bottom, s9.Left, s9.Bottom),
                 GraphicsUnit.Pixel
              );
 
             //Bottom Middle
             if (centerWidth > 0)
             {
-                _graphics.DrawImage(_skin,
-                    new RectangleF(_skin9Scale.Left, size.Height - _skin9Scale.Bottom, centerWidth, _skin9Scale.Bottom),
-                    new RectangleF(_skin9Scale.Left, _skin.Height - _skin9Scale.Bottom, skinCenterWidth, _skin9Scale.Bottom),
+                _graphics.DrawImage(bmp,
+                    new RectangleF(s9.Left, size.Height - s9.Bottom, centerWidth, s9.Bottom),
+                    new RectangleF(s9.Left, bmp.Height - s9.Bottom, skinCenterWidth, s9.Bottom),
                     GraphicsUnit.Pixel
                  );
             }
 
             //Bottom Right
-            _graphics.DrawImage(_skin,
-                new RectangleF(size.Width - _skin9Scale.Right, size.Height - _skin9Scale.Bottom, _skin9Scale.Right, _skin9Scale.Bottom),
-                new RectangleF(_skin.Width - _skin9Scale.Right, _skin.Height - _skin9Scale.Bottom, _skin9Scale.Right, _skin9Scale.Bottom),
+            _graphics.DrawImage(bmp,
+                new RectangleF(size.Width - s9.Right, size.Height - s9.Bottom, s9.Right, s9.Bottom),
+                new RectangleF(bmp.Width - s9.Right, bmp.Height - s9.Bottom, s9.Right, s9.Bottom),
                 GraphicsUnit.Pixel
              );
         }
@@ -313,7 +319,7 @@ namespace BBDock
         private void RenderIcons()
         {
             var state = _graphics.Save();
-            _graphics.TranslateTransform(Paddings.Left + _skin9Scale.Left, Paddings.Top + _skin9Scale.Top);
+            _graphics.TranslateTransform(SelectedSkin.Padding.Left, SelectedSkin.Padding.Top);
 
             for (var i = 0; i < _icons.Count; i++)
             {

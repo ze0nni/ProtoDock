@@ -16,8 +16,8 @@ namespace BBDock.Tray
 
         public void Awake()
         {
-            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Panel.png")));
-            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Panel.xcf")));
+            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Skins\PanelDark.png")));
+            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Skins\PanelDark.xcf")));
             _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"c:\go\favicon.ico")));
         }
 
