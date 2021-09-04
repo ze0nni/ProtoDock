@@ -5,4 +5,8 @@
 	<UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+	</ItemGroup>
+		
 </Project>

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Drawing;
 
 namespace BBDock.Api
 {
-    public partial class IDockIcon
+    public interface IDockIcon
     {
-        
+        void Render(Graphics graphics, float width, float height, bool isSelected);
     }
 }

@@ -50,20 +50,23 @@
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WindowsForms": {
+              "privateAssets": "none"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj": {
+    "D:\\Projects\\BBDock\\BBDock.Tasks\\BBDock.Tasks.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj",
-        "projectName": "BBDock.Tray",
-        "projectPath": "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj",
+        "projectUniqueName": "D:\\Projects\\BBDock\\BBDock.Tasks\\BBDock.Tasks.csproj",
+        "projectName": "BBDock.Tasks",
+        "projectPath": "D:\\Projects\\BBDock\\BBDock.Tasks\\BBDock.Tasks.csproj",
         "packagesPath": "C:\\Users\\Евгений\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\BBDock\\BBDock.Tray\\obj\\",
+        "outputPath": "D:\\Projects\\BBDock\\BBDock.Tasks\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Евгений\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -112,6 +115,78 @@
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WindowsForms": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj",
+        "projectName": "BBDock.Tray",
+        "projectPath": "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj",
+        "packagesPath": "C:\\Users\\Евгений\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\BBDock\\BBDock.Tray\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Евгений\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "D:\\Projects\\BBDock\\BBDock.Api\\BBDock.Api.csproj": {
+                "projectPath": "D:\\Projects\\BBDock\\BBDock.Api\\BBDock.Api.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "PInvoke.User32": {
+              "target": "Package",
+              "version": "[0.7.104, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[5.0.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WindowsForms": {
+              "privateAssets": "none"
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
@@ -143,6 +218,9 @@
             "projectReferences": {
               "D:\\Projects\\BBDock\\BBDock.Api\\BBDock.Api.csproj": {
                 "projectPath": "D:\\Projects\\BBDock\\BBDock.Api\\BBDock.Api.csproj"
+              },
+              "D:\\Projects\\BBDock\\BBDock.Tasks\\BBDock.Tasks.csproj": {
+                "projectPath": "D:\\Projects\\BBDock\\BBDock.Tasks\\BBDock.Tasks.csproj"
               },
               "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj": {
                 "projectPath": "D:\\Projects\\BBDock\\BBDock.Tray\\BBDock.Tray.csproj"

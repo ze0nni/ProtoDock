@@ -1,25 +1,29 @@
 ﻿using BBDock.Api;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace BBDock.Tray
 {
-    class TrayPanel : IDockPanel
+    internal class TrayPanel : IDockPanel
     {
+        private IDockPanelApi _api;
+
         public void Setup(IDockPanelApi api)
         {
-            throw new NotImplementedException();
+            _api = api;
         }
 
         public void Awake()
         {
-            throw new NotImplementedException();
+            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Panel.png")));
+            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\BBDock\Assets\Panel.xcf")));
+            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"c:\go\favicon.ico")));
         }
 
         public void Destroy()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

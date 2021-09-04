@@ -99,13 +99,7 @@ namespace BBDock
 
         public void Render(Graphics graphics)
         {
-            graphics.FillEllipse(
-                _isMouseOver ? SystemBrushes.Highlight : SystemBrushes.Window,
-                0,
-                0,
-                Width,
-                Height
-            );
+            _model.Render(graphics, _width, _height, _isMouseOver);
         }
     }
 }

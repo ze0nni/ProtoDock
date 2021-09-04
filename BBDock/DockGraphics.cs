@@ -31,6 +31,7 @@ namespace BBDock
         public float ActiveIconScale = 0.5f;
         public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
+        public int VOffset { get; private set; }
 
         private readonly Bitmap _skin;
         private readonly Padding _skin9Scale;
@@ -42,6 +43,7 @@ namespace BBDock
             int iconSize,
             int iconSpace,
             Padding paddings,
+            int vOffset,
             Bitmap skin,
             Padding skin9Scale
         )
@@ -49,6 +51,8 @@ namespace BBDock
             IconSize = iconSize;
             IconSpace = iconSpace;
             Paddings = paddings;
+
+            VOffset = vOffset;
 
             _skin = skin;
             _skin9Scale = skin9Scale;
@@ -146,8 +150,8 @@ namespace BBDock
                 maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
             }
 
-            var dockWidth = Paddings.Left + Math.Max(IconSize, iconsWidthSum) + Math.Max(0, iconsCount - 1) * IconSpace + Paddings.Right;
-            var dockHeight = Paddings.Top + IconSize + Paddings.Bottom;
+            var dockWidth = _skin9Scale.Left + Paddings.Left + iconsWidthSum + Math.Max(01, iconsCount - 1) * IconSpace + Paddings.Right + _skin9Scale.Right;
+            var dockHeight = _skin9Scale.Top + Paddings.Top + IconSize + Paddings.Bottom + _skin9Scale.Bottom;
             dockSize = new SizeF(
                 dockWidth,
                 dockHeight
@@ -216,7 +220,7 @@ namespace BBDock
                     throw new ArgumentException(Position.ToString());
             }
 
-                    RenderSkin(dockSize);
+            RenderSkin(dockSize);
             RenderIcons();
 
             _graphics.Restore(state);
@@ -233,11 +237,11 @@ namespace BBDock
             var skinCenterHeight = _skin.Height - _skin9Scale.Top - _skin9Scale.Bottom;
 
             //Top Left
-            _graphics.DrawImage(_skin,
-                new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
-                new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
-                GraphicsUnit.Pixel
-             );
+            //_graphics.DrawImage(_skin,
+            //    new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
+            //    new RectangleF(0, 0, _skin9Scale.Left, _skin9Scale.Top),
+            //    GraphicsUnit.Pixel
+            // );
 
             //Top Middle
             if (centerWidth > 0)
@@ -259,7 +263,7 @@ namespace BBDock
             //Center left
             _graphics.DrawImage(_skin,
                 new RectangleF(0, _skin9Scale.Top, _skin9Scale.Left, centerHeight),
-                new RectangleF(0, _skin9Scale.Top, _skin9Scale.Left, skinCenterWidth),
+                new RectangleF(0, _skin9Scale.Top, _skin9Scale.Left, skinCenterHeight),
                 GraphicsUnit.Pixel
              );
 
@@ -309,7 +313,7 @@ namespace BBDock
         private void RenderIcons()
         {
             var state = _graphics.Save();
-            _graphics.TranslateTransform(Paddings.Left, Paddings.Top);
+            _graphics.TranslateTransform(Paddings.Left + _skin9Scale.Left, Paddings.Top + _skin9Scale.Top);
 
             for (var i = 0; i < _icons.Count; i++)
             {

@@ -1,20 +1,44 @@
 ﻿using BBDock.Api;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace BBDock.Core
 {
-    class DockPanel : IDockPanelApi
+    class DockPanel : IDockPanelApi, IDisposable
     {
         public IDockApi Dock => _dock;
 
-        private Dock _dock;
-        private IDockPanel _panel;
+        private readonly Dock _dock;
+        private readonly IDockPanel _model;
 
-        public DockPanel(Dock dock, IDockPanel panel)
+        private readonly HashSet<IDockIcon> _icons = new HashSet<IDockIcon>();
+
+        public DockPanel(Dock dock, IDockPanel model)
         {
             _dock = dock;
-            _panel = panel;
+            _model = model;
+
+            _model.Setup(this);
+            _model.Awake();
+        }
+
+        public void Dispose()
+        {
+            _model.Destroy();
+        }
+
+        public void Add(IDockIcon icon)
+        {
+            if (_icons.Add(icon))
+            {
+                _dock.Graphics.AddIcon(icon);
+            }
+        }
+
+        public void Remove(IDockIcon icon)
+        {
+            
         }
     }
 }

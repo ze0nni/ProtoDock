@@ -22,6 +22,8 @@ namespace BBDock
             this.ShowIcon = false;
             this.FormBorderStyle = FormBorderStyle.None;
 
+            this.AllowDrop = true;
+
             _timer = new Timer();
             _timer.Interval = 1000 / 60;
             _timer.Start();
@@ -30,9 +32,15 @@ namespace BBDock
             _graphics = new DockGraphics(
                 64,
                 8,
-                new Padding(16, 16, 16, 16),
-                new Bitmap(@"D:\Projects\BBDock\Assets\Panel.png"),
-                new Padding(32, 32, 32, 32)
+                //new Padding(16, 16, 16, 26),
+                //24
+                //new Bitmap(@"D:\Projects\BBDock\Assets\Panel.png"),
+                //new Padding(32, 32, 32, 32)
+
+                new Padding(0, 0, 0, 8),
+                16,
+                new Bitmap(@"D:\Projects\BBDock\Assets\Panel2.png"),
+                new Padding(64, 16, 64, 31)
             );
             _dock = new Dock(HInstance, _graphics);
             Render();
@@ -48,9 +56,15 @@ namespace BBDock
                 _graphics.Dispose();
             };
 
-
             this.MouseLeave += OnMouseLeave;
             this.MouseMove += OnMouseMove;
+
+            this.DragOver += (s, e) =>
+            {
+                _graphics.MouseMove(e.X, e.Y);
+
+                e.Effect = DragDropEffects.Link;
+            };
         }
 
         protected override CreateParams CreateParams
@@ -78,11 +92,11 @@ namespace BBDock
             switch (_graphics.Position)
             {
                 case Position.Top:
-                    this.Top = 0;
+                    this.Top = -_graphics.VOffset;
                     break;
 
                 case Position.Bottom:
-                    this.Top = (bounds.Height - _graphics.Bitmap.Height);
+                    this.Top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.VOffset;
                     break;
 
                 default:

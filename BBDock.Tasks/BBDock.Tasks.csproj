@@ -1,19 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
   </ItemGroup>
 
+
   <ItemGroup>
     <ProjectReference Include="..\BBDock.Api\BBDock.Api.csproj" />
-    <ProjectReference Include="..\BBDock.Tasks\BBDock.Tasks.csproj" />
-    <ProjectReference Include="..\BBDock.Tray\BBDock.Tray.csproj" />
   </ItemGroup>
-
 </Project>

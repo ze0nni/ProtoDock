@@ -1,4 +1,5 @@
 ﻿using BBDock.Api;
+using BBDock.Tasks;
 using BBDock.Tray;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace BBDock.Core
         public IntPtr HInstance { get; }
         public ReadOnlyCollection<IDockPlugin> Plugins => _plugins.AsReadOnly();
 
-        private readonly DockGraphics _graphics;
+        public readonly DockGraphics Graphics;
+
         private readonly List<IDockPlugin> _plugins = new List<IDockPlugin>();
 
         private readonly List<DockPanel> _panels = new List<DockPanel>();
@@ -19,9 +21,10 @@ namespace BBDock.Core
         public Dock(IntPtr hInstance, DockGraphics graphics)
         {
             HInstance = hInstance;
-            _graphics = graphics;
+            Graphics = graphics;
 
-            _plugins.Add(new TrayPlugin());
+            _plugins.Add(new TasksPlugin());
+            _plugins.Add(new TrayPlugin());            
 
             foreach (var p in _plugins)
             {
@@ -29,9 +32,9 @@ namespace BBDock.Core
             }
         }
 
-        private void AddPanel(IDockPanel panel)
+        private void AddPanel(IDockPanel model)
         {
-            var view = new DockPanel(this, panel);
+            var view = new DockPanel(this, model);
         }
     }
 }
