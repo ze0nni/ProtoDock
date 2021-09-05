@@ -9,7 +9,7 @@ namespace ProtoDock
     class DockIconGraphics
     {
         private readonly DockGraphics _dock;
-        private readonly IDockIcon _model;
+        public readonly IDockIcon Model;
         private int _size => 1;
 
         private float _width;
@@ -47,7 +47,7 @@ namespace ProtoDock
         public DockIconGraphics(DockGraphics dock, IDockIcon model)
         {
             _dock = dock;
-            _model = model;
+            Model = model;
 
             _targetWidth = _dock.IconSize * _size;
             _targetHeight = _dock.IconSize;
@@ -99,7 +99,7 @@ namespace ProtoDock
 
         public void Render(Graphics graphics)
         {
-            _model.Render(graphics, _width, _height, _isMouseOver);            
+            Model.Render(graphics, _width, _height, _isMouseOver);            
         }
     }
 }

@@ -24,6 +24,16 @@ namespace ProtoDock.Tasks
             }
         }
 
+        public void Click()
+        {
+
+        }
+
+        public bool ContextClick()
+        {
+            return false;
+        }
+
         public void Render(Graphics graphics, float width, float height, bool isSelected)
         {
             if (_icon != null)

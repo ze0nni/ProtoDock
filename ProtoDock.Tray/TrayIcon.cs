@@ -16,6 +16,16 @@ namespace ProtoDock.Tray
             _icon = icon;
         }
 
+        public void Click()
+        {
+
+        }
+
+        public bool ContextClick()
+        {
+            return false;
+        }
+
         public void Render(
             Graphics graphics,
             float width,
