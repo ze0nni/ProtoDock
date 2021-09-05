@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace ProtoDock.Core
 {
-    class Dock: IDockApi
+    public class Dock: IDockApi
     {
         public IntPtr HInstance { get; }
         public ReadOnlyCollection<IDockPlugin> Plugins => _plugins.AsReadOnly();

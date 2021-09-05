@@ -99,7 +99,7 @@ namespace ProtoDock
 
         public void Render(Graphics graphics)
         {
-            _model.Render(graphics, _width, _height, _isMouseOver);
+            _model.Render(graphics, _width, _height, _isMouseOver);            
         }
     }
 }

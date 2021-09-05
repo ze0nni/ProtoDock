@@ -17,9 +17,9 @@ namespace ProtoDock.Tray
 
         public void Awake()
         {
-            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\ProtoDock\Assets\Skins\PanelDark.png")));
-            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"D:\Projects\ProtoDock\Assets\Skins\PanelDark.xcf")));
-            _api.Add(new TrayIcon(Icon.ExtractAssociatedIcon(@"c:\go\favicon.ico")));
+            _api.Add(new TrayIcon(this, Icon.ExtractAssociatedIcon(@"D:\Projects\ProtoDock\Assets\Skins\PanelDark.png")));
+            _api.Add(new TrayIcon(this, Icon.ExtractAssociatedIcon(@"D:\Projects\ProtoDock\Assets\Skins\PanelDark.xcf")));
+            _api.Add(new TrayIcon(this, Icon.ExtractAssociatedIcon(@"c:\go\favicon.ico")));
         }
 
         public void Destroy()

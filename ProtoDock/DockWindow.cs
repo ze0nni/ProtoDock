@@ -197,7 +197,7 @@ namespace ProtoDock
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            _graphics.MouseMove(e.X, e.Y);
+            _graphics.MouseMove(e.X - _graphics.OffsetX, e.Y - _graphics.OffsetY);
         }
 
         private void OnMouseLeave(object sender, EventArgs e)
@@ -207,11 +207,14 @@ namespace ProtoDock
 
         private void OnMouseDown(object sender, MouseEventArgs e)
         {
-            
+            _graphics.MouseDown(e.X - _graphics.OffsetX, e.Y - _graphics.OffsetY, e.Button);
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
         {
+            if (_graphics.MouseUp(e.X - _graphics.OffsetX, e.Y - _graphics.OffsetY, e.Button))
+                return;
+
             if (e.Button == MouseButtons.Right)
             {
                 _contextMenu.Show(this, e.Location);

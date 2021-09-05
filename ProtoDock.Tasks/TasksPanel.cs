@@ -3,6 +3,7 @@ using PInvoke;
 using System;
 using System.Diagnostics;
 using static PInvoke.User32;
+using System.Runtime.InteropServices;
 
 namespace ProtoDock.Tasks
 {
@@ -10,7 +11,9 @@ namespace ProtoDock.Tasks
     {
         private IDockPanelApi _api;
 
-        private SafeHookHandle _hook;
+        private Kernel32.SafeLibraryHandle _shellHookLib;
+        private delegate IntPtr SetListener();
+        private delegate void RemoveListener();
 
         public void Setup(IDockPanelApi api)
         {
@@ -19,17 +22,16 @@ namespace ProtoDock.Tasks
 
         public void Awake()
         {
-            using var process = Process.GetCurrentProcess();
-            using var module = process.MainModule;
+            //_shellHookLib = Kernel32.LoadLibrary("ShellHook.dll");
 
-            var bbHook = Kernel32.LoadLibrary("ShellHook.dll");
-            var setListener = Kernel32.GetProcAddress(bbHook, "setListener");
-            var removeListener = Kernel32.GetProcAddress(bbHook, "removeListener");
+            //var setListener = Marshal.GetDelegateForFunctionPointer<SetListener>(Kernel32.GetProcAddress(_shellHookLib, "SetHook"));
+            //setListener.Invoke();
         }
 
         public void Destroy()
         {
-            _hook.Dispose();
+            //var removeListener = Kernel32.GetProcAddress(_shellHookLib, "RemoveHook");
+            //FreeLibrary(_shellHookLib);
         }
 
         private int WindowsShellHook(int nCode, IntPtr wParam, IntPtr lParam)
@@ -38,5 +40,8 @@ namespace ProtoDock.Tasks
 
             return User32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
+
+        [DllImport("kernel32.dll", EntryPoint = "FreeLibrary")]
+        static extern bool FreeLibrary(Kernel32.SafeLibraryHandle hModule);
     }
 }

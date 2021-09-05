@@ -6,10 +6,13 @@ namespace ProtoDock.Tray
 {
     internal class TrayIcon : IDockIcon
     {
+        public IDockPanel Panel { get; }
+
         private Icon _icon;
 
-        public TrayIcon(Icon icon)
+        public TrayIcon(IDockPanel panel, Icon icon)
         {
+            Panel = panel;
             _icon = icon;
         }
 

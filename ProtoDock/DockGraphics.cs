@@ -1,9 +1,12 @@
-﻿using ProtoDock.Api;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using ProtoDock.Api;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ProtoDock
 {
@@ -13,21 +16,34 @@ namespace ProtoDock
         Bottom
     }
 
+    public enum State
+    {
+        Idle,
+        LeftDown,
+        Drag
+    }
+
     public sealed class DockGraphics : IDisposable
     {
+        private State _state;
+
         public Position Position => Position.Bottom;
 
         public bool IsDirty { get; private set; }
         
         public bool IsMouseOver { get; private set; }
+        private PointF _mouseDownPoint;
+        private DockIconGraphics _draggedIcon;
 
         public Bitmap Bitmap { get; private set; }
         private Graphics _graphics;
+        private SizeF _dockSize;
+        private Size _drawSize;
 
         public readonly int IconSize;
         public readonly int IconSpace;
 
-        public float ActiveIconScale = 0.5f;
+        public float ActiveIconScale = 1f;
         public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
 
@@ -74,7 +90,71 @@ namespace ProtoDock
             }
         }
 
+        public void MouseDown(float x, float y, MouseButtons button)
+        {
+            switch (button)
+            {
+                case MouseButtons.Left:
+                    _mouseDownPoint = new PointF(x, y);
+                    SetState(State.LeftDown);
+                    break;
+
+                case MouseButtons.Right:
+                    SetState(State.Idle);
+                    break;
+            }
+        }
+
+        public bool MouseUp(float x, float y, MouseButtons button)
+        {
+            switch (_state)
+            {
+                case State.Idle:
+                case State.LeftDown:
+                case State.Drag:
+                    if (_selectedIcon != null && button == MouseButtons.Right && IsOverIcon(x, y, _selectedIcon))
+                    {
+                        return true;
+                    }
+
+                    SetState(State.Idle);
+                    return false;
+
+                default:
+                    return false;
+            }
+        }            
+
         public void MouseMove(float x, float y)
+        {
+            switch (_state)
+            {
+                case State.Idle:
+                    MouseMoveIdle(x, y);
+                    break;
+
+                case State.LeftDown:
+                    if (MathF.Abs(_mouseDownPoint.X - x) > IconSize * 0.3f)
+                    {
+                        _draggedIcon = _selectedIcon;
+
+                        SetState(State.Drag);
+                        MouseMoveDrag(x, y);
+                    }
+                    else
+                    {
+                        MouseMoveIdle(x, y);
+                    }
+                    break;
+
+                case State.Drag:
+                    MouseMoveDrag(x, y);
+                    break;
+            }
+        }
+
+
+        private void MouseMoveIdle(float x, float y)
         {
             IsMouseOver = true;
 
@@ -96,11 +176,42 @@ namespace ProtoDock
                 left += icon.Width + IconSpace;
             }
 
-            var selectedIcon = IconFromPosition(x);
+            GetIconFromX(x, out var selectedIcon, out _);
             if (selectedIcon != _selectedIcon)
             {
                 UpdateSelectedIcon(selectedIcon);
             }
+        }
+
+        private void MouseMoveDrag(float x, float y)
+        {
+            GetIconFromX(x, out var icon, out var iconLeft);
+
+            if (icon == _draggedIcon || icon == null)
+            {
+                return;
+            }
+
+            var iconCenter = (iconLeft + icon.Width * 0.5f);
+            var distanceToCenter = MathF.Abs(iconCenter - x);
+            if (distanceToCenter < IconSize * 0.5f)
+            {
+                var index = _icons.IndexOf(icon);
+                var draggedIndex = _icons.IndexOf(_draggedIcon);
+
+                _icons[index] = _draggedIcon;
+                _icons[draggedIndex] = icon;
+
+                SetDirty();
+            }
+        }
+
+        private bool IsOverIcon(float x, float y, DockIconGraphics icon)
+        {
+            GetIconPos(icon, out var left, out var top);
+
+            return x > left && x < left + icon.Width &&
+                y > top && y < top + icon.Height;
         }
 
         public void MouseLeave()
@@ -122,12 +233,39 @@ namespace ProtoDock
             IsDirty = true;
         }
 
+        private void SetState(State value)
+        {
+            if (_state == value)
+                return;
+
+            _state = value;
+
+            switch (value)
+            {
+                case State.Idle:
+                    break;
+
+                case State.LeftDown:
+                    break;
+
+                case State.Drag:
+                    for (var i = 0; i < _icons.Count; i++)
+                    {
+                        _icons[i].SetDistanceToCursor(0f);
+                    }
+                    break;
+            }
+
+        }
+
         private void UpdateSelectedIcon(DockIconGraphics icon)
         {
             _selectedIcon?.MouseLeave();
 
             _selectedIcon = icon;
             _selectedIcon?.MouseEnter();
+
+            SetDirty();
         }
 
         public void UpdateSkin(DockSkin skin)
@@ -166,7 +304,7 @@ namespace ProtoDock
             ); ;
         }
 
-        private DockIconGraphics IconFromPosition(float x)
+        private bool GetIconFromX(float x, out DockIconGraphics outIcon, out float outLeft)
         {
             var left = (float)SelectedSkin.Padding.Left;
 
@@ -176,54 +314,105 @@ namespace ProtoDock
 
                 if (x > left - IconSpace * 0.5f && x < left + icon.Width + IconSpace * 0.5f)
                 {
-                    return icon;
+                    outIcon =  icon;
+                    outLeft = left;
+                    return true;
                 }
 
 
                 left += icon.Width + IconSpace;
             }
 
-            return null;
+            outIcon = default;
+            outLeft = default;
+            return false;
+        }
+
+        private void GetIconPos(DockIconGraphics value, out float left, out float top)
+        {
+            left = (float)SelectedSkin.Padding.Left;
+
+            for (var i = 0; i < _icons.Count; i++)
+            {
+                var icon = _icons[i];
+
+                if (icon == value)
+                {
+                    break;
+                }
+
+                left += icon.Width + IconSpace;
+            }
+
+            switch (Position)
+            {
+                case Position.Top:
+                    top = SelectedSkin.Padding.Top;                    
+                    break;
+
+                case Position.Bottom:
+                    var vOffset = value.Height - IconSize;
+                    top = -vOffset + SelectedSkin.Padding.Bottom;
+                    break;
+
+                default:
+                    throw new ArgumentException(Position.ToString());
+            }
+        }
+
+        public float OffsetX
+        {
+            get
+            {
+                switch (Position)
+                {
+                    case Position.Top:
+                    case Position.Bottom:
+                        return (Bitmap.Width - _dockSize.Width) * 0.5f;
+                }
+                throw new ArgumentException(Position.ToString());
+            }
+        }
+
+        public float OffsetY
+        {
+            get
+            {
+                CalculateSize(out var dockSize, out var drawSize);
+
+                switch (Position)
+                {
+                    case Position.Top:
+                        return 0;
+                    case Position.Bottom:
+                        return (Bitmap.Height - _dockSize.Height);
+                }
+                throw new ArgumentException(Position.ToString());
+            }
         }
 
         internal void Render()
         {
-            CalculateSize(out var dockSize, out var drawSize);
+            CalculateSize(out _dockSize, out _drawSize);
 
-            if (Bitmap == null || Bitmap.Width < drawSize.Width || Bitmap.Height < drawSize.Height)
+            if (Bitmap == null || Bitmap.Width < _drawSize.Width || Bitmap.Height < _drawSize.Height)
             {
                 _graphics?.Dispose();
                 Bitmap?.Dispose();
 
-                Bitmap = new Bitmap(drawSize.Width, drawSize.Height, PixelFormat.Format32bppArgb);
+                Bitmap = new Bitmap(_drawSize.Width, _drawSize.Height, PixelFormat.Format32bppArgb);
                 _graphics = Graphics.FromImage(Bitmap);
             }
             _graphics.Clear(Color.Transparent);
 
             var state = _graphics.Save();
 
+            _graphics.TranslateTransform(
+                OffsetX,
+                OffsetY
+            );
 
-            switch (Position)
-            {
-                case Position.Top:
-                    _graphics.TranslateTransform(
-                        (Bitmap.Width - dockSize.Width) * 0.5f,
-                        0
-                    );
-                    break;
-
-                case Position.Bottom:
-                    _graphics.TranslateTransform(
-                        (Bitmap.Width - dockSize.Width) * 0.5f,
-                        (Bitmap.Height - dockSize.Height)
-                    );
-                    break;
-
-                default:
-                    throw new ArgumentException(Position.ToString());
-            }
-
-            RenderSkin(dockSize);
+            RenderSkin(_dockSize);
             RenderIcons();
 
             _graphics.Restore(state);
