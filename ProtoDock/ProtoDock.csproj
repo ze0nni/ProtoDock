@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Embeded\Default.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
+    <ProjectReference Include="..\ProtoDock.Tasks\ProtoDock.Tasks.csproj" />
+    <ProjectReference Include="..\ProtoDock.Tray\ProtoDock.Tray.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Embeded\Default.png" />
+  </ItemGroup>
+
+</Project>
