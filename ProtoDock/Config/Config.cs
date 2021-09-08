@@ -14,13 +14,20 @@ namespace ProtoDock.Config
     [Serializable]
     public class DockPanelConfig
     {
-        public string PluginGUID { get; set; }
+        public List<DockPluginMediatorConfig> Mediators { get; set; }
         public List<DockIconConfig> Icons { get; set; }
+    }
+
+    [Serializable]
+    public class DockPluginMediatorConfig
+    {
+        public string PluginGUID { get; set; }
     }
 
     [Serializable]
     public class DockIconConfig
     {
+        public int MediatorId { get; set; }
         public string Data { get; set; }
     }
 }

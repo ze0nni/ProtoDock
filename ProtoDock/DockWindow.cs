@@ -91,7 +91,12 @@ namespace ProtoDock
             {
                 pluginsMenu.DropDownItems.Add(new ToolStripMenuItem(p.Name, null, (s, e) =>
                 {
-                    _dock.AddPanel(p);
+                    DockPanel panel;
+                    if (_dock.Panels.Count == 0)
+                    {
+                        _dock.AddPanel();
+                    }
+                    _dock.Panels[0].AddMediator(p.Create());
                 }));
             }
 
