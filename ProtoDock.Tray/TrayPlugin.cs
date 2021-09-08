@@ -53,9 +53,9 @@ namespace ProtoDock.Tray
 
         }
 
-        public IDockPanel Create()
+        public IDockPanelMediator Create()
         {
-            return new TrayPanel(this);
+            return new TrayMediator(this);
         }
     }
 }

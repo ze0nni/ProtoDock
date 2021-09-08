@@ -13,9 +13,9 @@ namespace ProtoDock.Tasks
 
         public int Version => 1;
 
-        public IDockPanel Create()
+        public IDockPanelMediator Create()
         {
-            return new TasksPanel(this);
+            return new TasksMediator(this);
         }
     }
 }

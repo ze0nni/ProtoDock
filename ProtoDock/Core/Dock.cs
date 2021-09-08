@@ -81,8 +81,8 @@ namespace ProtoDock.Core
 
     public class DropMediator : IDropMediator
     {
-        public IEnumerable<IDockPanel> Panels => panels;
+        public IEnumerable<IDockPanelMediator> Mediators => panels;
 
-        public readonly List<IDockPanel> panels = new List<IDockPanel>();
+        public readonly List<IDockPanelMediator> panels = new List<IDockPanelMediator>();
     }
 }

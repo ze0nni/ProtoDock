@@ -4,7 +4,7 @@ namespace ProtoDock.Api
 {
     public interface IDockIcon
     {
-        IDockPanel Panel { get; }
+        IDockPanelMediator Mediator { get; }
 
         void Click();
         bool ContextClick();

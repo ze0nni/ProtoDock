@@ -1,19 +1,15 @@
 ﻿using ProtoDock.Api;
-using PInvoke;
-using System;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace ProtoDock.Tray
 {
-    internal class TrayPanel : IDockPanel
+    internal class TrayMediator : IDockPanelMediator
     {
         public IDockPlugin Plugin { get; private set; }
 
         private IDockPanelApi _api;
 
-        public TrayPanel(IDockPlugin plugin)
+        public TrayMediator(IDockPlugin plugin)
         {
             Plugin = plugin;
         }

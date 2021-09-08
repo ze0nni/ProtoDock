@@ -8,6 +8,6 @@ namespace ProtoDock.Api
         string GUID { get; }
         int Version { get; }
 
-        IDockPanel Create();
+        IDockPanelMediator Create();
     }
 }

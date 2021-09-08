@@ -26,7 +26,7 @@ namespace ProtoDock
 
     public interface IDropMediator
     {
-        IEnumerable<IDockPanel> Panels { get; }
+        IEnumerable<IDockPanelMediator> Mediators { get; }
     }
 
     public sealed class DockGraphics : IDisposable
@@ -246,7 +246,7 @@ namespace ProtoDock
 
             SetDirty();
 
-            foreach (var panel in mediator.Panels)
+            foreach (var panel in mediator.Mediators)
             {
                 if (panel.DragCanAccept(data)) {
                     return true;
@@ -260,7 +260,7 @@ namespace ProtoDock
         {
             SetState(State.Idle);
 
-            foreach (var panel in mediator.Panels)
+            foreach (var panel in mediator.Mediators)
             {
                 if (panel.DragCanAccept(data))
                 {

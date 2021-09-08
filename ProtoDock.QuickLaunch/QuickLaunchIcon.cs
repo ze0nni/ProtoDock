@@ -8,14 +8,14 @@ namespace ProtoDock.QuickLaunch
 {
     class QuickLaunchIcon : IDockIcon
     {
-        public IDockPanel Panel { get; }
+        public IDockPanelMediator Mediator { get; }
 
         private string _path;
         private Icon _icon;
 
-        public QuickLaunchIcon(IDockPanel panel, string path)
+        public QuickLaunchIcon(IDockPanelMediator mediator, string path)
         {
-            Panel = panel;
+            Mediator = mediator;
 
             _path = path;
             _icon = Icon.ExtractAssociatedIcon(_path);

@@ -8,13 +8,13 @@ using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
 {
-    internal class TasksPanel : IDockPanel
+    internal class TasksMediator : IDockPanelMediator
     {
         public IDockPlugin Plugin { get; private set;  }
 
         private IDockPanelApi _api;
 
-        public TasksPanel(IDockPlugin plugin)
+        public TasksMediator(IDockPlugin plugin)
         {
             Plugin = plugin;
         }

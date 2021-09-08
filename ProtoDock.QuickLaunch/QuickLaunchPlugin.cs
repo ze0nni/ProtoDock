@@ -13,9 +13,9 @@ namespace ProtoDock.QuickLaunch
 
         public int Version => 1;
 
-        public IDockPanel Create()
+        public IDockPanelMediator Create()
         {
-            return new QuickLaunchPanel(this);
+            return new QuickLaunchMediator(this);
         }
     }
 }

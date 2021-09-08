@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ProtoDock.Api
 {
-    public interface IDockPanel
+    public interface IDockPanelMediator
     {
         IDockPlugin Plugin { get; }
         void Setup(IDockPanelApi api);

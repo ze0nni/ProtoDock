@@ -9,13 +9,13 @@ namespace ProtoDock.Tasks
 {
     internal class TaskIcon : IDockIcon
     {
-        public IDockPanel Panel { get; }
+        public IDockPanelMediator Mediator { get; }
 
         private Icon _icon;
 
-        public TaskIcon(IDockPanel panel, IntPtr hWnd)
+        public TaskIcon(IDockPanelMediator mediator, IntPtr hWnd)
         {
-            Panel = panel;
+            Mediator = mediator;
 
             var hIcon = PInvoke.User32.SendMessage(hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
             if (hIcon != IntPtr.Zero)

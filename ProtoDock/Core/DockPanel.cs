@@ -11,7 +11,7 @@ namespace ProtoDock.Core
         public IDockApi Dock => _dock;
 
         private readonly Dock _dock;
-        public readonly IDockPanel Model;
+        public readonly IDockPanelMediator Model;
 
         private readonly HashSet<IDockIcon> _icons = new HashSet<IDockIcon>();
 
@@ -20,7 +20,7 @@ namespace ProtoDock.Core
             _dock = dock;
         }
 
-        public DockPanel(Dock dock, IDockPanel model)
+        public DockPanel(Dock dock, IDockPanelMediator model)
         {
             _dock = dock;
             Model = model;

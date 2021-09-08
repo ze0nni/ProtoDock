@@ -7,11 +7,11 @@ using System.Windows.Forms;
 
 namespace ProtoDock.QuickLaunch
 {
-    class QuickLaunchPanel : IDockPanel
+    class QuickLaunchMediator : IDockPanelMediator
     {
         public IDockPlugin Plugin { get; private set; }
 
-        public QuickLaunchPanel(IDockPlugin plugin)
+        public QuickLaunchMediator(IDockPlugin plugin)
         {
             Plugin = plugin;
         }
