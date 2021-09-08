@@ -30,6 +30,10 @@ namespace ProtoDock.Core
                 var mediator = _dock.PluginFromGUID(mediatorConfig.PluginGUID)?.Create() ?? null;
                 mediator?.Setup(this);
                 mediatorsList.Add(mediator);
+                if (mediator != null)
+                {
+                    _mediators.Add(mediator);
+                }
             }
 
             foreach (var iconConfig in config.Icons)

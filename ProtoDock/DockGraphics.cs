@@ -235,6 +235,8 @@ namespace ProtoDock
                 _icons[draggedIndex] = icon;
 
                 SetDirty();
+                //TODO: Flush
+                //TODO: Swap Icons In Panel
             }
         }
 
