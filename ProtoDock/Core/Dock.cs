@@ -1,9 +1,16 @@
-﻿using ProtoDock.Api;
+﻿using ProtoDock;
+using ProtoDock.Api;
+using ProtoDock.Config;
+using ProtoDock.QuickLaunch;
 using ProtoDock.Tasks;
 using ProtoDock.Tray;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO.IsolatedStorage;
+using System.Text.Json.Serialization;
 
 namespace ProtoDock.Core
 {
@@ -23,18 +30,59 @@ namespace ProtoDock.Core
             HInstance = hInstance;
             Graphics = graphics;
 
+            _plugins.Add(new QuickLaunchPlugin());
             _plugins.Add(new TasksPlugin());
-            _plugins.Add(new TrayPlugin());            
+            _plugins.Add(new TrayPlugin());          
 
-            foreach (var p in _plugins)
-            {
-                AddPanel(p.Create());
-            }
+            Restore();
         }
 
-        private void AddPanel(IDockPanel model)
+        private readonly DropMediator _dropMediator = new DropMediator();
+        public IDropMediator GetDropMediator()
         {
-            var view = new DockPanel(this, model);
+            _dropMediator.panels.Clear();
+            for (var i = 0; i < _panels.Count; i++)
+            {
+                _dropMediator.panels.Add(_panels[i].Model);
+            }
+
+            return _dropMediator;
         }
+
+        public void AddPanel(IDockPlugin plugin)
+        {
+            var panelModel = plugin.Create();
+            var panel = new DockPanel(this, panelModel);
+            _panels.Add(panel);
+
+            Flush();
+        }
+
+        public void Restore()
+        {
+
+        }
+
+        public void Flush()
+        {
+            var config = new DockConfig
+            {
+                Panels = new List<DockPanelConfig>()
+            };
+            
+            foreach (var panel in _panels)
+            {
+                config.Panels.Add(panel.Store());
+            }
+
+            ConfigurationManager.AppSettings["panel"] = System.Text.Json.JsonSerializer.Serialize(config);
+        }
+    }
+
+    public class DropMediator : IDropMediator
+    {
+        public IEnumerable<IDockPanel> Panels => panels;
+
+        public readonly List<IDockPanel> panels = new List<IDockPanel>();
     }
 }

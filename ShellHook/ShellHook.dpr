@@ -41,39 +41,20 @@ begin
   case dwReason of
     Dll_Process_Attach:
       begin
+        WriteLn('Attach');
         uiWM_CapturedKeyboardLayout := RegisterWindowMessage('KBHook_WM_CapturedKeyboardLayout');
       end;
     Dll_Process_Detach:
       begin
+        WriteLn('Detach');
       end;
   end;
-end;
-
-procedure Process_Detach_Hook(dllparam: longint);
-begin
-  DLLEntryPoint(DLL_PROCESS_DETACH);
-end;
-
-procedure Thread_Attach_Hook(dllparam: longint);
-begin
-  DLLEntryPoint(DLL_THREAD_ATTACH);
-end;
-
-procedure Thread_Detach_Hook(dllparam: longint);
-begin
-  DLLEntryPoint(DLL_THREAD_DETACH);
 end;
 
 exports SetHook, RemoveHook;
 
 begin
     mtHook:=0;
-{$ifdef fpc}
-    Dll_Process_Detach_Hook:= @Process_Detach_Hook;
-    Dll_Thread_Attach_Hook := @Thread_Attach_Hook;
-    Dll_Thread_Detach_Hook := @Thread_Detach_Hook;
-{$else }
-    DLLProc:= @DLLEntryPoint;
-{$endif}
+    DLLProc := @DLLEntryPoint;
     DllEntryPoint(Dll_Process_Attach);
 end.

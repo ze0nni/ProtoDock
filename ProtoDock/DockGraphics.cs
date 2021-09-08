@@ -20,7 +20,13 @@ namespace ProtoDock
     {
         Idle,
         LeftDown,
-        Drag
+        Drag,
+        DragData
+    }
+
+    public interface IDropMediator
+    {
+        IEnumerable<IDockPanel> Panels { get; }
     }
 
     public sealed class DockGraphics : IDisposable
@@ -33,6 +39,7 @@ namespace ProtoDock
         
         public bool IsMouseOver { get; private set; }
         private PointF _mouseDownPoint;
+        private PointF _mousePosition;
         private DockIconGraphics _draggedIcon;
 
         public Bitmap Bitmap { get; private set; }
@@ -150,6 +157,8 @@ namespace ProtoDock
 
         public void MouseMove(float x, float y)
         {
+            _mousePosition = new PointF(x, y);
+
             switch (_state)
             {
                 case State.Idle:
@@ -227,6 +236,44 @@ namespace ProtoDock
 
                 SetDirty();
             }
+        }
+
+        public bool DragOver(float x, float y, IDropMediator mediator, IDataObject data)
+        {
+            _mousePosition = new PointF(x, y);
+
+            SetState(State.DragData);
+
+            SetDirty();
+
+            foreach (var panel in mediator.Panels)
+            {
+                if (panel.DragCanAccept(data)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void DragDrop(float x, float y, IDropMediator mediator, IDataObject data)
+        {
+            SetState(State.Idle);
+
+            foreach (var panel in mediator.Panels)
+            {
+                if (panel.DragCanAccept(data))
+                {
+                    GetDropIndex(x, out var index, out _);
+                    panel.DragAccept(index, data);
+                    return;
+                }
+            }
+        }
+
+        public void DragLeave()
+        {
+            SetState(State.Idle);
         }
 
         private bool IsOverIcon(float x, float y, DockIconGraphics icon)
@@ -383,6 +430,25 @@ namespace ProtoDock
             }
         }
 
+        private bool GetDropIndex(float x, out int outIndex, out float outX)
+        {
+            if (!GetIconFromX(x, out var icon, out var left)) {
+                outIndex = default;
+                outX = default;
+                return false;
+            }
+            outIndex = _icons.IndexOf(icon);
+            outX = left;
+
+            if (x > left + icon.Width * 0.5f)
+            {
+                outIndex += 1;
+                outX += icon.Width;
+            }
+
+            return true;
+        }
+
         public float OffsetX
         {
             get
@@ -437,6 +503,7 @@ namespace ProtoDock
 
             RenderSkin(_dockSize);
             RenderIcons();
+            RenderDropTarget();
 
             _graphics.Restore(state);
 
@@ -557,6 +624,33 @@ namespace ProtoDock
             }
 
             _graphics.Restore(state);
+        }
+
+        private void RenderDropTarget()
+        {
+            if (_state != State.DragData)
+            {
+                return;
+            }
+
+            if (!GetDropIndex(_mousePosition.X, out var index, out var x))
+            {
+                return;
+            }
+
+            _graphics.FillRectangle(
+                SystemBrushes.ButtonShadow,
+                x - 1,
+                SelectedSkin.Padding.Top + 1,
+                4,
+                IconSize);
+
+            _graphics.FillRectangle(
+                SystemBrushes.Highlight, 
+                x-2,
+                SelectedSkin.Padding.Top,
+                4,
+                IconSize);
         }
 
     }

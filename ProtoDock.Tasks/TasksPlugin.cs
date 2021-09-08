@@ -11,9 +11,11 @@ namespace ProtoDock.Tasks
 
         public string GUID => "{8F5FC966-7791-4F6F-B878-8BA4B335BCBE}";
 
+        public int Version => 1;
+
         public IDockPanel Create()
         {
-            return new TasksPanel();
+            return new TasksPanel(this);
         }
     }
 }

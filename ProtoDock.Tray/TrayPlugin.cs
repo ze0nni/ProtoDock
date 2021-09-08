@@ -17,6 +17,8 @@ namespace ProtoDock.Tray
 
         public string GUID => "{9A3F1A17-2F32-41B4-ABAA-0FC89EC75CDC}";
 
+        public int Version => 1;
+
         public IDockApi _api;
 
         public void Init(IDockApi api)
@@ -53,7 +55,7 @@ namespace ProtoDock.Tray
 
         public IDockPanel Create()
         {
-            return new TrayPanel();
+            return new TrayPanel(this);
         }
     }
 }

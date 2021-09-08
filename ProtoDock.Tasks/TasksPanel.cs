@@ -4,12 +4,20 @@ using System;
 using System.Diagnostics;
 using static PInvoke.User32;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
 {
     internal class TasksPanel : IDockPanel
     {
+        public IDockPlugin Plugin { get; private set;  }
+
         private IDockPanelApi _api;
+
+        public TasksPanel(IDockPlugin plugin)
+        {
+            Plugin = plugin;
+        }
 
         private Kernel32.SafeLibraryHandle _shellHookLib;
         private delegate IntPtr SetListener();
@@ -18,6 +26,11 @@ namespace ProtoDock.Tasks
         public void Setup(IDockPanelApi api)
         {
             _api = api;
+        }
+
+        public void RestoreIcon(int version, string data)
+        {
+
         }
 
         public void Awake()
@@ -34,14 +47,15 @@ namespace ProtoDock.Tasks
             //FreeLibrary(_shellHookLib);
         }
 
-        private int WindowsShellHook(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            Debug.WriteLine(nCode);
 
-            return User32.CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        public bool DragCanAccept(IDataObject data)
+        {
+            return false;
         }
 
-        [DllImport("kernel32.dll", EntryPoint = "FreeLibrary")]
-        static extern bool FreeLibrary(Kernel32.SafeLibraryHandle hModule);
+        public void DragAccept(int index, IDataObject data)
+        {
+
+        }
     }
 }

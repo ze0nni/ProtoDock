@@ -1,4 +1,5 @@
 ﻿using ProtoDock.Api;
+using ProtoDock.Config;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -10,22 +11,26 @@ namespace ProtoDock.Core
         public IDockApi Dock => _dock;
 
         private readonly Dock _dock;
-        private readonly IDockPanel _model;
+        public readonly IDockPanel Model;
 
         private readonly HashSet<IDockIcon> _icons = new HashSet<IDockIcon>();
+
+        public DockPanel(Dock dock, DockPanelConfig config)
+        {
+            _dock = dock;
+        }
 
         public DockPanel(Dock dock, IDockPanel model)
         {
             _dock = dock;
-            _model = model;
-
-            _model.Setup(this);
-            _model.Awake();
+            Model = model;
+            model.Setup(this);
+            model.Awake();
         }
 
         public void Dispose()
         {
-            _model.Destroy();
+            Model.Destroy();
         }
 
         public void Add(IDockIcon icon)
@@ -33,12 +38,35 @@ namespace ProtoDock.Core
             if (_icons.Add(icon))
             {
                 _dock.Graphics.AddIcon(icon);
+                _dock.Flush();
             }
         }
 
         public void Remove(IDockIcon icon)
         {
             
+        }
+
+        internal DockPanelConfig Store()
+        {
+            var config = new DockPanelConfig
+            {
+                PluginGUID = Model.Plugin.GUID,
+                Icons = new List<DockIconConfig>()
+            };
+            
+            foreach (var icon in _icons)
+            {
+                if (icon.Store(out var data))
+                {
+                    config.Icons.Add(new DockIconConfig()
+                    {
+                        Data = data
+                    });
+                }
+            }
+
+            return config;
         }
     }
 }

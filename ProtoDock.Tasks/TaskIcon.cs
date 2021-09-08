@@ -43,6 +43,12 @@ namespace ProtoDock.Tasks
                 
         }
 
+        public bool Store(out string data)
+        {
+            data = default;
+            return false;
+        }
+
         public const int GCL_HICONSM = -34;
         public const int GCL_HICON = -14;
 

@@ -61,13 +61,9 @@ namespace ProtoDock
             this.MouseMove += OnMouseMove;
             this.MouseDown += OnMouseDown;
             this.MouseUp += OnMouseUp;
-
-            this.DragOver += (s, e) =>
-            {
-                _graphics.MouseMove(e.X, e.Y);
-
-                e.Effect = DragDropEffects.Link;
-            };
+            this.DragOver += OnDragOver;
+            this.DragDrop += OnDragDrop;
+            this.DragLeave += OnDragLeave;
 
             CreateContextMenu();
         }
@@ -86,7 +82,21 @@ namespace ProtoDock
         private void CreateContextMenu()
         {
             _contextMenu.Items.Add(new ToolStripMenuItem("Settings", null, OnSettingsClick));
+            
             _contextMenu.Items.Add(new ToolStripSeparator());
+
+            var pluginsMenu = new ToolStripMenuItem("Add panel");
+            _contextMenu.Items.Add(pluginsMenu);
+            foreach (var p in _dock.Plugins)
+            {
+                pluginsMenu.DropDownItems.Add(new ToolStripMenuItem(p.Name, null, (s, e) =>
+                {
+                    _dock.AddPanel(p);
+                }));
+            }
+
+            _contextMenu.Items.Add(new ToolStripSeparator());
+
             _contextMenu.Items.Add(new ToolStripMenuItem("Exit", null, OnExitClick));
         }
 
@@ -221,6 +231,25 @@ namespace ProtoDock
             }
         }
 
+        private void OnDragOver(object sender, DragEventArgs e)
+        {
+            var p = this.PointToClient(new Point(e.X, e.Y));
+            if (_graphics.DragOver(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator(), e.Data)) {
+                e.Effect = DragDropEffects.Link;
+            }
+        }
+
+        private void OnDragDrop(object sender, DragEventArgs e)
+        {
+            var p = this.PointToClient(new Point(e.X, e.Y));
+            _graphics.DragDrop(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator(), e.Data);
+        }
+
+        private void OnDragLeave(object sender, EventArgs e)
+        {
+            _graphics.DragLeave();
+        }
+
         private void OnSettingsClick(object sender, EventArgs e)
         {
             new SettingsWindow(_dock, _graphics).Show();
@@ -230,6 +259,24 @@ namespace ProtoDock
         {
             _doExit = true;
             Close();
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // DockWindow
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "DockWindow";
+            this.Load += new System.EventHandler(this.DockWindow_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void DockWindow_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

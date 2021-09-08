@@ -48,5 +48,11 @@ namespace ProtoDock.Tray
         {
             _icon = icon;
         }
+
+        public bool Store(out string data)
+        {
+            data = default;
+            return false;
+        }
     }
 }

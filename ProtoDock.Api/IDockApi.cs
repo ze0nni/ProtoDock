@@ -10,5 +10,7 @@ namespace ProtoDock.Api
         IntPtr HInstance { get; }
 
         ReadOnlyCollection<IDockPlugin> Plugins { get; }
+
+        void Flush();
     }
 }

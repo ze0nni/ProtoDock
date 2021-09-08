@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
+    <ProjectReference Include="..\ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj" />
     <ProjectReference Include="..\ProtoDock.Tasks\ProtoDock.Tasks.csproj" />
     <ProjectReference Include="..\ProtoDock.Tray\ProtoDock.Tray.csproj" />
   </ItemGroup>

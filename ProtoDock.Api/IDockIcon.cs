@@ -8,7 +8,7 @@ namespace ProtoDock.Api
 
         void Click();
         bool ContextClick();
-
         void Render(Graphics graphics, float width, float height, bool isSelected);
+        bool Store(out string data);
     }
 }

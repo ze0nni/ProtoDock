@@ -6,6 +6,7 @@ namespace ProtoDock.Api
     {
         string Name { get; }
         string GUID { get; }
+        int Version { get; }
 
         IDockPanel Create();
     }
