@@ -28,6 +28,7 @@ namespace ProtoDock.Config
     public class DockIconConfig
     {
         public int MediatorId { get; set; }
+        public int PluginVersion { get; set; }
         public string Data { get; set; }
     }
 }

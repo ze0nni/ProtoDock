@@ -41,7 +41,7 @@ namespace ProtoDock.Core
                 try
                 {
                     //TODO: Version
-                    mediatorsList[iconConfig.MediatorId].RestoreIcon(0, iconConfig.Data);
+                    mediatorsList[iconConfig.MediatorId].RestoreIcon(iconConfig.PluginVersion, iconConfig.Data);
                 }
                 catch
                 {
@@ -110,6 +110,7 @@ namespace ProtoDock.Core
                     config.Icons.Add(new DockIconConfig()
                     {
                         MediatorId = _mediators.IndexOf(icon.Mediator),
+                        PluginVersion = icon.Mediator.Plugin.Version,
                         Data = data
                     });
                 }
