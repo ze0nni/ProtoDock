@@ -69,6 +69,8 @@ namespace ProtoDock.Core
             mediator.Awake();
 
             _mediators.Add(mediator);
+
+            _dock.Flush();
         }
 
         public void Add(IDockIcon icon)
@@ -82,9 +84,13 @@ namespace ProtoDock.Core
 
         public void Remove(IDockIcon icon)
         {
-            if (_icons.Remove(icon)) {
-                _dock.Graphics.RemoveIcon(icon);
+            if (!_icons.Remove(icon))
+            {
+                return;
             }
+
+            _dock.Graphics.RemoveIcon(icon);
+            _dock.Flush();
         }
 
         internal DockPanelConfig Store()
