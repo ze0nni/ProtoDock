@@ -23,6 +23,8 @@ namespace ProtoDock.Tasks
         private delegate IntPtr SetListener();
         private delegate void RemoveListener();
 
+        private TaskManForm _form;
+
         public void Setup(IDockPanelApi api)
         {
             _api = api;
@@ -32,21 +34,26 @@ namespace ProtoDock.Tasks
         {
 
         }
-
+        
         public void Awake()
         {
             //_shellHookLib = Kernel32.LoadLibrary("ShellHook.dll");
 
             //var setListener = Marshal.GetDelegateForFunctionPointer<SetListener>(Kernel32.GetProcAddress(_shellHookLib, "SetHook"));
             //setListener.Invoke();
+
+            
+            _form = new TaskManForm();
+            RegisterShellHookWindow(_form.Handle);
         }
 
         public void Destroy()
         {
             //var removeListener = Kernel32.GetProcAddress(_shellHookLib, "RemoveHook");
             //FreeLibrary(_shellHookLib);
+            RegisterShellHookWindow(IntPtr.Zero);
+            _form.Close();
         }
-
 
         public bool DragCanAccept(IDataObject data)
         {
@@ -57,5 +64,29 @@ namespace ProtoDock.Tasks
         {
 
         }
+        
+            
+        [DllImport("user32.dll")]
+        public static extern bool SetTaskmanWindow(IntPtr hWnd);
+        
+        [DllImport("user32.dll")]
+        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
     }
+    
+    internal class TaskManForm : Form {
+        private int _shellHookMsg;
+        
+        public TaskManForm() {
+            _shellHookMsg = User32.RegisterWindowMessage("SHELLHOOK");
+        }
+
+        protected override void WndProc(ref Message m) {
+            if (m.Msg == _shellHookMsg) {
+                Debug.WriteLine($"{m.LParam} {m.WParam}");
+            }
+            else
+                base.WndProc(ref m);
+        }
+    }
+
 }
