@@ -47,9 +47,9 @@ namespace ProtoDock.Tasks
 
             _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
 
-            //int msg = RegisterWindowMessage("TaskbarCreated");
-            // SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
-            // SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
+            var msg = User32.RegisterWindowMessage("TaskbarCreated");
+            SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
+            SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
             
             EnumWindows(delegate(IntPtr wnd, IntPtr param) {
                 _windows.Add(wnd);
