@@ -37,7 +37,7 @@ namespace ProtoDock.Tasks
         
         public void Awake()
         {
-            _form = new TaskManForm();
+            _form = new TaskManForm(this, _api);
         }
 
         public void Destroy()
@@ -57,9 +57,15 @@ namespace ProtoDock.Tasks
     }
 
     internal class TaskManForm : Form {
-        private int _shellHookMsg;
+        private readonly IDockPanelApi _api;
+        private readonly IDockPanelMediator _mediator;
+        
+        private readonly int _shellHookMsg;
 
-        public TaskManForm() {
+        public TaskManForm(IDockPanelMediator mediator, IDockPanelApi api) {
+            _api = api;
+            _mediator = mediator;
+            
             SetTaskmanWindow(Handle);
             RegisterShellHookWindow(Handle);
 
@@ -102,14 +108,25 @@ namespace ProtoDock.Tasks
         
         protected override void WndProc(ref Message m) {
             if (m.Msg == _shellHookMsg) {
-                var shmsg = (HShellMsg)m.WParam;
-                var win = m.LParam;
-                Debug.WriteLine(shmsg);
+                ShellWndProc(ref m);
             }
             else
                 base.WndProc(ref m);
         }
-        
+
+        private void ShellWndProc(ref Message m) {
+            var shellMsg = (HShellMsg)m.WParam;
+            var win = m.LParam;
+            switch (shellMsg) {
+                case HShellMsg.HSHELL_WINDOWCREATED:
+                    _api.Add(new TaskIcon(_mediator, win));
+                    break;
+                
+                case HShellMsg.HSHELL_WINDOWDESTROYED:
+                    break;
+            }
+        }
+
         [DllImport("user32.dll")]
         private static extern bool SetTaskmanWindow(IntPtr hWnd);
         

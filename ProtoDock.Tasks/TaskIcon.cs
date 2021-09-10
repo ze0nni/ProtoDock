@@ -11,17 +11,18 @@ namespace ProtoDock.Tasks
     {
         public IDockPanelMediator Mediator { get; }
 
-        private Icon _icon;
+        private Bitmap _icon;
 
         public TaskIcon(IDockPanelMediator mediator, IntPtr hWnd)
         {
             Mediator = mediator;
 
             var hIcon = PInvoke.User32.SendMessage(hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
-            if (hIcon != IntPtr.Zero)
-            {
-                _icon = Icon.FromHandle(hIcon);
+            if (hIcon != IntPtr.Zero) {
+                _icon = Icon.FromHandle(hIcon).ToBitmap();
             }
+            
+            //TODO: Destroy icon
         }
 
         public void Click()
@@ -38,7 +39,7 @@ namespace ProtoDock.Tasks
         {
             if (_icon != null)
             {
-                graphics.DrawIcon(_icon, new Rectangle(0, 0, (int)width, (int)height));
+                graphics.DrawImage(_icon, new Rectangle(0, 0, (int)width, (int)height));
             }
                 
         }
