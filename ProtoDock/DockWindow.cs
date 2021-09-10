@@ -73,6 +73,7 @@ namespace ProtoDock
             get
             {
                 var p = base.CreateParams;
+                p.Style = (int)PInvoke.User32.WindowStyles.WS_VISIBLE;
                 p.ExStyle |= (int)PInvoke.User32.WindowStylesEx.WS_EX_TOOLWINDOW;
                 p.ExStyle |= (int)PInvoke.User32.WindowStylesEx.WS_EX_LAYERED;
                 return p;

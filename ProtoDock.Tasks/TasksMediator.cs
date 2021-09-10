@@ -129,6 +129,8 @@ namespace ProtoDock.Tasks
                     break;
                 }
             }
+
+            UpdateWindows();
         }
 
         private void UpdateWindows() {
@@ -157,21 +159,13 @@ namespace ProtoDock.Tasks
                         visible = false;
                     }
                     
-                    if ((style & (uint) WindowStyles.WS_POPUP) != 0)
-                    {
-                        visible = false;
-                    }
 
                     if ((style & (int) WindowStyles.WS_VISIBLE) == 0)
                     {
                         visible = false;
                     }
-                }
 
-                if (visible)
-                {
-                    var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
-                    if ((styleEx & (int) WindowStylesEx.WS_EX_TOOLWINDOW) != 0)
+                    if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
                     {
                         visible = false;
                     }
@@ -179,10 +173,13 @@ namespace ProtoDock.Tasks
 
                 if (visible)
                 {
-                    var style = GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
                     var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
-                    GetWindowText(wnd, sb, 255);
-                    Debug.WriteLine($"{sb.ToString()}\n    {Convert.ToString(style, 2)}\n    {Convert.ToString(styleEx, 2)}");
+                    if ((styleEx & (int) WindowStylesEx.WS_EX_TOOLWINDOW) != 0 &&
+                        (styleEx & (int)WindowStylesEx.WS_EX_APPWINDOW) == 0 )
+                    {
+                        visible = false;
+                    }
+
                 }
 
                 if (visible)
@@ -194,8 +191,6 @@ namespace ProtoDock.Tasks
                     DestroyIcon(wnd);
                 }
             }
-
-            Debug.WriteLine("----");
         }
 
         private void CreateIcon(IntPtr wnd) {
