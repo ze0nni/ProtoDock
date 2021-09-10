@@ -119,8 +119,23 @@ namespace ProtoDock
                 new DockSkin(
                     0,
                     new Padding(16, 16, 16, 16),
-                    new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default.png")),
-                    new Padding(32, 32, 32, 32)
+                    new DockSkinImage(
+                        DockSkinImageAlign.Scale9,
+                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default.png")),
+                        new Padding(32, 32, 32, 32)
+                    ),
+                    new DockSkinImage(
+                        DockSkinImageAlign.Bottom,
+                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_selected.png")),
+                        new Padding(32, 32, 32, 32)
+                    ),
+                    null,
+                    new DockSkinImage(
+                        DockSkinImageAlign.Stretch,
+                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_highlight.png")),
+                        new Padding(32, 32, 32, 32)
+                    ),
+                    null
                 )
             );
 
@@ -128,13 +143,14 @@ namespace ProtoDock
             {
                 try
                 {
-                    var skin = JsonSerializer.Deserialize<DockSkin>(File.ReadAllText(file));
+                    var data = File.ReadAllText(file);
+                    var skin = JsonSerializer.Deserialize<DockSkin>(data);
                     skin.Name = file;
                     list.Add(skin);
                 }
-                catch
+                catch (Exception exc)
                 {
-                    //TODO: Error
+                    Debug.WriteLine(exc);
                 }
             }
 

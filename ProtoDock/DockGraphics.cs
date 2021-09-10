@@ -33,7 +33,7 @@ namespace ProtoDock
     {
         private State _state;
 
-        public Position Position => Position.Top;
+        public Position Position => Position.Bottom;
 
         public bool IsDirty { get; private set; }
         
@@ -378,7 +378,7 @@ namespace ProtoDock
 
             var dockWidth = MathF.Max(
                 SelectedSkin.Padding.Left + iconsWidthSum + Math.Max(0, iconsCount - 1) * IconSpace + SelectedSkin.Padding.Right,
-                SelectedSkin.Scale9.Left + SelectedSkin.Scale9.Right);
+                SelectedSkin.Dock.Scale9.Left + SelectedSkin.Dock.Scale9.Right);
             var dockHeight = SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom;
             dockSize = new SizeF(
                 dockWidth,
@@ -518,7 +518,7 @@ namespace ProtoDock
                 OffsetY
             );
 
-            RenderSkin(_dockSize);
+            SelectedSkin.Dock.Draw(_graphics, _dockSize);
             RenderIcons();
             RenderDropTarget();
 
@@ -526,91 +526,6 @@ namespace ProtoDock
 
             IsDirty = false;
         }
-
-        private void RenderSkin(SizeF size)
-        {
-            var s9 = SelectedSkin.Scale9;
-            var bmp = SelectedSkin.Bitmap;
-
-            var centerWidth = size.Width - s9.Left - s9.Right;
-            var centerHeight = size.Height - s9.Top - s9.Bottom;
-
-            var skinCenterWidth = bmp.Width - s9.Left - s9.Right;
-            var skinCenterHeight = bmp.Height - s9.Top - s9.Bottom;
-
-            //Top Left
-            _graphics.DrawImage(bmp,
-                new RectangleF(0, 0, s9.Left, s9.Top),
-                new RectangleF(0, 0, s9.Left, s9.Top),
-                GraphicsUnit.Pixel
-             );
-
-            //Top Middle
-            if (centerWidth > 0)
-            {
-                _graphics.DrawImage(bmp,
-                    new RectangleF(s9.Left, 0, centerWidth, s9.Top),
-                    new RectangleF(s9.Left, 0, skinCenterWidth, s9.Top),
-                    GraphicsUnit.Pixel
-                 );
-            }
-
-            //Top Right
-            _graphics.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, 0, s9.Right, s9.Top),
-                new RectangleF(bmp.Width - s9.Right, 0, s9.Right, s9.Top),
-                GraphicsUnit.Pixel
-             );
-
-            //Center left
-            _graphics.DrawImage(bmp,
-                new RectangleF(0, s9.Top, s9.Left, centerHeight),
-                new RectangleF(0, s9.Top, s9.Left, skinCenterHeight),
-                GraphicsUnit.Pixel
-             );
-
-            //Center Middle
-            if (centerWidth > 0)
-            {
-                _graphics.DrawImage(bmp,
-                    new RectangleF(s9.Left, s9.Top, centerWidth, centerHeight),
-                    new RectangleF(s9.Left, s9.Top, skinCenterWidth, skinCenterHeight),
-                    GraphicsUnit.Pixel
-                 );
-            }
-
-            //Center Right
-            _graphics.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, s9.Top, s9.Right, centerHeight),
-                new RectangleF(bmp.Width - s9.Right, s9.Top, s9.Right, skinCenterHeight),
-                GraphicsUnit.Pixel
-             );
-
-            //Bottom Left
-            _graphics.DrawImage(bmp,
-                new RectangleF(0, size.Height - s9.Bottom, s9.Left, s9.Bottom),
-                new RectangleF(0, bmp.Height - s9.Bottom, s9.Left, s9.Bottom),
-                GraphicsUnit.Pixel
-             );
-
-            //Bottom Middle
-            if (centerWidth > 0)
-            {
-                _graphics.DrawImage(bmp,
-                    new RectangleF(s9.Left, size.Height - s9.Bottom, centerWidth, s9.Bottom),
-                    new RectangleF(s9.Left, bmp.Height - s9.Bottom, skinCenterWidth, s9.Bottom),
-                    GraphicsUnit.Pixel
-                 );
-            }
-
-            //Bottom Right
-            _graphics.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, size.Height - s9.Bottom, s9.Right, s9.Bottom),
-                new RectangleF(bmp.Width - s9.Right, bmp.Height - s9.Bottom, s9.Right, s9.Bottom),
-                GraphicsUnit.Pixel
-             );
-        }
-
 
         private void RenderIcons()
         {

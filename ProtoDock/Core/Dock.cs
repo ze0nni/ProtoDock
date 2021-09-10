@@ -1,14 +1,11 @@
-﻿using ProtoDock;
-using ProtoDock.Api;
+﻿using ProtoDock.Api;
 using ProtoDock.Config;
 using ProtoDock.QuickLaunch;
 using ProtoDock.Tasks;
 using ProtoDock.Tray;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -69,6 +66,11 @@ namespace ProtoDock.Core
             _panels.Add(panel);
         }
 
+        public void SetDirty()
+        {
+            Graphics.SetDirty();
+        }
+
         public void Restore()
         {            
             try
@@ -107,6 +109,11 @@ namespace ProtoDock.Core
             var root = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ProtoDock");
             Directory.CreateDirectory(root);
             return Path.Join(root, "config.json");
+        }
+
+        public void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height)
+        {
+            Graphics.SelectedSkin.Draw(element, g, x, y, width, height);
         }
     }
 

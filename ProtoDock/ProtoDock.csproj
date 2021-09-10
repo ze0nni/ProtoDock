@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <None Remove="Embeded\Default.png" />
+    <None Remove="Embeded\Default_highlight.png" />
+    <None Remove="Embeded\Default_selected.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,11 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Embeded\Default.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Embeded\Default_highlight.png" />
+    <EmbeddedResource Include="Embeded\Default_selected.png" />
   </ItemGroup>
 
 </Project>

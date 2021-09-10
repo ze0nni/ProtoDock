@@ -1,5 +1,4 @@
 {
-	"BitmapSource": "Skins/PanelDark.png",
 	"VOffset": 16,
 	"Padding": {
 		"Left": 64,
@@ -7,10 +6,17 @@
 		"Right": 64,
 		"Bottom": 38
 	},
-	"Scale9": {
-		"Left": 64,
-		"Top": 10,
-		"Right": 64,
-		"Bottom": 32
+	"Dock" : {
+		"BitmapSource": "Skins/PanelDark/PanelDark.png",
+		"Scale9": {
+			"Left": 64,
+			"Top": 10,
+			"Right": 64,
+			"Bottom": 32
+		}
+	},
+	"SelectedFg": {
+		"Align": "Bottom",
+		"BitmapSource": "Skins/PanelDark/PanelDark_selected.png"
 	}
 }

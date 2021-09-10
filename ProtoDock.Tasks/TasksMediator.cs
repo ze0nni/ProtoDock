@@ -6,6 +6,7 @@ using static PInvoke.User32;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ProtoDock.Tasks
 {
@@ -56,7 +57,7 @@ namespace ProtoDock.Tasks
             }, IntPtr.Zero);
             
             UpdateWindows();
-
+            UpdateActiveWindow(User32.GetActiveWindow());
         }
 
         public void Destroy()
@@ -110,25 +111,39 @@ namespace ProtoDock.Tasks
 
         private void ShellWndProc(ref Message m) {
             var shellMsg = (HShellMsg)m.WParam;
-            var win = m.LParam;
+            var wnd = m.LParam;
             switch (shellMsg) {
                 case HShellMsg.HSHELL_WINDOWCREATED:
-                {
-                    _windows.Add(win);
-                    UpdateWindows();
-                    break;
-                }
+                    {
+                        _windows.Add(wnd);
+                        UpdateWindows();
+                        break;
+                    }
 
                 case HShellMsg.HSHELL_WINDOWDESTROYED:
-                {
-                    _windows.Remove(win);
-                    DestroyIcon(win);
-                    UpdateWindows();
+                    {
+                        _windows.Remove(wnd);
+                        DestroyIcon(wnd);
+                        UpdateWindows();
 
-                    break;
-                }
+                        break;
+                    }
+
+                case HShellMsg.HSHELL_REDRAW:
+                    {
+                        if (_icons.TryGetValue(wnd, out var icon))
+                        {
+                            icon.Redraw();
+                        }
+                        break;
+                    }
+
+                case HShellMsg.HSHELL_RUDEAPPACTIVATED:
+                    {
+                        UpdateActiveWindow(wnd);
+                        break;
+                    }
             }
-
             UpdateWindows();
         }
 
@@ -202,11 +217,19 @@ namespace ProtoDock.Tasks
             }
         }
 
+        private void UpdateActiveWindow(IntPtr wnd)
+        {
+            foreach (var icon in _icons)
+            {
+                icon.Value.SetActiveWindow(wnd);
+            }
+        }
+
         private void CreateIcon(IntPtr wnd) {
             if (_icons.ContainsKey(wnd))
                 return;
             
-            var icon = new TaskIcon(this, wnd);
+            var icon = new TaskIcon(this, _api.Dock, wnd);
             _icons.Add(wnd, icon);
             _api.Add(icon);
         }
