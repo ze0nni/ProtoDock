@@ -17,6 +17,9 @@ namespace ProtoDock.Tasks
         
         private int _shellHookMsg;
 
+        private readonly List<IntPtr> _windows = new List<IntPtr>();
+        private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
+
         public TasksMediator(IDockPlugin plugin): base()
         {
             Plugin = plugin;
@@ -46,6 +49,14 @@ namespace ProtoDock.Tasks
             //int msg = RegisterWindowMessage("TaskbarCreated");
             // SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
             // SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
+            
+            EnumWindows(delegate(IntPtr wnd, IntPtr param) {
+                _windows.Add(wnd);
+                return true;
+            }, IntPtr.Zero);
+            
+            UpdateWindows();
+
         }
 
         public void Destroy()
@@ -97,29 +108,64 @@ namespace ProtoDock.Tasks
                 base.WndProc(ref m);
         }
 
-        private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
-
         private void ShellWndProc(ref Message m) {
             var shellMsg = (HShellMsg)m.WParam;
             var win = m.LParam;
             switch (shellMsg) {
                 case HShellMsg.HSHELL_WINDOWCREATED:
                 {
-                    var icon = new TaskIcon(this, win);
-                    _icons.Add(win, icon);
-                    _api.Add(icon);
+                    _windows.Add(win);
+                    UpdateWindows();
                     break;
                 }
 
                 case HShellMsg.HSHELL_WINDOWDESTROYED:
                 {
-                    if (_icons.Remove(win, out var icon)) {
-                        _api.Remove(icon);
-                        icon.Dispose();
-                    }
+                    _windows.Remove(win);
+                    DestroyIcon(win);
+                    UpdateWindows();
 
                     break;
                 }
+            }
+        }
+
+        void UpdateWindows() {
+            for (var i = 0; i < _windows.Count; i++)
+            {
+                var wnd = _windows[i];
+
+                var visible = true;
+                if (!User32.IsWindowVisible(wnd))
+                {
+                    visible = false;
+                }
+                var style = PInvoke.User32.GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
+
+                if (visible)
+                {
+                    CreateIcon(wnd);
+                }
+                else
+                {
+                    DestroyIcon(wnd);
+                }
+            }
+        }
+
+        private void CreateIcon(IntPtr wnd) {
+            if (_icons.ContainsKey(wnd))
+                return;
+            
+            var icon = new TaskIcon(this, wnd);
+            _icons.Add(wnd, icon);
+            _api.Add(icon);
+        }
+        
+        private void DestroyIcon(IntPtr wnd) {
+            if (_icons.Remove(wnd, out var icon)) {
+                _api.Remove(icon);
+                icon.Dispose();
             }
         }
         
@@ -142,5 +188,11 @@ namespace ProtoDock.Tasks
         
         [DllImport("user32.dll")]
         private static extern IntPtr GetDesktopWindow();
+        
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+        
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
     }
 }
