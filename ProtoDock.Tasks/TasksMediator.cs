@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using static PInvoke.User32;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
@@ -130,17 +131,59 @@ namespace ProtoDock.Tasks
             }
         }
 
-        void UpdateWindows() {
-            for (var i = 0; i < _windows.Count; i++)
-            {
+        private void UpdateWindows() {
+            var sb = new StringBuilder(255);
+            
+            for (var i = 0; i < _windows.Count; i++) {
                 var wnd = _windows[i];
 
                 var visible = true;
-                if (!User32.IsWindowVisible(wnd))
-                {
+                if (!IsWindowVisible(wnd)) {
                     visible = false;
                 }
-                var style = PInvoke.User32.GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
+
+                if (visible)
+                {
+                    if (GetParent(wnd) != IntPtr.Zero)
+                    {
+                        visible = false;
+                    }
+                }
+                
+                if (visible) {
+                    var style = GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
+                    if ((style & (int) WindowStyles.WS_CHILD) != 0)
+                    {
+                        visible = false;
+                    }
+                    
+                    if ((style & (uint) WindowStyles.WS_POPUP) != 0)
+                    {
+                        visible = false;
+                    }
+
+                    if ((style & (int) WindowStyles.WS_VISIBLE) == 0)
+                    {
+                        visible = false;
+                    }
+                }
+
+                if (visible)
+                {
+                    var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
+                    if ((styleEx & (int) WindowStylesEx.WS_EX_TOOLWINDOW) != 0)
+                    {
+                        visible = false;
+                    }
+                }
+
+                if (visible)
+                {
+                    var style = GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
+                    var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
+                    GetWindowText(wnd, sb, 255);
+                    Debug.WriteLine($"{sb.ToString()}\n    {Convert.ToString(style, 2)}\n    {Convert.ToString(styleEx, 2)}");
+                }
 
                 if (visible)
                 {
@@ -151,6 +194,8 @@ namespace ProtoDock.Tasks
                     DestroyIcon(wnd);
                 }
             }
+
+            Debug.WriteLine("----");
         }
 
         private void CreateIcon(IntPtr wnd) {
@@ -194,5 +239,7 @@ namespace ProtoDock.Tasks
         
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
     }
 }
