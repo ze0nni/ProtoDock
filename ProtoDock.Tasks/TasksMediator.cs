@@ -2,7 +2,6 @@
 using PInvoke;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using static PInvoke.User32;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -165,12 +164,12 @@ namespace ProtoDock.Tasks
                         visible = false;
                     }
 
-                    if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
-                    {
-                        visible = false;
-                    }
+                    //!!!!
+                    //if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
+                    //{
+                    //    visible = false;
+                    //}
                 }
-
                 if (visible)
                 {
                     var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
@@ -180,6 +179,16 @@ namespace ProtoDock.Tasks
                         visible = false;
                     }
 
+                }
+
+                if (visible)
+                {
+                    IntPtr cloakedVal;
+                    var hRes = DwmGetWindowAttribute(wnd, (int)DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out cloakedVal, sizeof(int));
+                    if (cloakedVal != IntPtr.Zero)
+                    {
+                        visible = false;
+                    }
                 }
 
                 if (visible)
@@ -236,5 +245,31 @@ namespace ProtoDock.Tasks
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out IntPtr pvAttribute, int cbAttribute);
+
+        enum DWMWINDOWATTRIBUTE
+        {
+            DWMWA_NCRENDERING_ENABLED = 1,
+            DWMWA_NCRENDERING_POLICY,
+            DWMWA_TRANSITIONS_FORCEDISABLED,
+            DWMWA_ALLOW_NCPAINT,
+            DWMWA_CAPTION_BUTTON_BOUNDS,
+            DWMWA_NONCLIENT_RTL_LAYOUT,
+            DWMWA_FORCE_ICONIC_REPRESENTATION,
+            DWMWA_FLIP3D_POLICY,
+            DWMWA_EXTENDED_FRAME_BOUNDS,
+            DWMWA_HAS_ICONIC_BITMAP,
+            DWMWA_DISALLOW_PEEK,
+            DWMWA_EXCLUDED_FROM_PEEK,
+            DWMWA_CLOAK,
+            DWMWA_CLOAKED,
+            DWMWA_FREEZE_REPRESENTATION,
+            DWMWA_LAST
+        }
     }
 }
