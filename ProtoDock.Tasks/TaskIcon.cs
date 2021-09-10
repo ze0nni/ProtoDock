@@ -26,7 +26,7 @@ namespace ProtoDock.Tasks
         }
 
         public void Dispose() {
-            _icon.Dispose();
+            _icon?.Dispose();
         }
 
         public void Click()
