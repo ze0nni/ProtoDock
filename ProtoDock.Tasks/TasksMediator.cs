@@ -9,13 +9,15 @@ using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
 {
-    internal class TasksMediator : IDockPanelMediator
+    internal class TasksMediator : Form, IDockPanelMediator
     {
         public IDockPlugin Plugin { get; private set;  }
 
         private IDockPanelApi _api;
+        
+        private int _shellHookMsg;
 
-        public TasksMediator(IDockPlugin plugin)
+        public TasksMediator(IDockPlugin plugin): base()
         {
             Plugin = plugin;
         }
@@ -23,8 +25,6 @@ namespace ProtoDock.Tasks
         private Kernel32.SafeLibraryHandle _shellHookLib;
         private delegate IntPtr SetListener();
         private delegate void RemoveListener();
-
-        private TaskManForm _form;
 
         public void Setup(IDockPanelApi api)
         {
@@ -38,12 +38,21 @@ namespace ProtoDock.Tasks
         
         public void Awake()
         {
-            _form = new TaskManForm(this, _api);
+            SetTaskmanWindow(Handle);
+            RegisterShellHookWindow(Handle);
+
+            _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
+
+            //int msg = RegisterWindowMessage("TaskbarCreated");
+            // SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
+            // SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
         }
 
         public void Destroy()
         {
-            _form.Close();
+            DeregisterShellHookWindow(Handle);
+            Close();
+            Dispose();
         }
 
         public bool DragCanAccept(IDataObject data)
@@ -55,34 +64,7 @@ namespace ProtoDock.Tasks
         {
 
         }
-    }
-
-    internal class TaskManForm : Form {
-        private readonly IDockPanelApi _api;
-        private readonly IDockPanelMediator _mediator;
         
-        private readonly int _shellHookMsg;
-
-        public TaskManForm(IDockPanelMediator mediator, IDockPanelApi api) {
-            _api = api;
-            _mediator = mediator;
-            
-            SetTaskmanWindow(Handle);
-            RegisterShellHookWindow(Handle);
-
-            _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
-
-            int msg = RegisterWindowMessage("TaskbarCreated");
-            // SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
-            // SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
-        }
-
-        protected override void Dispose(bool disposing) {
-            DeregisterShellHookWindow(Handle);
-
-            base.Dispose(disposing);
-        }
-
         private enum HShellMsg: int
         {   
             HSHELL_WINDOWCREATED = 1,
@@ -123,7 +105,7 @@ namespace ProtoDock.Tasks
             switch (shellMsg) {
                 case HShellMsg.HSHELL_WINDOWCREATED:
                 {
-                    var icon = new TaskIcon(_mediator, win);
+                    var icon = new TaskIcon(this, win);
                     _icons.Add(win, icon);
                     _api.Add(icon);
                     break;
@@ -140,7 +122,7 @@ namespace ProtoDock.Tasks
                 }
             }
         }
-
+        
         [DllImport("user32.dll")]
         private static extern bool SetTaskmanWindow(IntPtr hWnd);
         
@@ -160,7 +142,5 @@ namespace ProtoDock.Tasks
         
         [DllImport("user32.dll")]
         private static extern IntPtr GetDesktopWindow();
-
     }
-
 }
