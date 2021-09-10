@@ -127,9 +127,13 @@ namespace ProtoDock
                     new DockSkinImage(
                         DockSkinImageAlign.Bottom,
                         new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_selected.png")),
-                        new Padding(32, 32, 32, 32)
+                        new Padding()
                     ),
-                    null,
+                    new DockSkinImage(
+                        DockSkinImageAlign.Bottom,
+                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_selected_fg.png")),
+                        new Padding()
+                    ),
                     new DockSkinImage(
                         DockSkinImageAlign.Stretch,
                         new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_highlight.png")),

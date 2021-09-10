@@ -87,20 +87,38 @@ namespace ProtoDock.Tasks
             else
             {
                 User32.GetWindowThreadProcessId(_hWnd, out var processId);
+                var hProcess = Kernel32.OpenProcess(0x0400, false, processId);
                 uint size = (uint)_sb.Capacity;
-                QueryFullProcessImageName((IntPtr)processId, 0, _sb, ref size);
-                Debug.WriteLine(_sb.ToString());
+                try
+                {
+                    var result = QueryFullProcessImageName(hProcess, 0, _sb, ref size);
 
+                    var icon = Icon.ExtractAssociatedIcon(_sb.ToString());
+                    _icon = icon.ToBitmap();
+                    icon.Dispose();
+                }
+                catch
+                {
+                    //
+                }
+                finally
+                {
+                    CloseHandle(hProcess);
+                }
+   
             }
         }
 
         public const int GCL_HICONSM = -34;
         public const int GCL_HICON = -14;
 
+        [DllImport("Kernel32.dll")]
+        private static extern bool CloseHandle(Kernel32.SafeObjectHandle hObject);
+
         [DllImport("user32.dll", EntryPoint = "GetClassLong")]
         public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
 
         [DllImport("Kernel32.dll")]
-        private static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+        private static extern bool QueryFullProcessImageName([In] Kernel32.SafeObjectHandle hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
     }
 }

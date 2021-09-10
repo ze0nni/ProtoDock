@@ -232,6 +232,8 @@ namespace ProtoDock
             this.Padding = padding;
             this.Dock = dock;
             this.SelectedBg = selectedBg;
+            this.SelectedFg = selectedFg;
+            this.HighlightFg = highlightFg;
             this.HighlightFg = highlightFg;
         }
 
