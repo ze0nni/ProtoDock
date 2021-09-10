@@ -194,8 +194,7 @@ namespace ProtoDock
                     break;
             }
         }
-
-
+        
         private void MouseMoveIdle(float x, float y)
         {
             IsMouseOver = true;
@@ -372,7 +371,7 @@ namespace ProtoDock
             }
 
             var dockWidth = MathF.Max(
-                SelectedSkin.Padding.Left + iconsWidthSum + Math.Max(01, iconsCount - 1) * IconSpace + SelectedSkin.Padding.Right,
+                SelectedSkin.Padding.Left + iconsWidthSum + Math.Max(0, iconsCount - 1) * IconSpace + SelectedSkin.Padding.Right,
                 SelectedSkin.Scale9.Left + SelectedSkin.Scale9.Right);
             var dockHeight = SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom;
             dockSize = new SizeF(
