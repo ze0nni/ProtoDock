@@ -37,21 +37,11 @@ namespace ProtoDock.Tasks
         
         public void Awake()
         {
-            //_shellHookLib = Kernel32.LoadLibrary("ShellHook.dll");
-
-            //var setListener = Marshal.GetDelegateForFunctionPointer<SetListener>(Kernel32.GetProcAddress(_shellHookLib, "SetHook"));
-            //setListener.Invoke();
-
-            
             _form = new TaskManForm();
-            RegisterShellHookWindow(_form.Handle);
         }
 
         public void Destroy()
         {
-            //var removeListener = Kernel32.GetProcAddress(_shellHookLib, "RemoveHook");
-            //FreeLibrary(_shellHookLib);
-            RegisterShellHookWindow(IntPtr.Zero);
             _form.Close();
         }
 
@@ -64,29 +54,82 @@ namespace ProtoDock.Tasks
         {
 
         }
-        
-            
-        [DllImport("user32.dll")]
-        public static extern bool SetTaskmanWindow(IntPtr hWnd);
-        
-        [DllImport("user32.dll")]
-        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
     }
-    
+
     internal class TaskManForm : Form {
         private int _shellHookMsg;
-        
+
         public TaskManForm() {
-            _shellHookMsg = User32.RegisterWindowMessage("SHELLHOOK");
+            SetTaskmanWindow(Handle);
+            RegisterShellHookWindow(Handle);
+
+            _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
+
+            int msg = RegisterWindowMessage("TaskbarCreated");
+            // SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
+            // SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
         }
 
+        protected override void Dispose(bool disposing) {
+            DeregisterShellHookWindow(Handle);
+
+            base.Dispose(disposing);
+        }
+
+        private enum HShellMsg: int
+        {   
+            HSHELL_WINDOWCREATED = 1,
+            HSHELL_WINDOWDESTROYED = 2,
+            HSHELL_ACTIVATESHELLWINDOW = 3,
+            //Windows N,
+            HSHELL_WINDOWACTIVATED = 4,
+            HSHELL_GETM_NRECT = 5,
+            HSHELL_REDRAW = 6,
+            HSHELL_TASKMAN = 7,
+            HSHELL_LANGUAGE = 8,
+            HSHELL_SYSMENU = 9,
+            HSHELL_ENDTASK = 10,
+            //Windows 200,
+            HSHELL_ACCESSIBILITYSTATE = 11,
+            HSHELL_APPCOMMAND = 12,
+            //Windows X,
+            HSHELL_WINDOWREPLACED = 13,
+            HSHELL_WINDOWREPLACING = 14,
+            HSHELL_HIGHBIT = 0x8000,
+            HSHELL_FLASH = (HSHELL_REDRAW | HSHELL_HIGHBIT),
+            HSHELL_RUDEAPPACTIVATED = (HSHELL_WINDOWACTIVATED | HSHELL_HIGHBIT),
+        }
+        
         protected override void WndProc(ref Message m) {
             if (m.Msg == _shellHookMsg) {
-                Debug.WriteLine($"{m.LParam} {m.WParam}");
+                var shmsg = (HShellMsg)m.WParam;
+                var win = m.LParam;
+                Debug.WriteLine(shmsg);
             }
             else
                 base.WndProc(ref m);
         }
+        
+        [DllImport("user32.dll")]
+        private static extern bool SetTaskmanWindow(IntPtr hWnd);
+        
+        
+        [DllImport("user32.dll")]
+        private static extern bool RegisterShellHookWindow(IntPtr hWnd);
+        
+        [DllImport("user32.dll")]
+        private static extern bool DeregisterShellHookWindow(IntPtr hWnd);
+        
+        [DllImport("Shell32.dll")]
+        private static extern bool RegisterShellHook(IntPtr hWnd, uint flags);
+
+        
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hwnd, int message, IntPtr wparam, IntPtr lparam);
+        
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDesktopWindow();
+
     }
 
 }
