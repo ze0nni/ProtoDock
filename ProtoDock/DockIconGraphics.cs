@@ -8,6 +8,12 @@ namespace ProtoDock
 {
     class DockIconGraphics
     {
+        public enum DisplayState {
+            Display,
+            Disappear,
+            Hidden
+        }
+        
         private readonly DockGraphics _dock;
         public readonly IDockIcon Model;
         private int _size => 1;
@@ -16,6 +22,7 @@ namespace ProtoDock
         private float _height;
         private float _targetWidth;
         private float _targetHeight;
+        public DisplayState State { get; private set; }
 
         public float Width
         {
@@ -55,11 +62,31 @@ namespace ProtoDock
 
         public void Update(float dt)
         {
-            if (UpdateToTarget(ref _width, _targetWidth, dt * _dock.IconScaleSpeed * _size))
-                _dock.SetDirty();
+            switch (State) {
+                case DisplayState.Display:
+                {
+                    if (UpdateToTarget(ref _width, _targetWidth, dt * _dock.IconScaleSpeed * _size))
+                        _dock.SetDirty();
 
-            if (UpdateToTarget(ref _height, _targetHeight, dt * _dock.IconScaleSpeed))
-                _dock.SetDirty();
+                    if (UpdateToTarget(ref _height, _targetHeight, dt * _dock.IconScaleSpeed))
+                        _dock.SetDirty();
+
+                    break;
+                }
+
+                case DisplayState.Disappear:
+                {
+                    if (UpdateToTarget(ref _width, 0, dt * _dock.IconScaleSpeed * _size) ||
+                        UpdateToTarget(ref _height, 0, dt * _dock.IconScaleSpeed)) {
+                        _dock.SetDirty();
+                    }
+                    else {
+                        State = DisplayState.Hidden;
+                    }
+
+                    break;
+                }
+        }
         }
 
         public bool UpdateToTarget(ref float value, float target, float step)
@@ -99,7 +126,14 @@ namespace ProtoDock
 
         public void Render(Graphics graphics)
         {
-            Model.Render(graphics, _width, _height, _isMouseOver);            
+            if (State == DisplayState.Display)
+            {
+                Model.Render(graphics, _width, _height, _isMouseOver);
+            }
+        }
+
+        public void Hide() {
+            State = DisplayState.Disappear;
         }
     }
 }

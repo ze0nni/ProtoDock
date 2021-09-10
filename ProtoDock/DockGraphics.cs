@@ -33,7 +33,7 @@ namespace ProtoDock
     {
         private State _state;
 
-        public Position Position => Position.Bottom;
+        public Position Position => Position.Top;
 
         public bool IsDirty { get; private set; }
         
@@ -93,7 +93,7 @@ namespace ProtoDock
             if (index == -1)
                 return;
 
-            _icons.RemoveAt(index);
+            _icons[index].Hide();
             
             SetDirty();
         }
@@ -103,7 +103,13 @@ namespace ProtoDock
             for (var i = _icons.Count - 1; i >= 0; i--)
             {
                 var icon = _icons[i];
-                icon.Update(dt);
+                if (icon.State == DockIconGraphics.DisplayState.Hidden)
+                {
+                    _icons.RemoveAt(i);
+                }
+                else {
+                    icon.Update(dt);
+                }
             }
         }
 
