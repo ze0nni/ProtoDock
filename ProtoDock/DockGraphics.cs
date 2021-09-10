@@ -87,6 +87,16 @@ namespace ProtoDock
 
             SetDirty();
         }
+        
+        internal void RemoveIcon(IDockIcon model) {
+            var index = _icons.FindIndex(d => d.Model == model);
+            if (index == -1)
+                return;
+
+            _icons.RemoveAt(index);
+            
+            SetDirty();
+        }
 
         internal void Update(float dt)
         {

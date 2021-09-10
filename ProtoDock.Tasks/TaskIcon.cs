@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ProtoDock.Tasks
 {
-    internal class TaskIcon : IDockIcon
+    internal class TaskIcon : IDockIcon, IDisposable
     {
         public IDockPanelMediator Mediator { get; }
 
@@ -23,6 +23,10 @@ namespace ProtoDock.Tasks
             }
             
             //TODO: Destroy icon
+        }
+
+        public void Dispose() {
+            _icon.Dispose();
         }
 
         public void Click()

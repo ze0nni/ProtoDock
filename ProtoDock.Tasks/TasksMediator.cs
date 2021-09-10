@@ -1,6 +1,7 @@
 ﻿using ProtoDock.Api;
 using PInvoke;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using static PInvoke.User32;
 using System.Runtime.InteropServices;
@@ -114,16 +115,29 @@ namespace ProtoDock.Tasks
                 base.WndProc(ref m);
         }
 
+        private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
+
         private void ShellWndProc(ref Message m) {
             var shellMsg = (HShellMsg)m.WParam;
             var win = m.LParam;
             switch (shellMsg) {
                 case HShellMsg.HSHELL_WINDOWCREATED:
-                    _api.Add(new TaskIcon(_mediator, win));
+                {
+                    var icon = new TaskIcon(_mediator, win);
+                    _icons.Add(win, icon);
+                    _api.Add(icon);
                     break;
-                
+                }
+
                 case HShellMsg.HSHELL_WINDOWDESTROYED:
+                {
+                    if (_icons.Remove(win, out var icon)) {
+                        _api.Remove(icon);
+                        icon.Dispose();
+                    }
+
                     break;
+                }
             }
         }
 

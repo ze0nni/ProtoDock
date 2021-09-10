@@ -78,7 +78,9 @@ namespace ProtoDock.Core
 
         public void Remove(IDockIcon icon)
         {
-            
+            if (_icons.Remove(icon)) {
+                _dock.Graphics.RemoveIcon(icon);
+            }
         }
 
         internal DockPanelConfig Store()
