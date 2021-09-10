@@ -14,6 +14,9 @@ namespace ProtoDock.Core
     public class Dock: IDockApi
     {
         public IntPtr HInstance { get; }
+
+        public IntPtr HWnd { get; }
+
         public IReadOnlyList<IDockPlugin> Plugins => _plugins.AsReadOnly();
         public IDockPlugin PluginFromGUID(string guid) => _plugins.FirstOrDefault(p => p.GUID == guid);
 
@@ -24,9 +27,10 @@ namespace ProtoDock.Core
         public IReadOnlyList<DockPanel> Panels => _panels;
         private readonly List<DockPanel> _panels = new List<DockPanel>();
 
-        public Dock(IntPtr hInstance, DockGraphics graphics)
+        public Dock(IntPtr hInstance, IntPtr hWnd, DockGraphics graphics)
         {
             HInstance = hInstance;
+            HWnd = HWnd;
             Graphics = graphics;
 
             _plugins.Add(new QuickLaunchPlugin());

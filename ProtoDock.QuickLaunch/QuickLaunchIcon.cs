@@ -21,6 +21,10 @@ namespace ProtoDock.QuickLaunch
             _icon = Icon.ExtractAssociatedIcon(_path);
         }
 
+        public void Update()
+        {
+
+        }
         public void Click()
         {
             

@@ -221,7 +221,7 @@ namespace ProtoDock.Tasks
         {
             foreach (var icon in _icons)
             {
-                icon.Value.SetActiveWindow(wnd);
+                icon.Value.UpdateActiveWindow(wnd);
             }
         }
 

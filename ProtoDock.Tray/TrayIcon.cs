@@ -16,6 +16,11 @@ namespace ProtoDock.Tray
             _icon = icon;
         }
 
+        public void Update()
+        {
+
+        }
+
         public void Click()
         {
 

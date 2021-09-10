@@ -136,14 +136,7 @@ namespace ProtoDock
                     SetState(State.Idle);
 
                     switch (button)
-                    {
-                        case MouseButtons.Left:
-                            if (_selectedIcon != null && IsOverIcon(x, y, _selectedIcon))
-                            {
-                                _selectedIcon.Model.Click();
-                            }
-                            return false;
-
+                    {                       
                         case MouseButtons.Right:
                             if (_selectedIcon != null && IsOverIcon(x, y, _selectedIcon) && _selectedIcon.Model.ContextClick())
                             {
@@ -158,7 +151,11 @@ namespace ProtoDock
                             return false;
                     }
 
-                case State.LeftDown:
+                case State.LeftDown:                    
+                    if (_selectedIcon != null && IsOverIcon(x, y, _selectedIcon))
+                    {
+                        _selectedIcon.Model.Click();
+                    }
                     SetState(State.Idle);
                     return false;
 

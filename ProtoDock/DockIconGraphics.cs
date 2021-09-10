@@ -62,6 +62,8 @@ namespace ProtoDock
 
         public void Update(float dt)
         {
+            Model.Update();
+
             switch (State) {
                 case DisplayState.Display:
                 {
@@ -86,7 +88,7 @@ namespace ProtoDock
 
                     break;
                 }
-        }
+            }
         }
 
         public bool UpdateToTarget(ref float value, float target, float step)

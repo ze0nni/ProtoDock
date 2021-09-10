@@ -43,7 +43,7 @@ namespace ProtoDock
                 8,
                 LoadSkins()
             );
-            _dock = new Dock(HInstance, _graphics);
+            _dock = new Dock(HInstance, Handle, _graphics);
             Render();
 
             this.FormClosing += (s, e) =>

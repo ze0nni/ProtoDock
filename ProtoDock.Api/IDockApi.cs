@@ -19,6 +19,8 @@ namespace ProtoDock.Api
     {
         IntPtr HInstance { get; }
 
+        IntPtr HWnd { get; }
+
         IReadOnlyList<IDockPlugin> Plugins { get; }
         void SetDirty();
         void Flush();

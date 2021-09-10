@@ -11,6 +11,7 @@ namespace ProtoDock.Tasks
 {
     internal class TaskIcon : IDockIcon, IDisposable
     {
+
         public readonly StringBuilder _sb = new StringBuilder(2048);
 
         public IDockPanelMediator Mediator { get; }
@@ -18,6 +19,8 @@ namespace ProtoDock.Tasks
         private readonly IDockApi _api;
 
         private Bitmap _icon;
+
+        private IntPtr _activeWindow;
         private bool _isActive;
 
         public TaskIcon(IDockPanelMediator mediator, IDockApi api, IntPtr hWnd)
@@ -33,9 +36,28 @@ namespace ProtoDock.Tasks
             _icon?.Dispose();
         }
 
+        public void Update()
+        {
+            
+        }
+
         public void Click()
         {
-
+            var style = (User32.WindowStyles)User32.GetWindowLong(_hWnd, User32.WindowLongIndexFlags.GWL_STYLE);
+            var minimized = style.HasFlag(User32.WindowStyles.WS_MINIMIZE);
+            if (minimized)
+            {
+                User32.ShowWindow(_hWnd, User32.WindowShowStyle.SW_RESTORE);
+                PInvoke.User32.SetForegroundWindow(_hWnd);
+            }
+            else if (_activeWindow != _hWnd)
+            {
+                PInvoke.User32.SetForegroundWindow(_hWnd);
+            }
+            else
+            {
+                User32.ShowWindow(_hWnd, User32.WindowShowStyle.SW_MINIMIZE);
+            }
         }
 
         public bool ContextClick()
@@ -67,8 +89,14 @@ namespace ProtoDock.Tasks
             return false;
         }
 
-        internal void SetActiveWindow(IntPtr wnd)
+        internal void UpdateActiveWindow(IntPtr wnd)
         {
+            if (wnd == _api.HWnd)
+            {
+                return;
+            }
+
+            _activeWindow = wnd;
             _isActive = _hWnd == wnd;
             _api.SetDirty();
         }
@@ -120,5 +148,9 @@ namespace ProtoDock.Tasks
 
         [DllImport("Kernel32.dll")]
         private static extern bool QueryFullProcessImageName([In] Kernel32.SafeObjectHandle hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
     }
 }
