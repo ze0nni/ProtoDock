@@ -31,6 +31,7 @@ namespace ProtoDock.Tray
             return false;
         }
 
+        public string Title => "";
         public void Render(
             Graphics graphics,
             float width,

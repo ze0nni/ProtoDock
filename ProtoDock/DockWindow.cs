@@ -19,6 +19,7 @@ namespace ProtoDock
 
         private readonly DockGraphics _graphics;
         private readonly Dock _dock;
+        private readonly HintWindow _hint;
 
         private readonly ContextMenuStrip _contextMenu = new ContextMenuStrip();
 
@@ -38,9 +39,13 @@ namespace ProtoDock
             _timer.Start();
             _timer.Tick += OnTick;
 
+            _hint = new HintWindow();
+
             _graphics = new DockGraphics(
                 64,
                 8,
+                this,
+                _hint,
                 LoadSkins()
             );
             _dock = new Dock(HInstance, Handle, _graphics);
@@ -161,24 +166,22 @@ namespace ProtoDock
             return list;
         }
 
-        public const int IconSize = 64;
-
         public void Render()
         {
             var screen = Screen.AllScreens[0];
             var bounds = screen.Bounds;
 
             _graphics.Render();
-            SetImage(_graphics.Bitmap);
+            FormApi.SetImage(this, _graphics.Bitmap);
 
             this.Left = (bounds.Width - _graphics.Bitmap.Width) / 2;
             switch (_graphics.Position)
             {
-                case Position.Top:
+                case Api.Position.Top:
                     this.Top = -_graphics.SelectedSkin.VOffset;
                     break;
 
-                case Position.Bottom:
+                case Api.Position.Bottom:
                     this.Top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset;
                     break;
 
@@ -187,48 +190,14 @@ namespace ProtoDock
             }            
         }
 
-        public void SetImage(Bitmap bitmap)
-        {
-             var screenDC = User32.GetDC(IntPtr.Zero);
-             var memDC = User32.CreateCompatibleDC(screenDC);
-
-            IntPtr bitmapHandle = IntPtr.Zero;
-            IntPtr oldBitmapHandle = IntPtr.Zero;
-            try
-            {
-                bitmapHandle = bitmap.GetHbitmap(Color.FromArgb(0));
-                oldBitmapHandle = User32.SelectObject(memDC, bitmapHandle);
-
-                var size = new User32.Size { cx = bitmap.Width, cy = bitmap.Height };
-                var poinSource = new User32.Point { x = 0, y = 0 };
-                var topPos = new User32.Point { x = this.Left, y = this.Top };
-                var blend = new User32.BLENDFUNCTION
-                {
-                    blendOp = User32.AC_SRC_ALPHA,
-                    blendFlags = 0,
-                    sourceConstantAlpha = 255,
-                    alphaFormat = User32.AC_SRC_ALPHA
-                };
-                User32.UpdateLayeredWindow(this.Handle, screenDC, ref topPos, ref size, memDC, ref poinSource, 0, ref blend, User32.ULW_ALPHA);
-            }
-            finally
-            {
-                User32.ReleaseDC(IntPtr.Zero, screenDC);
-                if (bitmapHandle != IntPtr.Zero)
-                {
-                    User32.SelectObject(memDC, oldBitmapHandle);
-                    User32.DeleteObject(bitmapHandle);
-                }
-                User32.DeleteDC(memDC);
-            }
-        }
-
         public void OnTick(Object sender, EventArgs e)
         {
             _graphics.Update(1 / 60f);
 
             if (_graphics.IsDirty)
                 Render();
+
+            _hint.Update();
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)

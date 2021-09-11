@@ -65,6 +65,15 @@ namespace ProtoDock.Tasks
             return false;
         }
 
+        public string Title
+        {
+            get
+            {
+                _sb.Clear();
+                GetWindowText(_hWnd, _sb, _sb.Capacity);
+                return _sb.ToString();
+            }
+        }
         public void Render(Graphics graphics, float width, float height, bool isSelected)
         {
             if (_isActive)
@@ -150,7 +159,10 @@ namespace ProtoDock.Tasks
         private static extern bool QueryFullProcessImageName([In] Kernel32.SafeObjectHandle hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+        private static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
     }
 }

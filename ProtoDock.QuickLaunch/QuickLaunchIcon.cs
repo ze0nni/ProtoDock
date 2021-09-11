@@ -35,6 +35,8 @@ namespace ProtoDock.QuickLaunch
             return false;
         }
 
+        public string Title => _path;
+
         public void Render(Graphics graphics, float width, float height, bool isSelected)
         {
             graphics.DrawIcon(_icon, new Rectangle(0, 0, (int)width, (int)height));

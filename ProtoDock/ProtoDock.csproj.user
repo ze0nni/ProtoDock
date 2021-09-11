@@ -5,6 +5,9 @@
     <Compile Update="DockWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="HintWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>

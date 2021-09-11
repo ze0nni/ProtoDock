@@ -17,6 +17,8 @@ namespace ProtoDock.Core
 
         public IntPtr HWnd { get; }
 
+        public Position Position => Graphics.Position;
+
         public IReadOnlyList<IDockPlugin> Plugins => _plugins.AsReadOnly();
         public IDockPlugin PluginFromGUID(string guid) => _plugins.FirstOrDefault(p => p.GUID == guid);
 

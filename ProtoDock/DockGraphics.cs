@@ -10,12 +10,6 @@ using System.Windows.Forms;
 
 namespace ProtoDock
 {
-    public enum Position
-    {
-        Top,
-        Bottom
-    }
-
     public enum State
     {
         Idle,
@@ -49,6 +43,8 @@ namespace ProtoDock
 
         public readonly int IconSize;
         public readonly int IconSpace;
+        private readonly DockWindow _dockWindow;
+        private readonly HintWindow _hintWindow;
 
         public float ActiveIconScale = 1f;
         public float ActiveIconScaleDistance => IconSize * 3;
@@ -64,11 +60,15 @@ namespace ProtoDock
         public DockGraphics(
             int iconSize,
             int iconSpace,
+            DockWindow dockWindow,
+            HintWindow hintWindow,
             List<DockSkin> skins
         )
         {
             IconSize = iconSize;
             IconSpace = iconSpace;
+            _dockWindow = dockWindow;
+            _hintWindow = hintWindow;
             Skins = skins;
 
             UpdateSkin(Skins.First());
@@ -196,6 +196,24 @@ namespace ProtoDock
                     MouseMoveDrag(x, y);
                     break;
             }
+
+            var screenPos = _dockWindow.PointToScreen(new Point((int)x, (int)0));
+            switch (Position)
+            {
+                case Position.Top:
+                    _hintWindow.SetPosition(
+                        screenPos.X,
+                        (int)(_dockSize.Height + IconSize * ActiveIconScale),
+                        Position);
+                    break;
+                case Position.Bottom:
+                    _hintWindow.SetPosition(
+                        screenPos.X,
+                        (int)(screenPos.Y + OffsetY - IconSize * ActiveIconScale),
+                        Position
+                    );
+                    break;
+            }            
         }
         
         private void MouseMoveIdle(float x, float y)
@@ -308,6 +326,7 @@ namespace ProtoDock
             }
 
             UpdateSelectedIcon(null);
+            _hintWindow.Hide();
 
             SetDirty();
         }
@@ -344,10 +363,21 @@ namespace ProtoDock
 
         private void UpdateSelectedIcon(DockIconGraphics icon)
         {
+            if (_selectedIcon == icon)
+                return;
+
             _selectedIcon?.MouseLeave();
 
             _selectedIcon = icon;
             _selectedIcon?.MouseEnter();
+
+            if (_selectedIcon != null)
+            {
+                _hintWindow.SetText(icon.Model.Title);
+            } else
+            {
+                _hintWindow.SetText("");
+            }
 
             SetDirty();
         }

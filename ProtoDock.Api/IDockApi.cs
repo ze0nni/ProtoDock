@@ -15,12 +15,18 @@ namespace ProtoDock.Api
         HighlightFg
     }
 
+
+    public enum Position
+    {
+        Top,
+        Bottom
+    }
+
     public interface IDockApi
     {
         IntPtr HInstance { get; }
-
         IntPtr HWnd { get; }
-
+        Position Position { get;  }
         IReadOnlyList<IDockPlugin> Plugins { get; }
         void SetDirty();
         void Flush();
