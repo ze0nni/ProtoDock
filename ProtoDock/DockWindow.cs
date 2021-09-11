@@ -97,7 +97,6 @@ namespace ProtoDock
             {
                 pluginsMenu.DropDownItems.Add(new ToolStripMenuItem(p.Name, null, (s, e) =>
                 {
-                    DockPanel panel;
                     if (_dock.Panels.Count == 0)
                     {
                         _dock.AddPanel();

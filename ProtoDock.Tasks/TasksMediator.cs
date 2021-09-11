@@ -47,15 +47,16 @@ namespace ProtoDock.Tasks
 
             _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
 
-            var msg = User32.RegisterWindowMessage("TaskbarCreated");
-            SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
-            SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
-            
-            EnumWindows(delegate(IntPtr wnd, IntPtr param) {
+            //var msg = User32.RegisterWindowMessage("TaskbarCreated");
+            //SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
+            //SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
+
+            EnumWindows(delegate (IntPtr wnd, IntPtr param)
+            {
                 _windows.Add(wnd);
                 return true;
             }, IntPtr.Zero);
-            
+
             UpdateWindows();
             UpdateActiveWindow(User32.GetActiveWindow());
         }
@@ -100,16 +101,19 @@ namespace ProtoDock.Tasks
             HSHELL_FLASH = (HSHELL_REDRAW | HSHELL_HIGHBIT),
             HSHELL_RUDEAPPACTIVATED = (HSHELL_WINDOWACTIVATED | HSHELL_HIGHBIT),
         }
-        
-        protected override void WndProc(ref Message m) {
-            if (m.Msg == _shellHookMsg) {
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == _shellHookMsg)
+            {
                 ShellWndProc(ref m);
             }
             else
                 base.WndProc(ref m);
         }
 
-        private void ShellWndProc(ref Message m) {
+        private void ShellWndProc(ref Message m)
+        {
             var shellMsg = (HShellMsg)m.WParam;
             var wnd = m.LParam;
             switch (shellMsg) {
@@ -144,17 +148,18 @@ namespace ProtoDock.Tasks
                         break;
                     }
             }
-            UpdateWindows();
         }
 
-        private void UpdateWindows() {
+        private void UpdateWindows()
+        {
             var sb = new StringBuilder(255);
             
             for (var i = 0; i < _windows.Count; i++) {
                 var wnd = _windows[i];
 
                 var visible = true;
-                if (!IsWindowVisible(wnd)) {
+                if (!IsWindowVisible(wnd))
+                {
                     visible = false;
                 }
 
