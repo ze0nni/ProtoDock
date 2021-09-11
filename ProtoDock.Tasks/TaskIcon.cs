@@ -140,17 +140,14 @@ namespace ProtoDock.Tasks
                 }
                 finally
                 {
-                    CloseHandle(hProcess);
+                    hProcess.Dispose();
                 }
-   
+
             }
         }
 
         public const int GCL_HICONSM = -34;
         public const int GCL_HICON = -14;
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool CloseHandle(Kernel32.SafeObjectHandle hObject);
 
         [DllImport("user32.dll", EntryPoint = "GetClassLong")]
         public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
