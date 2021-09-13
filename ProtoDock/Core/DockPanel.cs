@@ -77,7 +77,7 @@ namespace ProtoDock.Core
         {
             if (_icons.Add(icon))
             {
-                _dock.Graphics.AddIcon(icon);
+                _dock.Graphics.AddIcon(this, icon);
                 _dock.Flush();
             }
         }
@@ -89,7 +89,7 @@ namespace ProtoDock.Core
                 return;
             }
 
-            _dock.Graphics.RemoveIcon(icon);
+            _dock.Graphics.RemoveIcon(this, icon);
             _dock.Flush();
         }
 

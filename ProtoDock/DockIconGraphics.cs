@@ -14,7 +14,7 @@ namespace ProtoDock
             Hidden
         }
         
-        private readonly DockGraphics _dock;
+        private readonly DockPanelGraphics _panel;
         public readonly IDockIcon Model;
         private int _size => 1;
 
@@ -32,7 +32,7 @@ namespace ProtoDock
                 if (value != _width)
                 {
                     _width = value;
-                    _dock.SetDirty();
+                    _panel.Dock.SetDirty();
                 }
             }
         }
@@ -44,20 +44,20 @@ namespace ProtoDock
                 if (value != _height)
                 {
                     _height = value;
-                    _dock.SetDirty();
+                    _panel.Dock.SetDirty();
                 }
             }
         }
 
         private bool _isMouseOver;
 
-        public DockIconGraphics(DockGraphics dock, IDockIcon model)
+        public DockIconGraphics(DockPanelGraphics panel, IDockIcon model)
         {
-            _dock = dock;
+            _panel = panel;
             Model = model;
 
-            _targetWidth = _dock.IconSize * _size;
-            _targetHeight = _dock.IconSize;
+            _targetWidth = _panel.Dock.IconSize * _size;
+            _targetHeight = _panel.Dock.IconSize;
         }
 
         public void Update(float dt)
@@ -67,20 +67,20 @@ namespace ProtoDock
             switch (State) {
                 case DisplayState.Display:
                 {
-                    if (UpdateToTarget(ref _width, _targetWidth, dt * _dock.IconScaleSpeed * _size))
-                        _dock.SetDirty();
+                    if (UpdateToTarget(ref _width, _targetWidth, dt * _panel.Dock.IconScaleSpeed * _size))
+                        _panel.Dock.SetDirty();
 
-                    if (UpdateToTarget(ref _height, _targetHeight, dt * _dock.IconScaleSpeed))
-                        _dock.SetDirty();
+                    if (UpdateToTarget(ref _height, _targetHeight, dt * _panel.Dock.IconScaleSpeed))
+                        _panel.Dock.SetDirty();
 
                     break;
                 }
 
                 case DisplayState.Disappear:
                 {
-                    if (UpdateToTarget(ref _width, 0, dt * _dock.IconScaleSpeed * _size) ||
-                        UpdateToTarget(ref _height, 0, dt * _dock.IconScaleSpeed)) {
-                        _dock.SetDirty();
+                    if (UpdateToTarget(ref _width, 0, dt * _panel.Dock.IconScaleSpeed * _size) ||
+                        UpdateToTarget(ref _height, 0, dt * _panel.Dock.IconScaleSpeed)) {
+                        _panel.Dock.SetDirty();
                     }
                     else {
                         State = DisplayState.Hidden;
@@ -110,7 +110,7 @@ namespace ProtoDock
 
         public void SetDistanceToCursor(float ratio)
         {
-            var size = _dock.IconSize * (1f + _dock.ActiveIconScale * ratio);
+            var size = _panel.Dock.IconSize * (1f + _panel.Dock.ActiveIconScale * ratio);
 
             _targetWidth = size * _size;
             _targetHeight = size;
