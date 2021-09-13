@@ -39,7 +39,6 @@ namespace ProtoDock
 
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;
-        private DockPanelGraphics _hoveredpanel;
         private DockIconGraphics _hoveredIcon;
 
         public bool IsMouseOver { get; private set; }
@@ -165,7 +164,8 @@ namespace ProtoDock
                 //TODO: setIconDistance 0
             }
 
-                _hintWindow.Hide();
+            UpdateHoveredIcon(null);
+            _hintWindow.Hide();
             SetDirty();
         }
         
@@ -284,15 +284,16 @@ namespace ProtoDock
             var width =
                 MathF.Max(
                     SelectedSkin.Padding.Left + IconSize + SelectedSkin.Padding.Right,
-                    SelectedSkin.Padding.Left + panelsWidth + SelectedSkin.Padding.Right);
-            var height = MathF.Max(
-                SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom, 
-                SelectedSkin.Padding.Top + panelsHeight + SelectedSkin.Padding.Bottom);
+                    SelectedSkin.Padding.Left + panelsWidth + SelectedSkin.Padding.Right);            
             
             dockSize = new SizeF(
                 width,
-                height
+                SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom
             );
+
+            var height = MathF.Max(
+                SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom,
+                SelectedSkin.Padding.Top + panelsHeight + SelectedSkin.Padding.Bottom);
 
             drawSize = new Size(
                 (int) MathF.Max(1, width),
@@ -351,7 +352,7 @@ namespace ProtoDock
                 _graphics = Graphics.FromImage(Bitmap);
             }
             _graphics.Clear(Color.Transparent);
-            
+
             var state = _graphics.Save();
             
             _graphics.TranslateTransform(

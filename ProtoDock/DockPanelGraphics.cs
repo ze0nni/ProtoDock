@@ -162,7 +162,7 @@ namespace ProtoDock {
 			}
 
 			var dockWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace;
-			var dockHeight = Dock.IconSize;
+			var dockHeight = Math.Max(Dock.IconSize, maxIconHeight);
 			dockSize = new SizeF(
 				dockWidth,
 				dockHeight

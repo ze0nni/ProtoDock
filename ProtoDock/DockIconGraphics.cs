@@ -121,11 +121,14 @@ namespace ProtoDock
         public void MouseEnter()
         {
             _isMouseOver = true;
+            SetDistanceToCursor(1);
         }
 
         public void MouseLeave()
         {
             _isMouseOver = false;
+
+            SetDistanceToCursor(0);
         }
 
         public void Render(Graphics graphics)
