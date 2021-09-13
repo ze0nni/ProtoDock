@@ -227,7 +227,7 @@ namespace ProtoDock
         private void OnDragOver(object sender, DragEventArgs e)
         {
             var p = this.PointToClient(new Point(e.X, e.Y));
-            if (_graphics.DragOver(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator(), e.Data)) {
+            if (_graphics.DragOver(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator, e.Data)) {
                 e.Effect = DragDropEffects.Link;
             }
         }
@@ -235,7 +235,7 @@ namespace ProtoDock
         private void OnDragDrop(object sender, DragEventArgs e)
         {
             var p = this.PointToClient(new Point(e.X, e.Y));
-            _graphics.DragDrop(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator(), e.Data);
+            _graphics.DragDrop(p.X - _graphics.OffsetX, p.Y - _graphics.OffsetY, _dock.GetDropMediator, e.Data);
         }
 
         private void OnDragLeave(object sender, EventArgs e)

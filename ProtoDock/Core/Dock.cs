@@ -43,15 +43,19 @@ namespace ProtoDock.Core
         }
 
         private readonly DropMediator _dropMediator = new DropMediator();
-        public IDropMediator GetDropMediator()
+        public IDropMediator GetDropMediator(DockPanel forPanel)
         {
-            _dropMediator.panels.Clear();
+            _dropMediator.mediators.Clear();
             for (var i = 0; i < _panels.Count; i++)
             {
-                var mediators = _panels[i].Mediators;
+                var panel = _panels[i];
+                if (panel != forPanel)
+                    continue;
+
+                var mediators = panel.Mediators;
                 for (var j = 0; j < mediators.Count; j++)
                 {
-                    _dropMediator.panels.Add(mediators[j]);
+                    _dropMediator.mediators.Add(mediators[j]);
                 }
             }
 
@@ -127,8 +131,8 @@ namespace ProtoDock.Core
 
     public class DropMediator : IDropMediator
     {
-        public IEnumerable<IDockPanelMediator> Mediators => panels;
+        public IReadOnlyList<IDockPanelMediator> Mediators => mediators;
 
-        public readonly List<IDockPanelMediator> panels = new List<IDockPanelMediator>();
+        public readonly List<IDockPanelMediator> mediators = new List<IDockPanelMediator>();
     }
 }

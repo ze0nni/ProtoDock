@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using ProtoDock.Api;
+﻿using ProtoDock.Api;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -13,7 +11,7 @@ namespace ProtoDock
 {
     public interface IDropMediator
     {
-        IEnumerable<IDockPanelMediator> Mediators { get; }
+        IReadOnlyList<IDockPanelMediator> Mediators { get; }
     }
 
     public sealed class DockGraphics : IDisposable
@@ -41,6 +39,7 @@ namespace ProtoDock
 
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;
+        private DockPanelGraphics _hoveredpanel;
         private DockIconGraphics _hoveredIcon;
 
         public bool IsMouseOver { get; private set; }
@@ -170,43 +169,38 @@ namespace ProtoDock
             SetDirty();
         }
         
-        public bool DragOver(float x, float y, IDropMediator mediator, IDataObject data) {
-            if (_selectedPanel == null) {
+        public bool DragOver(float x, float y, Func<DockPanel, IDropMediator> getMediator, IDataObject data) {
+            if (!PanelFromPosition(x, y, out var hoveredPanel))
                 return false;
+
+            var mediators = getMediator(hoveredPanel.Model).Mediators;
+            for (var i = 0; i < mediators.Count; i++)
+            {
+                var m = mediators[i];
+                if (m.DragCanAccept(data))
+                {
+                    return true;
+                }
             }
 
-            // _mousePosition = new PointF(x, y);
-            //
-            // SetState(State.DragData);
-            //
-            // SetDirty();
-            //
-            // foreach (var panel in mediator.Mediators)
-            // {
-            //     if (panel.DragCanAccept(data)) {
-            //         return true;
-            //     }
-            // }
-            //
             return false;
         }
 
-        public void DragDrop(float x, float y, IDropMediator mediator, IDataObject data)
+        public void DragDrop(float x, float y, Func<DockPanel, IDropMediator> getMediator, IDataObject data)
         {
-            if (_selectedPanel == null) {
+            if (!PanelFromPosition(x, y, out var hoveredPanel))
                 return;
+
+            var mediators = getMediator(hoveredPanel.Model).Mediators;
+            for (var i = 0; i < mediators.Count; i++)
+            {
+                var m = mediators[i];
+                if (m.DragCanAccept(data))
+                {
+                    //TODO: index
+                    m.DragAccept(-1, data);
+                }
             }
-            // SetState(State.Idle);
-            //
-            // foreach (var panel in mediator.Mediators)
-            // {
-            //     if (panel.DragCanAccept(data))
-            //     {
-            //         GetDropIndex(x, out var index, out _);
-            //         panel.DragAccept(index, data);
-            //         return;
-            //     }
-            // }
         }
 
         public void DragLeave()
