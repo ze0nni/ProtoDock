@@ -129,8 +129,6 @@ namespace ProtoDock {
 		
 		internal void Render(Graphics graphics)
 		{
-			graphics.Clear(Color.Transparent);
-
 			var state = graphics.Save();
 			
 			RenderIcons(graphics);

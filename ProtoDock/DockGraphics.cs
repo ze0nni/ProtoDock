@@ -467,8 +467,17 @@ namespace ProtoDock
             );
             
             SelectedSkin.Dock.Draw(_graphics, _dockSize);
-            // RenderIcons();
-            // RenderDropTarget();
+            
+            _graphics.Transform.Translate(
+                SelectedSkin.Padding.Left,
+                SelectedSkin.Padding.Top
+            );
+            
+            for (var i = 0; i < _panels.Count; i++) {
+                var panel = _panels[i];
+                panel.Render(_graphics);
+                _graphics.TranslateTransform(panel.Width, 0);//TODO Width + Space
+            }
             
             _graphics.Restore(state);
 
