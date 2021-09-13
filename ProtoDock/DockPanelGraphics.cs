@@ -23,7 +23,7 @@ namespace ProtoDock {
 		private State _state;
 
 		private PointF _position;
-		public void Move(float x, float y) => new PointF(x, y);
+		public void Move(float x, float y) => _position = new PointF(x, y);
 		public float Left => _position.X;
 		public float Top => _position.Y;
 		public float Right => _position.X + Width;
@@ -94,7 +94,6 @@ namespace ProtoDock {
 					if (GetDropIndex(x, out var destIndex, out var left)) {
 						if (GetIconIndex(_draggedIcon, out var srcIndex)) {
 							if (srcIndex != destIndex) {
-								Debug.WriteLine($"{srcIndex} {destIndex}");
 								_icons[srcIndex] = _icons[destIndex];
 								_icons[destIndex] = _draggedIcon;
 								Dock.SetDirty();
@@ -295,15 +294,17 @@ namespace ProtoDock {
                 outIndex = default;
                 outX = default;
                 return false;
-            }
+            }			
             outIndex = _icons.IndexOf(icon);
             outX = left;
 
-            if (x > left + icon.Width * 0.5f)
+			if (x > left + icon.Width)
             {
                 outIndex += 1;
                 outX += icon.Width;
             }
+
+			outIndex = Math.Min(_icons.Count - 1, outIndex);
 
             return true;
         }

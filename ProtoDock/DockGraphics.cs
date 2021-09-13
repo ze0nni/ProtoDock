@@ -131,7 +131,6 @@ namespace ProtoDock
         public void MouseMove(float x, float y)
         {
             if (_selectedPanel != null) {
-                Debug.WriteLine($"{x} {y} {_selectedPanel.Left} {_selectedPanel.Top}");
                 _selectedPanel?.MouseMove(x - _selectedPanel.Left, y - _selectedPanel.Top);
             }
 
