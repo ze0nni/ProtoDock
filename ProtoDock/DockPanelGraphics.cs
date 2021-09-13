@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 using ProtoDock.Api;
 using ProtoDock.Core;
 
@@ -11,7 +13,7 @@ namespace ProtoDock {
 		{
 			Idle,
 			LeftDown,
-			Drag,
+			DragIcon,
 			DragData
 		}
 		
@@ -21,7 +23,11 @@ namespace ProtoDock {
 		private State _state;
 
 		private PointF _position;
-		private void Move(float x, float y) => new PointF(x, y);
+		public void Move(float x, float y) => new PointF(x, y);
+		public float Left => _position.X;
+		public float Top => _position.Y;
+		public float Right => _position.X + Width;
+		public float Bottom => _position.Y + Height;
 		
 		private SizeF _size;
 		public float Width => _size.Width;
@@ -56,14 +62,49 @@ namespace ProtoDock {
 			Dock.SetDirty();
 		}
 
-		internal void Click(float x, float y) {
-			
+		public void MouseDown(float x, float y, MouseButtons button)
+		{
+			switch (button) {
+				case MouseButtons.Left:
+					GetIconFromX(x, out _draggedIcon, out _);
+					_mouseDownPoint = new PointF(x, y);
+					SetState(State.LeftDown);
+					break;
+			} 
 		}
-		
-		internal bool ContextClick(float x, float y) {
+
+		public bool MouseUp(float x, float y, MouseButtons button) {
+			_draggedIcon = null;
+			SetState(State.Idle);
 			return false;
 		}
-		
+
+		public void MouseMove(float x, float y) {
+			switch (_state) {
+				case State.Idle:
+					break;
+				
+				case State.LeftDown:
+					if (MathF.Abs(_mouseDownPoint.X - x) > Dock.IconSize * 0.5f) {
+						SetState(State.DragIcon);
+					}
+					break;
+
+				case State.DragIcon:
+					if (GetDropIndex(x, out var destIndex, out var left)) {
+						if (GetIconIndex(_draggedIcon, out var srcIndex)) {
+							if (srcIndex != destIndex) {
+								Debug.WriteLine($"{srcIndex} {destIndex}");
+								_icons[srcIndex] = _icons[destIndex];
+								_icons[destIndex] = _draggedIcon;
+								Dock.SetDirty();
+							}
+						}
+					}
+					break;
+			}
+		}
+
 		internal void Update(float dt) {
 			CalculateSize(out _size);
 			
@@ -96,7 +137,7 @@ namespace ProtoDock {
 				case State.LeftDown:
 					break;
 
-				case State.Drag:
+				case State.DragIcon:
 					for (var i = 0; i < _icons.Count; i++)
 					{
 						_icons[i].SetDistanceToCursor(0f);
@@ -265,6 +306,18 @@ namespace ProtoDock {
             }
 
             return true;
+        }
+        
+        private bool GetIconIndex(DockIconGraphics icon, out int outIndex) {
+	        for (var i = 0; i < _icons.Count; i++) {
+		        if (icon == _icons[i]) {
+			        outIndex = i;
+			        return true;
+		        }
+	        }
+	        
+	        outIndex = default;
+	        return false;
         }
 	}
 }
