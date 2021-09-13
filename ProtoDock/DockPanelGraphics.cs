@@ -34,6 +34,7 @@ namespace ProtoDock {
 		public float Height => _size.Height;
 
 		private readonly List<DockIconGraphics> _icons = new List<DockIconGraphics>();
+		internal IReadOnlyList<DockIconGraphics> Icons => _icons;
 		
 		public bool IsMouseOver { get; private set; }
 		private PointF _mouseDownPoint;
@@ -66,7 +67,7 @@ namespace ProtoDock {
 		{
 			switch (button) {
 				case MouseButtons.Left:
-					GetIconFromX(x, out _draggedIcon, out _);
+					GetIconFromX(x, out _draggedIcon, out _, out _);
 					_mouseDownPoint = new PointF(x, y);
 					SetState(State.LeftDown);
 					break;
@@ -149,17 +150,18 @@ namespace ProtoDock {
 		private void CalculateSize(out SizeF dockSize)
 		{
 			var iconsCount = _icons.Count;
-			var iconsWidthSum = 0f;
+			var iconLeft = 0f;
 			var maxIconHeight = 0f;
 
 			for (var i = 0; i < iconsCount; i++)
 			{
 				var icon = _icons[i];
-				iconsWidthSum += icon.Width;
+				icon.Left = iconLeft;
+				iconLeft += icon.Width;
 				maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
 			}
 
-			var dockWidth = iconsWidthSum + Math.Max(0, iconsCount - 1) * Dock.IconSpace;
+			var dockWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace;
 			var dockHeight = Dock.IconSize;
 			dockSize = new SizeF(
 				dockWidth,
@@ -234,7 +236,7 @@ namespace ProtoDock {
         }
         
         
-        private bool GetIconFromX(float x, out DockIconGraphics outIcon, out float outLeft) {
+        internal bool GetIconFromX(float x, out DockIconGraphics outIcon, out int outIndex, out float outLeft) {
 	        var left = 0f;
 	        
             for (var i = 0; i < _icons.Count; i++)
@@ -244,7 +246,8 @@ namespace ProtoDock {
                 if (x > left - Dock.IconSpace * 0.5f && x < left + icon.Width + Dock.IconSpace * 0.5f)
                 {
                     outIcon =  icon;
-                    outLeft = left;
+					outIndex = i;
+					outLeft = left;
                     return true;
                 }
 
@@ -253,7 +256,8 @@ namespace ProtoDock {
             }
 
             outIcon = default;
-            outLeft = default;
+			outIndex = default;
+			outLeft = default;
             return false;
         }
 
@@ -290,7 +294,7 @@ namespace ProtoDock {
 
         private bool GetDropIndex(float x, out int outIndex, out float outX)
         {
-            if (!GetIconFromX(x, out var icon, out var left)) {
+            if (!GetIconFromX(x, out var icon, out var _, out var left)) {
                 outIndex = default;
                 outX = default;
                 return false;

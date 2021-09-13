@@ -41,6 +41,7 @@ namespace ProtoDock
 
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;
+        private DockIconGraphics _hoveredIcon;
 
         public bool IsMouseOver { get; private set; }
         
@@ -134,6 +135,10 @@ namespace ProtoDock
                 _selectedPanel?.MouseMove(x - _selectedPanel.Left, y - _selectedPanel.Top);
             }
 
+            IconFromX(x, out var hoveredIcon, out _, out _);
+            UpdateHoveredIcon(hoveredIcon);
+            
+
             var screenPos = _dockWindow.PointToScreen(new Point((int)x, (int)0));
             switch (Position)
             {
@@ -214,25 +219,26 @@ namespace ProtoDock
             IsDirty = true;
         }
 
-        private void UpdateSelectedIcon(DockIconGraphics icon)
+        private void UpdateHoveredIcon(DockIconGraphics icon)
         {
-            // if (_selectedIcon == icon)
-            //     return;
-            //
-            // _selectedIcon?.MouseLeave();
-            //
-            // _selectedIcon = icon;
-            // _selectedIcon?.MouseEnter();
-            //
-            // if (_selectedIcon != null)
-            // {
-            //     _hintWindow.SetText(icon.Model.Title);
-            // } else
-            // {
-            //     _hintWindow.SetText("");
-            // }
-            //
-            // SetDirty();
+            if (_hoveredIcon == icon)
+                return;
+
+            _hoveredIcon?.MouseLeave();
+
+            _hoveredIcon = icon;
+            _hoveredIcon?.MouseEnter();
+
+            if (_hoveredIcon != null)
+            {
+                _hintWindow.SetText(icon.Model.Title);
+            }
+            else
+            {
+                _hintWindow.SetText("");
+            }
+
+            SetDirty();
         }
 
         public void UpdateSkin(DockSkin skin)
@@ -315,7 +321,31 @@ namespace ProtoDock
             outPanel = default;
             return false;
         }
-        
+
+        private bool IconFromX(float x, out DockIconGraphics outIcon, out int outIndex, out float outLeft)
+        {           
+            var index = 0;
+            var left = (float)SelectedSkin.Padding.Left;
+            for (var pi = 0; pi < _panels.Count; pi++) {
+                var panel = _panels[pi];
+                if (panel.GetIconFromX(x - left, out var icon, out var iconIndex, out var iconLeft)) {
+                    outIcon = icon;
+                    outIndex = index + iconIndex;
+                    outLeft = left + iconLeft;
+                    return true;
+                }
+                left += panel.Width + IconSpace;
+                index += panel.Icons.Count;
+            }
+
+            outIcon = default;
+            outIndex = default;
+            outLeft = default;
+
+            return false;
+        }
+
+
         internal void Render()
         {
             if (Bitmap == null || Bitmap.Width < _drawSize.Width || Bitmap.Height < _drawSize.Height)

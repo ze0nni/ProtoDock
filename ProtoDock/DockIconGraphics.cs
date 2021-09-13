@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ProtoDock
 {
-    class DockIconGraphics
+    internal class DockIconGraphics
     {
         public enum DisplayState {
             Display,
@@ -17,6 +17,8 @@ namespace ProtoDock
         private readonly DockPanelGraphics _panel;
         public readonly IDockIcon Model;
         private int _size => 1;
+
+        public float Left;
 
         private float _width;
         private float _height;
