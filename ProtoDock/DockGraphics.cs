@@ -277,23 +277,23 @@ namespace ProtoDock
 
         private void CalculateSize(out SizeF dockSize, out Size drawSize) {
             var panelsWidth = 0f;
-            var panelsHeight = 0f;
             var panelsDrawHeight = 0f;
             for (var i = 0; i < _panels.Count; i++) {
                 var panel = _panels[i];
-                panelsWidth = panel.Left + panel.Width;
-                panelsHeight = MathF.Max(panelsHeight, panel.Height);
+                panelsWidth += panel.Width;
                 panelsDrawHeight = MathF.Max(panelsDrawHeight, panel.DrawHeight);
             }
 
+            panelsWidth += Math.Max(0, _panels.Count - 1) * IconSpace;
+
             var width =
                 MathF.Max(
-                    SelectedSkin.Padding.Left + IconSize + SelectedSkin.Padding.Right,
-                    SelectedSkin.Padding.Left + panelsWidth + SelectedSkin.Padding.Right);            
+                    SelectedSkin.Padding.Horizontal+ IconSize,
+                    SelectedSkin.Padding.Horizontal + panelsWidth);
             
             dockSize = new SizeF(
                 width,
-                SelectedSkin.Padding.Top + panelsHeight + SelectedSkin.Padding.Bottom
+                SelectedSkin.Padding.Vertical + SelectedSkin.PanelPadding.Vertical + IconSize
             );
 
             var drawHeight = MathF.Max(

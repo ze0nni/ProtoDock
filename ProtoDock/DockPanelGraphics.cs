@@ -163,12 +163,12 @@ namespace ProtoDock {
 				iconLeft += icon.Width;
 				maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
 			}
-			
-			var dockWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace + Dock.SelectedSkin.PanelPadding.Horizontal;
-			var dockHeight = Math.Max(Dock.IconSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
+
+			var panelWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace + Dock.SelectedSkin.PanelPadding.Horizontal;
+			var panelHeight = Math.Max(Dock.IconSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
 			dockSize = new SizeF(
-				dockWidth,
-				dockHeight
+				panelWidth,
+				panelHeight
 			);
 		}
 		
