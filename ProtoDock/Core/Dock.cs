@@ -67,6 +67,7 @@ namespace ProtoDock.Core
             var panel = new DockPanel(this);
             _panels.Add(panel);
             Graphics.AddPanel(panel);
+            panel.Awake();
 
             Flush();
         }
@@ -76,6 +77,7 @@ namespace ProtoDock.Core
             var panel = new DockPanel(this, config);
             _panels.Add(panel);
             Graphics.AddPanel(panel);
+            panel.Awake();
         }
 
         public void SetDirty()

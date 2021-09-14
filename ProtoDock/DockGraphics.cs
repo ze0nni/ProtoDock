@@ -81,8 +81,11 @@ namespace ProtoDock
             foreach (var panel in _panels) {
                 if (panel.Model == panelModel) {
                     panel.AddIcon(iconModel);
+                    return;
                 }
             }
+
+            throw new ArgumentException();
         }
         
         internal void RemoveIcon(DockPanel panelModel, IDockIcon iconModel) {

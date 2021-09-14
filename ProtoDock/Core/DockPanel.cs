@@ -48,12 +48,14 @@ namespace ProtoDock.Core
                     //TODO:
                 }
             }
+        }
 
-            foreach (var m in mediatorsList) {
+        internal void Awake() {
+            foreach (var m in Mediators) {
                 m.Awake();
             }
         }
-
+        
         public void Dispose()
         {
             foreach (var m in _mediators)
