@@ -210,6 +210,8 @@ namespace ProtoDock
 
         public DockSkinImage Dock { get; set; }
         
+        public DockSkinImage Panel { get; set; }
+        
         public DockSkinImage SelectedBg { get; set; }
 
         public DockSkinImage SelectedFg { get; set; }
@@ -222,6 +224,7 @@ namespace ProtoDock
             int vOffset,
             Padding padding,
             DockSkinImage dock,
+            DockSkinImage panel,
             DockSkinImage selectedBg,
             DockSkinImage selectedFg,
             DockSkinImage highlightBg,
@@ -231,6 +234,7 @@ namespace ProtoDock
             this.VOffset = vOffset;
             this.Padding = padding;
             this.Dock = dock;
+            this.Panel = panel;
             this.SelectedBg = selectedBg;
             this.SelectedFg = selectedFg;
             this.HighlightFg = highlightFg;

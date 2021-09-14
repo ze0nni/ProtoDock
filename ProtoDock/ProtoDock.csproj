@@ -16,9 +16,10 @@
 
   <ItemGroup>
     <None Remove="Embeded\Default.png" />
+    <None Remove="Embeded\Default_panel.png" />
     <None Remove="Embeded\Default_highlight.png" />
     <None Remove="Embeded\Default_selected.png" />
-    <None Remove="Embeded\Default_selected_fg.png" />
+    <None Remove="Embeded\Default_selected_fg.png" />    
   </ItemGroup>
 
   <ItemGroup>
@@ -34,9 +35,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Embeded\Default.png" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <EmbeddedResource Include="Embeded\Default_panel.png" />
     <EmbeddedResource Include="Embeded\Default_highlight.png" />
     <EmbeddedResource Include="Embeded\Default_selected.png" />
     <EmbeddedResource Include="Embeded\Default_selected_fg.png" />

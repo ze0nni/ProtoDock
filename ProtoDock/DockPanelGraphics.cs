@@ -173,6 +173,7 @@ namespace ProtoDock {
 		{
 			var state = graphics.Save();
 			
+			Dock.SelectedSkin.Panel?.Draw(graphics, new SizeF(_size.Width, Dock.IconSize));
 			RenderIcons(graphics);
 			RenderDropTarget(graphics);
 		}

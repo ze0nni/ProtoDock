@@ -373,7 +373,7 @@ namespace ProtoDock
             for (var i = 0; i < _panels.Count; i++) {
                 var panel = _panels[i];
                 panel.Render(_graphics);
-                _graphics.TranslateTransform(panel.Width, 0);//TODO Width + Space
+                _graphics.TranslateTransform(panel.Width + IconSpace, 0);
             }
             
             _graphics.Restore(state);
