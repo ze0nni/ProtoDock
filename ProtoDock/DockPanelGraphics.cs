@@ -109,8 +109,6 @@ namespace ProtoDock {
 		}
 
 		internal void Update(float dt) {
-			CalculateSize(out _drawSize);
-			
 			for (var i = _icons.Count - 1; i >= 0; i--)
 			{
 				var icon = _icons[i];
@@ -123,6 +121,7 @@ namespace ProtoDock {
 					icon.Update(dt);
 				}
 			}
+			CalculateSize(out _drawSize);
 		}
 		
 		private void SetState(State value)
