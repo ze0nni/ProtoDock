@@ -122,6 +122,7 @@ namespace ProtoDock
                 new DockSkin(
                     0,
                     new Padding(16, 16, 16, 16),
+                    new Padding(8, 8, 8, 8),
                     new DockSkinImage(
                         DockSkinImageAlign.Scale9,
                         new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default.png")),

@@ -29,9 +29,12 @@ namespace ProtoDock {
 		public float Right => _position.X + Width;
 		public float Bottom => _position.Y + Height;
 		
-		private SizeF _size;
-		public float Width => _size.Width;
-		public float Height => _size.Height;
+		public float Width => _drawSize.Width;
+		public float Height => Dock.SelectedSkin.PanelPadding.Top + Dock.IconSize + Dock.SelectedSkin.PanelPadding.Bottom;
+		
+		private SizeF _drawSize;
+		public float DrawWidth => _drawSize.Width;
+		public float DrawHeight => _drawSize.Height;
 
 		private readonly List<DockIconGraphics> _icons = new List<DockIconGraphics>();
 		internal IReadOnlyList<DockIconGraphics> Icons => _icons;
@@ -106,7 +109,7 @@ namespace ProtoDock {
 		}
 
 		internal void Update(float dt) {
-			CalculateSize(out _size);
+			CalculateSize(out _drawSize);
 			
 			for (var i = _icons.Count - 1; i >= 0; i--)
 			{
@@ -160,9 +163,9 @@ namespace ProtoDock {
 				iconLeft += icon.Width;
 				maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
 			}
-
-			var dockWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace;
-			var dockHeight = Math.Max(Dock.IconSize, maxIconHeight);
+			
+			var dockWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace + Dock.SelectedSkin.PanelPadding.Horizontal;
+			var dockHeight = Math.Max(Dock.IconSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
 			dockSize = new SizeF(
 				dockWidth,
 				dockHeight
@@ -173,9 +176,18 @@ namespace ProtoDock {
 		{
 			var state = graphics.Save();
 			
-			Dock.SelectedSkin.Panel?.Draw(graphics, new SizeF(_size.Width, Dock.IconSize));
+			Dock.SelectedSkin.Panel?.Draw(graphics, new SizeF(Width, Height));
+			
+			graphics.TranslateTransform(
+				Dock.SelectedSkin.PanelPadding.Left,
+				Dock.SelectedSkin.PanelPadding.Top);
+			
 			RenderIcons(graphics);
 			RenderDropTarget(graphics);
+			
+			graphics.TranslateTransform(
+				-Dock.SelectedSkin.PanelPadding.Left,
+				-Dock.SelectedSkin.PanelPadding.Top);
 		}
 		
 		
