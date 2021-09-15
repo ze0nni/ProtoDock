@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Windows.Forms;
 
@@ -42,6 +43,9 @@ namespace ProtoDock
             _timer.Tick += OnTick;
 
             _hint = new HintWindow();
+
+
+            EnableBlur();
 
             _graphics = new DockGraphics(
                 64,
@@ -84,6 +88,27 @@ namespace ProtoDock
                 p.ExStyle |= (int)PInvoke.User32.WindowStylesEx.WS_EX_LAYERED;
                 return p;
             }
+        }
+
+        private void EnableBlur() {
+            AccentPolicy accent = new AccentPolicy();
+            accent.AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND;
+            // if (hasFrame)
+            //     accent.AccentFlags = 0x20 | 0x40 | 0x80 | 0x100;
+ 
+            int accentStructSize = Marshal.SizeOf(accent);
+ 
+            IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
+            Marshal.StructureToPtr(accent, accentPtr, false);
+ 
+            WindowCompositionAttributeData data = new WindowCompositionAttributeData();
+            data.Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY;
+            data.SizeOfData = accentStructSize;
+            data.Data = accentPtr;
+ 
+            SetWindowCompositionAttribute(Handle, ref data);
+ 
+            Marshal.FreeHGlobal(accentPtr);
         }
 
         private void CreateContextMenu()
@@ -277,6 +302,34 @@ namespace ProtoDock
         private void DockWindow_Load(object sender, EventArgs e)
         {
 
+        }
+        
+        [DllImport("user32.dll")]
+        public static extern int SetWindowCompositionAttribute(IntPtr hwnd, ref WindowCompositionAttributeData data);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WindowCompositionAttributeData {
+            public WindowCompositionAttribute Attribute;
+            public IntPtr Data;
+            public int SizeOfData;
+        }
+
+        public enum WindowCompositionAttribute {
+            WCA_ACCENT_POLICY = 19
+        }
+
+        public enum AccentState {
+            ACCENT_DISABLED = 0,
+            ACCENT_ENABLE_BLURBEHIND = 3,
+            ACCENT_ENABLE_ACRYLICBLURBEHIND = 4
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct AccentPolicy {
+            public AccentState AccentState;
+            public int AccentFlags;
+            public int GradientColor;
+            public int AnimationId;
         }
     }
 }
