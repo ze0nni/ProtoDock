@@ -8,7 +8,7 @@ namespace ProtoDock.Api
         IDockPanelMediator Mediator { get; }
 
         string Title { get; }
-        int Width { get; }
+        float Width { get; }
         bool Hovered { get; }
 
         void Update();

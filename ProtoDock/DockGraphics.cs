@@ -390,6 +390,8 @@ namespace ProtoDock
 
         internal void Render()
         {
+            IsDirty = false;
+            
             if (Bitmap == null || Bitmap.Width < _drawSize.Width || Bitmap.Height < _drawSize.Height)
             {
                 _graphics?.Dispose();
@@ -421,8 +423,6 @@ namespace ProtoDock
             }
             
             _graphics.Restore(state);
-
-            IsDirty = false;
         }
 
     }

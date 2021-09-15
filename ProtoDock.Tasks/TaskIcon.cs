@@ -14,7 +14,7 @@ namespace ProtoDock.Tasks
 
         private readonly StringBuilder _sb = new StringBuilder(2048);
 
-        public int Width => 1;
+        public float Width => 1;
         public bool Hovered => true;
         
         public IDockPanelMediator Mediator { get; }

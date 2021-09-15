@@ -9,7 +9,7 @@ namespace ProtoDock.Tray
         public IDockPanelMediator Mediator { get; }
 
         public string Title => "";
-        public int Width => 1;
+        public float Width => 1;
         public bool Hovered => true;
         
         private Icon _icon;
