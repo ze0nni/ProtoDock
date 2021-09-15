@@ -5,14 +5,14 @@ namespace ProtoDock.Time {
 	internal class TimeMediator: IDockPanelMediator {
 		public IDockPlugin Plugin { get; }
 
-		private IDockPanelApi _api;
+		public IDockPanelApi Api { get; private set; }
 		
 		public TimeMediator(IDockPlugin plugin) {
 			Plugin = plugin;
 		}
 
 		public void Setup(IDockPanelApi api) {
-			_api = api;
+			Api = api;
 		}
 
 		public void RestoreIcon(int version, string data) {
@@ -20,7 +20,7 @@ namespace ProtoDock.Time {
 		}
 
 		public void Awake() {
-			_api.Add(new DigitClock(this));
+			Api.Add(new DigitClock(this));
 		}
 
 		public void Destroy() {

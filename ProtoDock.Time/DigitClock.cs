@@ -3,18 +3,29 @@ using System.Drawing;
 using ProtoDock.Api;
 
 namespace ProtoDock.Time {
-	internal class DigitClock: IDockIcon {
-		public IDockPanelMediator Mediator { get; }
-		public string Title => DateTime.Now.ToLongTimeString();
+	internal class DigitClock: IDockIcon, IDisposable {
+		public IDockPanelMediator Mediator => _mediator;
+		private TimeMediator _mediator;
+		public string Title => DateTime.Now.ToShortDateString();
 		public int Width => 2;
 		public bool Hovered => false;
 
-		public DigitClock(IDockPanelMediator mediator) {
-			Mediator = mediator;
+		private int _minutes;
+
+		public DigitClock(TimeMediator mediator) {
+			_mediator = mediator;
+		}
+
+		public void Dispose() {
+			
 		}
 
 		public void Update() {
-			
+			var minutes = DateTime.Now.Minute;
+			if (_minutes != minutes) {
+				_minutes = minutes;
+				_mediator.Api.Dock.SetDirty();
+			}
 		}
 
 		public void Click() {
@@ -26,7 +37,7 @@ namespace ProtoDock.Time {
 		}
 
 		public void Render(Graphics graphics, float width, float height, bool isSelected) {
-			
+		
 		}
 
 		public bool Store(out string data) {

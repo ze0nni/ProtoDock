@@ -80,6 +80,28 @@ namespace ProtoDock {
 		public bool MouseUp(float x, float y, MouseButtons button) {
 			_draggedIcon = null;
 			SetState(State.Idle);
+
+			switch (button) {
+				case MouseButtons.Left:
+				{
+					if (GetIconFromX(x, out var icon, out var _, out var _)) {
+						icon.Model.Click();
+						return true;
+					}
+
+					return false;
+				}
+
+				case MouseButtons.Right:
+				{
+					if (GetIconFromX(x, out var icon, out var _, out var _)) {
+						return icon.Model.ContextClick();
+					}
+
+					return false;
+				}
+			}
+
 			return false;
 		}
 
