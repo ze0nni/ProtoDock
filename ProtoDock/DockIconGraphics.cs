@@ -17,32 +17,21 @@ namespace ProtoDock
         private readonly DockPanelGraphics _panel;
         public readonly IDockIcon Model;
 
-        private float _width;
-        private float _height;
-        private float _targetWidth;
-        private float _targetHeight;
+        private float _size;
+        private float _targetSize;
         public DisplayState State { get; private set; }
 
-        public float Width
+        public float Width => Model.Width * _size;
+        public float Height => _size;
+        
+        private float Size
         {
-            get => _width;
-            private set
+            get => _size;
+            set
             {
-                if (value != _width)
+                if (value != _size)
                 {
-                    _width = value;
-                    _panel.Dock.SetDirty();
-                }
-            }
-        }
-        public float Height
-        {
-            get => _height;
-            private set
-            {
-                if (value != _height)
-                {
-                    _height = value;
+                    _size = value;
                     _panel.Dock.SetDirty();
                 }
             }
@@ -55,11 +44,9 @@ namespace ProtoDock
             _panel = panel;
             Model = model;
 
-            _targetWidth = _panel.Dock.IconSize * Model.Width;
-            _targetHeight = _panel.Dock.IconSize;
+            _targetSize = _panel.Dock.IconSize;
             if (!playAppear) {
-                _width = _targetWidth;
-                _height = _targetHeight;
+                _size = _targetSize;
             }
         }
 
@@ -70,19 +57,15 @@ namespace ProtoDock
             switch (State) {
                 case DisplayState.Display:
                 {
-                    if (UpdateToTarget(ref _width, _targetWidth, dt * _panel.Dock.IconScaleSpeed * Model.Width))
+                    if (UpdateToTarget(ref _size, _targetSize, dt * _panel.Dock.IconScaleSpeed))
                         _panel.Dock.SetDirty();
-
-                    if (UpdateToTarget(ref _height, _targetHeight, dt * _panel.Dock.IconScaleSpeed))
-                        _panel.Dock.SetDirty();
-
+                    
                     break;
                 }
 
                 case DisplayState.Disappear:
                 {
-                    if (UpdateToTarget(ref _width, 0, dt * _panel.Dock.IconScaleSpeed * Model.Width) ||
-                        UpdateToTarget(ref _height, 0, dt * _panel.Dock.IconScaleSpeed)) {
+                    if (UpdateToTarget(ref _size, 0, dt * _panel.Dock.IconScaleSpeed)) {
                         _panel.Dock.SetDirty();
                     }
                     else {
@@ -118,12 +101,10 @@ namespace ProtoDock
             }
             var size = _panel.Dock.IconSize * (1f + _panel.Dock.ActiveIconScale * ratio);
 
-            _targetWidth = size * Model.Width ;
-            _targetHeight = size;
+            _targetSize = size ;
 
             if (fast) {
-                Width = _targetWidth;
-                Height = _targetHeight;
+                Size = _targetSize;
             }
         }
 
@@ -141,7 +122,7 @@ namespace ProtoDock
         {
             if (State == DisplayState.Display)
             {
-                Model.Render(graphics, _width, _height, _isMouseOver);
+                Model.Render(graphics, Width, Height, _isMouseOver);
             }
         }
 
