@@ -50,18 +50,18 @@ namespace ProtoDock {
 			Model = model;
 		}
 
-		public void AddIcon(IDockIcon model)
+		public void AddIcon(IDockIcon model, bool playAppear)
 		{
-			var icon = new DockIconGraphics(this, model);
+			var icon = new DockIconGraphics(this, model, playAppear);
 			_icons.Add(icon);
 		}
 		
-		internal void RemoveIcon(IDockIcon model) {
+		internal void RemoveIcon(IDockIcon model, bool playDisappear) {
 			var index = _icons.FindIndex(d => d.Model == model);
 			if (index == -1)
 				return;
         
-			_icons[index].Hide();
+			_icons[index].Hide(playDisappear);
             
 			Dock.SetDirty();
 		}

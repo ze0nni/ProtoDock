@@ -20,7 +20,7 @@ namespace ProtoDock.Time {
 		}
 
 		public void Awake() {
-			Api.Add(new DigitClock(this));
+			Api.Add(new DigitClock(this), false);
 		}
 
 		public void Destroy() {

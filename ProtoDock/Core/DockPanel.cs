@@ -75,23 +75,23 @@ namespace ProtoDock.Core
             _dock.Flush();
         }
 
-        public void Add(IDockIcon icon)
+        public void Add(IDockIcon icon, bool playAppear)
         {
             if (_icons.Add(icon))
             {
-                _dock.Graphics.AddIcon(this, icon);
+                _dock.Graphics.AddIcon(this, icon, playAppear);
                 _dock.Flush();
             }
         }
 
-        public void Remove(IDockIcon icon)
+        public void Remove(IDockIcon icon, bool playDisappear)
         {
             if (!_icons.Remove(icon))
             {
                 return;
             }
 
-            _dock.Graphics.RemoveIcon(this, icon);
+            _dock.Graphics.RemoveIcon(this, icon, playDisappear);
             _dock.Flush();
         }
 

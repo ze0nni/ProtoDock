@@ -52,13 +52,17 @@ namespace ProtoDock
 
         private bool _isMouseOver;
 
-        public DockIconGraphics(DockPanelGraphics panel, IDockIcon model)
+        public DockIconGraphics(DockPanelGraphics panel, IDockIcon model, bool playAppear)
         {
             _panel = panel;
             Model = model;
 
             _targetWidth = _panel.Dock.IconSize * Model.Width;
             _targetHeight = _panel.Dock.IconSize;
+            if (!playAppear) {
+                _width = _targetWidth;
+                _height = _targetHeight;
+            }
         }
 
         public void Update(float dt)
@@ -141,8 +145,13 @@ namespace ProtoDock
             }
         }
 
-        public void Hide() {
-            State = DisplayState.Disappear;
+        public void Hide(bool playDisappear) {
+            if (playDisappear) {
+                State = DisplayState.Disappear;
+            }
+            else {
+                State = DisplayState.Hidden;
+            }
         }
     }
 }

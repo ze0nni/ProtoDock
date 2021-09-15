@@ -20,6 +20,7 @@ namespace ProtoDock
         private readonly DockGraphics _graphics;
         private readonly Dock _dock;
         private readonly HintWindow _hint;
+        private long _lastUpdate;
 
         private readonly ContextMenuStrip _contextMenu = new ContextMenuStrip();
 
@@ -34,6 +35,7 @@ namespace ProtoDock
 
             this.AllowDrop = true;
 
+            _lastUpdate = DateTime.Now.Ticks;
             _timer = new Timer();
             _timer.Interval = 1000 / 60;
             _timer.Start();
@@ -194,9 +196,12 @@ namespace ProtoDock
             }            
         }
 
-        public void OnTick(Object sender, EventArgs e)
-        {
-            _graphics.Update(1 / 60f);
+        private void OnTick(Object sender, EventArgs e) {
+            var ticks = DateTime.Now.Ticks;
+            var delta = ticks - _lastUpdate;
+            _lastUpdate = ticks;
+            
+            _graphics.Update(delta / (1000f * 10000f));
 
             if (_graphics.IsDirty)
                 Render();

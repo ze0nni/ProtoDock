@@ -8,7 +8,7 @@ namespace ProtoDock.Api
     {
         IDockApi Dock { get; }
 
-        void Add(IDockIcon icon);
-        void Remove(IDockIcon icon);
+        void Add(IDockIcon icon, bool playAppear);
+        void Remove(IDockIcon icon, bool playDisappear);
     }
 }

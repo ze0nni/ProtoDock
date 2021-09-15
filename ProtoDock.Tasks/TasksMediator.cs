@@ -57,7 +57,7 @@ namespace ProtoDock.Tasks
                 return true;
             }, IntPtr.Zero);
 
-            UpdateWindows();
+            UpdateWindows(false);
             UpdateActiveWindow(User32.GetActiveWindow());
         }
 
@@ -120,15 +120,15 @@ namespace ProtoDock.Tasks
                 case HShellMsg.HSHELL_WINDOWCREATED:
                     {
                         _windows.Add(wnd);
-                        UpdateWindows();
+                        UpdateWindows(true);
                         break;
                     }
 
                 case HShellMsg.HSHELL_WINDOWDESTROYED:
                     {
                         _windows.Remove(wnd);
-                        DestroyIcon(wnd);
-                        UpdateWindows();
+                        DestroyIcon(wnd, true);
+                        UpdateWindows(false);
 
                         break;
                     }
@@ -145,15 +145,13 @@ namespace ProtoDock.Tasks
                 case HShellMsg.HSHELL_RUDEAPPACTIVATED:
                     {
                         UpdateActiveWindow(wnd);
+                        UpdateWindows(false);
                         break;
                     }
             }
         }
 
-        private void UpdateWindows()
-        {
-            var sb = new StringBuilder(255);
-            
+        private void UpdateWindows(bool playAnimation) {
             for (var i = 0; i < _windows.Count; i++) {
                 var wnd = _windows[i];
 
@@ -213,11 +211,11 @@ namespace ProtoDock.Tasks
 
                 if (visible)
                 {
-                    CreateIcon(wnd);
+                    CreateIcon(wnd, playAnimation);
                 }
                 else
                 {
-                    DestroyIcon(wnd);
+                    DestroyIcon(wnd, playAnimation);
                 }
             }
         }
@@ -230,26 +228,25 @@ namespace ProtoDock.Tasks
             }
         }
 
-        private void CreateIcon(IntPtr wnd) {
+        private void CreateIcon(IntPtr wnd, bool playAppear) {
             if (_icons.ContainsKey(wnd))
                 return;
             
             var icon = new TaskIcon(this, _api.Dock, wnd);
             _icons.Add(wnd, icon);
-            _api.Add(icon);
+            _api.Add(icon, playAppear);
         }
         
-        private void DestroyIcon(IntPtr wnd) {
+        private void DestroyIcon(IntPtr wnd, bool playDisappear) {
             if (_icons.Remove(wnd, out var icon)) {
-                _api.Remove(icon);
+                _api.Remove(icon, playDisappear);
                 icon.Dispose();
             }
         }
         
         [DllImport("user32.dll")]
         private static extern bool SetTaskmanWindow(IntPtr hWnd);
-        
-        
+
         [DllImport("user32.dll")]
         private static extern bool RegisterShellHookWindow(IntPtr hWnd);
         

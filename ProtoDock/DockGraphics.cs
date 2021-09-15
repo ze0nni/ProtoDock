@@ -76,11 +76,11 @@ namespace ProtoDock
             throw new NotImplementedException();
         }
         
-        internal void AddIcon(DockPanel panelModel, IDockIcon iconModel)
+        internal void AddIcon(DockPanel panelModel, IDockIcon iconModel, bool playAppear)
         {
             foreach (var panel in _panels) {
                 if (panel.Model == panelModel) {
-                    panel.AddIcon(iconModel);
+                    panel.AddIcon(iconModel, playAppear);
                     return;
                 }
             }
@@ -88,10 +88,10 @@ namespace ProtoDock
             throw new ArgumentException();
         }
         
-        internal void RemoveIcon(DockPanel panelModel, IDockIcon iconModel) {
+        internal void RemoveIcon(DockPanel panelModel, IDockIcon iconModel, bool playDisappear) {
             foreach (var panel in _panels) {
                 if (panel.Model == panelModel) {
-                    panel.RemoveIcon(iconModel);
+                    panel.RemoveIcon(iconModel, playDisappear);
                 }
             }
         }

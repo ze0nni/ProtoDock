@@ -24,7 +24,7 @@ namespace ProtoDock.QuickLaunch
 
         public void RestoreIcon(int version, string data)
         {
-            _api.Add(new QuickLaunchIcon(this, data));
+            _api.Add(new QuickLaunchIcon(this, data), false);
         }
 
         public void Awake()
@@ -65,7 +65,7 @@ namespace ProtoDock.QuickLaunch
                             var files = (string[])data.GetData(format);
                             foreach (var filename in files)
                             {
-                                _api.Add(new QuickLaunchIcon(this, filename));
+                                _api.Add(new QuickLaunchIcon(this, filename), true);
                             }
                             return;
                         }
