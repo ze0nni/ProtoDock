@@ -44,7 +44,7 @@ namespace ProtoDock
 
         internal void Load()
         {
-            if (BitmapSource != null)
+            if (!string.IsNullOrEmpty(BitmapSource))
             {
                 Bitmap?.Dispose();
                 Bitmap = new Bitmap(BitmapSource);
@@ -53,7 +53,7 @@ namespace ProtoDock
 
         internal void Unload()
         {
-            if (BitmapSource != null)
+            if (!string.IsNullOrEmpty(BitmapSource))
             {
                 Bitmap?.Dispose();
                 Bitmap = null;
@@ -246,6 +246,12 @@ namespace ProtoDock
 
         public DockSkin()
         {
+            this.Dock = new DockSkinImage();
+            this.Panel = new DockSkinImage();
+            this.SelectedBg = new DockSkinImage();
+            this.SelectedFg = new DockSkinImage();
+            this.HighlightFg = new DockSkinImage();
+            this.HighlightFg = new DockSkinImage();
         }
 
         public void Load()

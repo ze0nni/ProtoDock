@@ -89,7 +89,8 @@ namespace ProtoDock
         private void CreateContextMenu()
         {
             _contextMenu.Items.Add(new ToolStripMenuItem("Settings", null, OnSettingsClick));
-            
+            _contextMenu.Items.Add(new ToolStripMenuItem("Skin", null, OnSkinClick));
+
             _contextMenu.Items.Add(new ToolStripSeparator());
 
             var pluginsMenu = new ToolStripMenuItem("Add panel");
@@ -259,6 +260,11 @@ namespace ProtoDock
         private void OnSettingsClick(object sender, EventArgs e)
         {
             new SettingsWindow(_dock, _graphics).Show();
+        }
+
+        private void OnSkinClick(object sender, EventArgs e)
+        {
+            new SkinEditor(_graphics).Show();
         }
 
         private void OnExitClick(object sender, EventArgs e)
