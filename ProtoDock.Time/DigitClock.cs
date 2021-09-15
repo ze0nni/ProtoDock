@@ -47,6 +47,12 @@ namespace ProtoDock.Time {
 		}
 
 		private void UpdateFont(float height) {
+			if (height == 0) {
+				Width = 1;
+				_mediator.Api.Dock.SetDirty();
+				return;
+			}
+			
 			_font?.Dispose();
 
 			_font = new Font(FontFamily.GenericMonospace, _height, GraphicsUnit.Pixel);
@@ -56,7 +62,7 @@ namespace ProtoDock.Time {
 			
 			_mediator.Api.Dock.SetDirty();
 		}
-		
+
 		public void Render(Graphics graphics, float width, float height, bool isSelected) {
 			if (_width != width || _height != height) {
 				_width = width;
@@ -64,7 +70,12 @@ namespace ProtoDock.Time {
 				UpdateFont(height);
 			}
 
-			graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+			if (_font == null) {
+				return;
+			}
+
+
+				graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
 			graphics.DrawString(DateTime.Now.ToShortTimeString(), _font, Brushes.White,new PointF(0, 0));
 		}
 
