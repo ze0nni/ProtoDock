@@ -17,8 +17,6 @@ namespace ProtoDock
         private readonly DockPanelGraphics _panel;
         public readonly IDockIcon Model;
 
-        public float Left;
-
         private float _width;
         private float _height;
         private float _targetWidth;
@@ -113,7 +111,7 @@ namespace ProtoDock
             return false;
         }
 
-        public void SetDistanceToCursor(float ratio) {
+        public void SetDistanceToCursor(float ratio, bool fast) {
 
             if (!Model.Hovered) {
                 ratio = 0;
@@ -122,19 +120,21 @@ namespace ProtoDock
 
             _targetWidth = size * Model.Width ;
             _targetHeight = size;
+
+            if (fast) {
+                Width = _targetWidth;
+                Height = _targetHeight;
+            }
         }
 
         public void MouseEnter()
         {
             _isMouseOver = true;
-            SetDistanceToCursor(1);
         }
 
         public void MouseLeave()
         {
             _isMouseOver = false;
-
-            SetDistanceToCursor(0);
         }
 
         public void Render(Graphics graphics)

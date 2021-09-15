@@ -108,9 +108,11 @@ namespace ProtoDock {
 		public void MouseMove(float x, float y) {
 			switch (_state) {
 				case State.Idle:
+					Dock.UpdateIconsDistance(x);
 					break;
 				
 				case State.LeftDown:
+					Dock.UpdateIconsDistance(x);
 					if (MathF.Abs(_mouseDownPoint.X - x) > Dock.IconSize * 0.5f) {
 						SetState(State.DragIcon);
 					}
@@ -162,15 +164,12 @@ namespace ProtoDock {
 					break;
 
 				case State.DragIcon:
-					for (var i = 0; i < _icons.Count; i++)
-					{
-						_icons[i].SetDistanceToCursor(0f);
-					}
+					Dock.ClearIconsDistance();
 					break;
 			}
 
 		}
-		
+
 		private void CalculateSize(out SizeF dockSize)
 		{
 			var iconsCount = _icons.Count;
@@ -180,7 +179,6 @@ namespace ProtoDock {
 			for (var i = 0; i < iconsCount; i++)
 			{
 				var icon = _icons[i];
-				icon.Left = iconLeft;
 				iconLeft += icon.Width;
 				maxIconHeight = MathF.Max(maxIconHeight, icon.Height);
 			}
@@ -277,7 +275,7 @@ namespace ProtoDock {
             {
                 var icon = _icons[i];
 
-                if (x > left - Dock.IconSpace * 0.5f && x < left + icon.Width + Dock.IconSpace * 0.5f)
+                if (x > left - Dock.IconSpace * 0.5f && x <= left + icon.Width + Dock.IconSpace * 0.5f)
                 {
                     outIcon =  icon;
 					outIndex = i;

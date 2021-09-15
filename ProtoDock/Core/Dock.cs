@@ -64,7 +64,7 @@ namespace ProtoDock.Core
             return _dropMediator;
         }
 
-        public void AddPanel()
+        public DockPanel AddPanel()
         {
             var panel = new DockPanel(this);
             _panels.Add(panel);
@@ -72,6 +72,8 @@ namespace ProtoDock.Core
             panel.Awake();
 
             Flush();
+
+            return panel;
         }
 
         public void AddPanel(DockPanelConfig config)

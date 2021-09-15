@@ -1,6 +1,7 @@
 ﻿using ProtoDock.Api;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -138,7 +139,7 @@ namespace ProtoDock
 
             IconFromX(x, out var hoveredIcon, out _, out _);
             UpdateHoveredIcon(hoveredIcon);
-            
+            UpdateIconsDistance(x);
 
             var screenPos = _dockWindow.PointToScreen(new Point((int)x, (int)0));
             switch (Position)
@@ -168,6 +169,7 @@ namespace ProtoDock
             }
 
             UpdateHoveredIcon(null);
+            ClearIconsDistance();
             _hintWindow.Hide();
             SetDirty();
         }
@@ -344,7 +346,47 @@ namespace ProtoDock
 
             return false;
         }
+        
+        public void ClearIconsDistance() {
+            for (var pi = 0; pi < _panels.Count; pi++) {
+                var panel = _panels[pi];
+                for (var ii = 0; ii < panel.Icons.Count; ii++)
+                {
+                    panel.Icons[ii].SetDistanceToCursor(0f, false);
+                }
+            }
+        }
+        
+        public void UpdateIconsDistance(float x) {
+            var left = (float)SelectedSkin.Padding.Left;
+            
+            for (var pi = 0; pi < _panels.Count; pi++) {
+                var panel = _panels[pi];
+                var iconLeft = (float)SelectedSkin.PanelPadding.Left;
+                for (var ii = 0; ii < panel.Icons.Count; ii++) {
+                    var icon = panel.Icons[ii];
+                    var panelX = x - left;
 
+                    var iconCenter = iconLeft + icon.Width * 0.5f;
+                    var distance = MathF.Abs(iconCenter - panelX);
+                    float ratio;
+
+                    var effectDistance = IconSize * 2f;
+                    if (distance > effectDistance) {
+                        ratio = 0;
+                    }
+                    else {
+                        ratio = 1f - (distance / effectDistance);
+                    }
+                    
+                    icon.SetDistanceToCursor(ratio, true);
+
+                    iconLeft += icon.Width + IconSpace;
+                }
+
+                left += panel.Width + IconSpace;
+            }
+        }
 
         internal void Render()
         {
