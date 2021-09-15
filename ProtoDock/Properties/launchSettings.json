@@ -2,7 +2,7 @@
   "profiles": {
     "BBDock": {
       "commandName": "Project",
-      "workingDirectory": "C:\\Projects\\ProtoDock\\Assets"
+      "workingDirectory": ".\\..\\Assets"
     }
   }
 }

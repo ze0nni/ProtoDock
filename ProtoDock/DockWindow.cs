@@ -150,19 +150,25 @@ namespace ProtoDock
                 )
             );
 
-            foreach (var file in Directory.GetFiles("./Skins/", "*.json"))
+            try
             {
-                try
+                foreach (var file in Directory.GetFiles("./Skins/", "*.json"))
                 {
-                    var data = File.ReadAllText(file);
-                    var skin = JsonSerializer.Deserialize<DockSkin>(data);
-                    skin.Name = file;
-                    list.Add(skin);
+                    try
+                    {
+                        var data = File.ReadAllText(file);
+                        var skin = JsonSerializer.Deserialize<DockSkin>(data);
+                        skin.Name = file;
+                        list.Add(skin);
+                    }
+                    catch (Exception exc)
+                    {
+                        Debug.WriteLine(exc);
+                    }
                 }
-                catch (Exception exc)
-                {
-                    Debug.WriteLine(exc);
-                }
+            } catch
+            {
+                //
             }
 
             return list;
