@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ProtoDock.Time;
 
 namespace ProtoDock.Core
 {
@@ -37,7 +38,8 @@ namespace ProtoDock.Core
 
             _plugins.Add(new QuickLaunchPlugin());
             _plugins.Add(new TasksPlugin());
-            _plugins.Add(new TrayPlugin());          
+            _plugins.Add(new TrayPlugin());
+            _plugins.Add(new TimePlugin());
 
             Restore();
         }

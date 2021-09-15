@@ -30,6 +30,7 @@
     <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
     <ProjectReference Include="..\ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj" />
     <ProjectReference Include="..\ProtoDock.Tasks\ProtoDock.Tasks.csproj" />
+    <ProjectReference Include="..\ProtoDock.Time\ProtoDock.Time.csproj" />
     <ProjectReference Include="..\ProtoDock.Tray\ProtoDock.Tray.csproj" />
   </ItemGroup>
 

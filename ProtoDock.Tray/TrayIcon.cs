@@ -8,6 +8,10 @@ namespace ProtoDock.Tray
     {
         public IDockPanelMediator Mediator { get; }
 
+        public string Title => "";
+        public int Width => 1;
+        public bool Hovered => true;
+        
         private Icon _icon;
 
         public TrayIcon(IDockPanelMediator mediator, Icon icon)
@@ -30,8 +34,7 @@ namespace ProtoDock.Tray
         {
             return false;
         }
-
-        public string Title => "";
+        
         public void Render(
             Graphics graphics,
             float width,

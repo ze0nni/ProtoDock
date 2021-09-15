@@ -16,7 +16,6 @@ namespace ProtoDock
         
         private readonly DockPanelGraphics _panel;
         public readonly IDockIcon Model;
-        private int _size => 1;
 
         public float Left;
 
@@ -58,7 +57,7 @@ namespace ProtoDock
             _panel = panel;
             Model = model;
 
-            _targetWidth = _panel.Dock.IconSize * _size;
+            _targetWidth = _panel.Dock.IconSize * Model.Width;
             _targetHeight = _panel.Dock.IconSize;
         }
 
@@ -69,7 +68,7 @@ namespace ProtoDock
             switch (State) {
                 case DisplayState.Display:
                 {
-                    if (UpdateToTarget(ref _width, _targetWidth, dt * _panel.Dock.IconScaleSpeed * _size))
+                    if (UpdateToTarget(ref _width, _targetWidth, dt * _panel.Dock.IconScaleSpeed * Model.Width))
                         _panel.Dock.SetDirty();
 
                     if (UpdateToTarget(ref _height, _targetHeight, dt * _panel.Dock.IconScaleSpeed))
@@ -80,7 +79,7 @@ namespace ProtoDock
 
                 case DisplayState.Disappear:
                 {
-                    if (UpdateToTarget(ref _width, 0, dt * _panel.Dock.IconScaleSpeed * _size) ||
+                    if (UpdateToTarget(ref _width, 0, dt * _panel.Dock.IconScaleSpeed * Model.Width) ||
                         UpdateToTarget(ref _height, 0, dt * _panel.Dock.IconScaleSpeed)) {
                         _panel.Dock.SetDirty();
                     }
@@ -110,11 +109,14 @@ namespace ProtoDock
             return false;
         }
 
-        public void SetDistanceToCursor(float ratio)
-        {
+        public void SetDistanceToCursor(float ratio) {
+
+            if (!Model.Hovered) {
+                ratio = 0;
+            }
             var size = _panel.Dock.IconSize * (1f + _panel.Dock.ActiveIconScale * ratio);
 
-            _targetWidth = size * _size;
+            _targetWidth = size * Model.Width ;
             _targetHeight = size;
         }
 

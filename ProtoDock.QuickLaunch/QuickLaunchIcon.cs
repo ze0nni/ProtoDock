@@ -9,7 +9,11 @@ namespace ProtoDock.QuickLaunch
     class QuickLaunchIcon : IDockIcon
     {
         public IDockPanelMediator Mediator { get; }
-
+        
+        public string Title => _path;
+        public int Width => 1;
+        public bool Hovered => true;
+        
         private string _path;
         private Icon _icon;
 
@@ -34,8 +38,6 @@ namespace ProtoDock.QuickLaunch
         {
             return false;
         }
-
-        public string Title => _path;
 
         public void Render(Graphics graphics, float width, float height, bool isSelected)
         {
