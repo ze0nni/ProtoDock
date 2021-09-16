@@ -1,6 +1,8 @@
 ﻿using ProtoDock.Api;
 using System.Drawing;
 using System.Runtime.InteropServices.ComTypes;
+using System.Windows.Input;
+using ManagedShell.WindowsTray;
 
 namespace ProtoDock.Tray
 {
@@ -8,13 +10,13 @@ namespace ProtoDock.Tray
     {
         public IDockPanelMediator Mediator { get; }
 
-        public string Title => "";
+        public string Title => _icon.Title;
         public float Width => 1;
         public bool Hovered => true;
-        
-        private Icon _icon;
 
-        public TrayIcon(IDockPanelMediator mediator, Icon icon)
+        private readonly NotifyIcon _icon;
+
+        public TrayIcon(IDockPanelMediator mediator, NotifyIcon icon)
         {
             Mediator = mediator;
             _icon = icon;
@@ -27,7 +29,8 @@ namespace ProtoDock.Tray
 
         public void Click()
         {
-
+            _icon.IconMouseDown(MouseButton.Left, 0, 0);
+            _icon.IconMouseUp(MouseButton.Left, 0, 0);
         }
 
         public bool ContextClick()
@@ -42,22 +45,17 @@ namespace ProtoDock.Tray
             bool isSelected
         ) {
 
-            if (_icon != null)
+            if (_icon.Icon != null)
             {
-                graphics.DrawIcon(
-                    _icon,
-                    new Rectangle(0, 0, (int)width, (int)height)
-                );
+                // graphics.DrawIcon(
+                //     _icon.Icon,
+                //     new Rectangle(0, 0, (int)width, (int)height)
+                // );
             }
 
                 
         }
-
-        public void UpdateIcon(Icon icon)
-        {
-            _icon = icon;
-        }
-
+        
         public bool Store(out string data)
         {
             data = default;
