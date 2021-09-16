@@ -40,16 +40,6 @@ namespace ProtoDock.Tray
             
             _notificationArea.PinnedIcons.CollectionChanged += OnTrayCollectionChanged;
             _notificationArea.UnpinnedIcons.CollectionChanged += OnTrayCollectionChanged;
-
-            foreach (var entry in _notificationArea.PinnedIcons) {
-                var icon = entry as NotifyIcon;
-                Api.Add(new TrayIcon(this, icon), true);
-            }
-            
-            foreach (var entry in _notificationArea.UnpinnedIcons) {
-                var icon = entry as NotifyIcon;
-                Api.Add(new TrayIcon(this, icon), true);
-            }
         }
 
         public void Destroy()
@@ -79,6 +69,10 @@ namespace ProtoDock.Tray
                 case NotifyCollectionChangedAction.Add:
                     foreach (var entry in e.NewItems) {
                         var icon = (NotifyIcon) entry;
+                        if (_icons.ContainsKey(icon)) {
+                            continue;
+                        }
+                        
                         var view = new TrayIcon(this, icon);
                         _icons[icon] = view;
                         Api.Add(view, true);

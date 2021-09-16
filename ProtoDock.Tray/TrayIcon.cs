@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using ProtoDock.Api;
 using System.Drawing;
-using System.Runtime.InteropServices.ComTypes;
+using System.Drawing.Imaging;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using ManagedShell.WindowsTray;
 
 namespace ProtoDock.Tray
@@ -27,13 +29,13 @@ namespace ProtoDock.Tray
 
             UpdateView();
             
-            // _icon.PropertyChanged += OnPropertyChanged;
+            _icon.PropertyChanged += OnPropertyChanged;
             // _icon.Icon.Changed += OnIconChanged;
         }
 
         public void Dispose() {
             _iconBitmap.Dispose();
-            // _icon.PropertyChanged -= OnPropertyChanged;
+            _icon.PropertyChanged -= OnPropertyChanged;
             // _icon.Icon.Changed -= OnIconChanged;
         }
 
@@ -44,8 +46,8 @@ namespace ProtoDock.Tray
 
         public void Click()
         {
-            _icon.IconMouseDown(MouseButton.Left, 0, 0);
-            _icon.IconMouseUp(MouseButton.Left, 0, 0);
+            _icon.IconMouseDown(MouseButton.Left, 0, System.Windows.Forms.SystemInformation.DoubleClickTime);
+            _icon.IconMouseUp(MouseButton.Left, 0, System.Windows.Forms.SystemInformation.DoubleClickTime);
         }
 
         public bool ContextClick()
@@ -83,9 +85,37 @@ namespace ProtoDock.Tray
             _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);
             using (var g = Graphics.FromImage(_iconBitmap)) {
                 g.Clear(Color.Transparent);
+
+                switch (_icon.Icon) {
+                    case InteropBitmap iBitmap:
+                    {
+                        using var bitmap = GetBitmap(iBitmap);
+                        g.DrawImage(bitmap, 0, 0, _iconBitmap.Width, _iconBitmap.Height);
+                        break;
+                    }
+                }
             }
             
             _mediator.Api.Dock.SetDirty();
+        }
+        
+        Bitmap GetBitmap(BitmapSource source)
+        {
+            Bitmap bmp = new Bitmap(
+                source.PixelWidth,
+                source.PixelHeight,
+                System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            BitmapData data = bmp.LockBits(
+                new System.Drawing.Rectangle(System.Drawing.Point.Empty, bmp.Size),
+                ImageLockMode.WriteOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            source.CopyPixels(
+                Int32Rect.Empty,
+                data.Scan0,
+                data.Height * data.Stride,
+                data.Stride);
+            bmp.UnlockBits(data);
+            return bmp;
         }
         
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {

@@ -44,7 +44,7 @@ namespace ProtoDock
             _hint = new HintWindow();
 
             _graphics = new DockGraphics(
-                64,
+                48,
                 8,
                 this,
                 _hint,
