@@ -10,6 +10,7 @@
     <RepositoryUrl>https://github.com/ze0nni/ProtoDock</RepositoryUrl>
     <PackageTags>Dock</PackageTags>
     <SignAssembly>true</SignAssembly>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
