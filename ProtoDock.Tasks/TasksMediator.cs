@@ -144,6 +144,7 @@ namespace ProtoDock.Tasks
                         if (_icons.TryGetValue(wnd, out var icon))
                         {
                             icon.Redraw();
+                            _api.Dock.SetDirty();
                         }
                         break;
                     }
