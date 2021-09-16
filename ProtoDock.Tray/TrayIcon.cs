@@ -82,7 +82,7 @@ namespace ProtoDock.Tray
             _iconBitmap?.Dispose();
             _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);
             using (var g = Graphics.FromImage(_iconBitmap)) {
-                g.Clear(Color.Red);
+                g.Clear(Color.Transparent);
             }
             
             _mediator.Api.Dock.SetDirty();
