@@ -1,4 +1,7 @@
-﻿using ProtoDock.Api;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using ProtoDock.Api;
 using System.Drawing;
 using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Input;
@@ -6,20 +9,32 @@ using ManagedShell.WindowsTray;
 
 namespace ProtoDock.Tray
 {
-    internal class TrayIcon : IDockIcon
-    {
-        public IDockPanelMediator Mediator { get; }
+    internal class TrayIcon : IDockIcon, IDisposable {
+        public IDockPanelMediator Mediator => _mediator;
+        private TrayMediator _mediator;
 
         public string Title => _icon.Title;
         public float Width => 1;
         public bool Hovered => true;
 
         private readonly NotifyIcon _icon;
+        private Bitmap _iconBitmap;
 
-        public TrayIcon(IDockPanelMediator mediator, NotifyIcon icon)
+        public TrayIcon(TrayMediator mediator, NotifyIcon icon)
         {
-            Mediator = mediator;
+            _mediator = mediator;
             _icon = icon;
+
+            UpdateView();
+            
+            // _icon.PropertyChanged += OnPropertyChanged;
+            // _icon.Icon.Changed += OnIconChanged;
+        }
+
+        public void Dispose() {
+            _iconBitmap.Dispose();
+            // _icon.PropertyChanged -= OnPropertyChanged;
+            // _icon.Icon.Changed -= OnIconChanged;
         }
 
         public void Update()
@@ -45,12 +60,12 @@ namespace ProtoDock.Tray
             bool isSelected
         ) {
 
-            if (_icon.Icon != null)
+            if (_iconBitmap != null)
             {
-                // graphics.DrawIcon(
-                //     _icon.Icon,
-                //     new Rectangle(0, 0, (int)width, (int)height)
-                // );
+                graphics.DrawImage(
+                    _iconBitmap,
+                    new Rectangle(0, 0, (int)width, (int)height)
+                );
             }
 
                 
@@ -60,6 +75,25 @@ namespace ProtoDock.Tray
         {
             data = default;
             return false;
+        }
+
+        private void UpdateView() {
+            if (_iconBitmap == null  || _iconBitmap.Width != _icon.Icon.Width || _iconBitmap.Height != _icon.Icon.Height)
+            _iconBitmap?.Dispose();
+            _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);
+            using (var g = Graphics.FromImage(_iconBitmap)) {
+                g.Clear(Color.Red);
+            }
+            
+            _mediator.Api.Dock.SetDirty();
+        }
+        
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
+            UpdateView();
+        }
+
+        private void OnIconChanged(object sender, EventArgs e) {
+            UpdateView();
         }
     }
 }

@@ -71,6 +71,7 @@ namespace ProtoDock.Core
             mediator.Awake();
 
             _mediators.Add(mediator);
+            Dock.SetDirty();
 
             _dock.Flush();
         }
@@ -81,6 +82,7 @@ namespace ProtoDock.Core
             {
                 _dock.Graphics.AddIcon(this, icon, playAppear);
                 _dock.Flush();
+                Dock.SetDirty();
             }
         }
 
@@ -90,9 +92,10 @@ namespace ProtoDock.Core
             {
                 return;
             }
-
+            
             _dock.Graphics.RemoveIcon(this, icon, playDisappear);
             _dock.Flush();
+            Dock.SetDirty();
         }
 
         internal DockPanelConfig Store()

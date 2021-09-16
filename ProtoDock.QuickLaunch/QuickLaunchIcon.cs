@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ProtoDock.QuickLaunch
 {
-    class QuickLaunchIcon : IDockIcon
+    class QuickLaunchIcon : IDockIcon, IDisposable
     {
         public IDockPanelMediator Mediator { get; }
         
@@ -23,6 +23,10 @@ namespace ProtoDock.QuickLaunch
 
             _path = path;
             _icon = Icon.ExtractAssociatedIcon(_path);
+        }
+
+        public void Dispose() {
+            _icon.Dispose();
         }
 
         public void Update()

@@ -82,6 +82,7 @@ namespace ProtoDock
             foreach (var panel in _panels) {
                 if (panel.Model == panelModel) {
                     panel.AddIcon(iconModel, playAppear);
+                    SetDirty();
                     return;
                 }
             }
@@ -93,6 +94,7 @@ namespace ProtoDock
             foreach (var panel in _panels) {
                 if (panel.Model == panelModel) {
                     panel.RemoveIcon(iconModel, playDisappear);
+                    SetDirty();
                 }
             }
         }

@@ -12,9 +12,10 @@ using ProtoDock.Time;
 
 namespace ProtoDock.Core
 {
-    public class Dock: IDockApi
+    public class Dock: IDockApi, IDisposable
     {
         public IntPtr HInstance { get; }
+        private bool _disposed;
 
         public IntPtr HWnd { get; }
 
@@ -42,6 +43,16 @@ namespace ProtoDock.Core
             _plugins.Add(new TimePlugin());
 
             Restore();
+        }
+
+        public void Dispose() {
+            Flush();
+            _disposed = true;
+            
+            foreach (var panel in _panels) {
+                panel.Dispose();
+            }
+            _panels.Clear();
         }
 
         private readonly DropMediator _dropMediator = new DropMediator();
@@ -108,7 +119,11 @@ namespace ProtoDock.Core
 
         public void Flush()
         {
-            var config = new DockConfig
+            if (_disposed) {
+                return;
+            }
+
+                var config = new DockConfig
             {
                 Panels = new List<DockPanelConfig>()
             };

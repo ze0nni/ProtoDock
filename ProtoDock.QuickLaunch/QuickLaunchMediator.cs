@@ -22,9 +22,12 @@ namespace ProtoDock.QuickLaunch
             _api = api;
         }
 
-        public void RestoreIcon(int version, string data)
-        {
-            _api.Add(new QuickLaunchIcon(this, data), false);
+        private readonly List<QuickLaunchIcon> _icons = new List<QuickLaunchIcon>();
+
+        public void RestoreIcon(int version, string data) {
+            var icon = new QuickLaunchIcon(this, data);
+            _api.Add(icon, false);
+            _icons.Add(icon);
         }
 
         public void Awake()
@@ -34,7 +37,11 @@ namespace ProtoDock.QuickLaunch
 
         public void Destroy()
         {
-            
+            foreach (var icon in _icons)
+            {
+                _api.Remove(icon, false);
+                icon.Dispose();
+            }
         }
 
         public bool DragCanAccept(IDataObject data)
@@ -63,9 +70,10 @@ namespace ProtoDock.QuickLaunch
                     case "FileDrop":
                         {
                             var files = (string[])data.GetData(format);
-                            foreach (var filename in files)
-                            {
-                                _api.Add(new QuickLaunchIcon(this, filename), true);
+                            foreach (var filename in files) {
+                                var icon = new QuickLaunchIcon(this, filename);
+                                _api.Add(icon, true);
+                                _icons.Add(icon);
                             }
                             return;
                         }

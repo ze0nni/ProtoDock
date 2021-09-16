@@ -63,6 +63,12 @@ namespace ProtoDock.Tasks
 
         public void Destroy()
         {
+            foreach (var icon in _icons)
+            {
+                _api.Remove(icon.Value, false);
+                icon.Value.Dispose();
+            }
+            
             DeregisterShellHookWindow(Handle);
             Close();
             Dispose();

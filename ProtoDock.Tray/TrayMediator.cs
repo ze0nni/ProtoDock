@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using ProtoDock.Api;
 using System.Windows.Forms;
 using ManagedShell.WindowsTray;
@@ -10,8 +11,10 @@ namespace ProtoDock.Tray
     {
         public IDockPlugin Plugin { get; private set; }
 
-        private IDockPanelApi _api;
+        public IDockPanelApi Api { get; private set; }
+        
         private NotificationArea _notificationArea;
+        private readonly Dictionary<NotifyIcon, TrayIcon> _icons = new Dictionary<NotifyIcon, TrayIcon>();
 
         public TrayMediator(IDockPlugin plugin)
         {
@@ -20,7 +23,7 @@ namespace ProtoDock.Tray
 
         public void Setup(IDockPanelApi api)
         {
-            _api = api;
+            Api = api;
         }
 
         public void RestoreIcon(int version, string data)
@@ -40,17 +43,22 @@ namespace ProtoDock.Tray
 
             foreach (var entry in _notificationArea.PinnedIcons) {
                 var icon = entry as NotifyIcon;
-                _api.Add(new TrayIcon(this, icon), true);
+                Api.Add(new TrayIcon(this, icon), true);
             }
             
             foreach (var entry in _notificationArea.UnpinnedIcons) {
                 var icon = entry as NotifyIcon;
-                _api.Add(new TrayIcon(this, icon), true);
+                Api.Add(new TrayIcon(this, icon), true);
             }
         }
 
         public void Destroy()
         {
+            foreach (var icon in _icons) {
+                Api.Remove(icon.Value, false);
+                icon.Value.Dispose();
+            }
+
             _notificationArea.PinnedIcons.CollectionChanged -= OnTrayCollectionChanged;
             _notificationArea.UnpinnedIcons.CollectionChanged -= OnTrayCollectionChanged;
             _notificationArea.Dispose();
@@ -71,12 +79,22 @@ namespace ProtoDock.Tray
                 case NotifyCollectionChangedAction.Add:
                     foreach (var entry in e.NewItems) {
                         var icon = (NotifyIcon) entry;
-                        _api.Add(new TrayIcon(this, icon), true);
+                        var view = new TrayIcon(this, icon);
+                        _icons[icon] = view;
+                        Api.Add(view, true);
                     }
 
                     break;
                 
                 case NotifyCollectionChangedAction.Remove:
+                    foreach (var entry in e.NewItems) {
+                        var icon = (NotifyIcon) entry;
+                        if (_icons.Remove(icon, out var view)) {
+                            Api.Remove(view, true);
+                            view.Dispose();
+                        }
+                    }
+
                     break;
             }
         }

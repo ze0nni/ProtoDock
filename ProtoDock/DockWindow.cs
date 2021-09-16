@@ -57,10 +57,10 @@ namespace ProtoDock
                 e.Cancel = !_doExit;
             };
 
-            this.FormClosed += (s, e) =>
-            {
+            this.FormClosed += (s, e) => {
                 _timer.Dispose();
                 _graphics.Dispose();
+                _dock.Dispose();
             };
 
             this.MouseLeave += OnMouseLeave;
