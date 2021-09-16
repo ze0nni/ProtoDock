@@ -133,6 +133,11 @@ namespace ProtoDock {
 		}
 
 		internal void Update(float dt) {
+			for (var i = 0; i < Model.Mediators.Count; i++)
+			{
+				Model.Mediators[i].Update();
+			}
+
 			for (var i = _icons.Count - 1; i >= 0; i--)
 			{
 				var icon = _icons[i];

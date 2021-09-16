@@ -4,6 +4,7 @@ using ProtoDock.Api;
 using System.Windows.Forms;
 using ManagedShell.WindowsTray;
 using NotifyIcon = ManagedShell.WindowsTray.NotifyIcon;
+using ManagedShell;
 
 namespace ProtoDock.Tray
 {
@@ -34,12 +35,34 @@ namespace ProtoDock.Tray
         public void Awake() {
             var trayService = new TrayService();
             var explorerTraService = new ExplorerTrayService();
-            _notificationArea = new NotificationArea(trayService, explorerTraService);
+            _notificationArea = new NotificationArea(NotificationArea.DEFAULT_PINNED, trayService, explorerTraService);
             
             _notificationArea.Initialize();
             
             _notificationArea.PinnedIcons.CollectionChanged += OnTrayCollectionChanged;
             _notificationArea.UnpinnedIcons.CollectionChanged += OnTrayCollectionChanged;
+
+            foreach (var entry in _notificationArea.PinnedIcons)
+            {
+                var icon = entry as NotifyIcon;
+                if (!_icons.ContainsKey(icon))
+                {
+                    var view = new TrayIcon(this, icon);
+                    _icons[icon] = view;
+                    Api.Add(view, true);
+                }
+            }
+
+            foreach (var entry in _notificationArea.UnpinnedIcons)
+            {
+                var icon = entry as NotifyIcon;
+                if (!_icons.ContainsKey(icon))
+                {
+                    var view = new TrayIcon(this, icon);
+                    _icons[icon] = view;
+                    Api.Add(view, true);
+                }
+            }
         }
 
         public void Destroy()
@@ -52,6 +75,10 @@ namespace ProtoDock.Tray
             _notificationArea.PinnedIcons.CollectionChanged -= OnTrayCollectionChanged;
             _notificationArea.UnpinnedIcons.CollectionChanged -= OnTrayCollectionChanged;
             _notificationArea.Dispose();
+        }
+
+        public void Update()
+        {
         }
 
         public bool DragCanAccept(IDataObject data)
@@ -81,7 +108,7 @@ namespace ProtoDock.Tray
                     break;
                 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var entry in e.NewItems) {
+                    foreach (var entry in e.OldItems) {
                         var icon = (NotifyIcon) entry;
                         if (_icons.Remove(icon, out var view)) {
                             Api.Remove(view, true);

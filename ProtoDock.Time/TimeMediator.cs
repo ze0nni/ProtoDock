@@ -33,6 +33,11 @@ namespace ProtoDock.Time {
 			}			
 		}
 
+		public void Update()
+		{
+
+		}
+		
 		public bool DragCanAccept(IDataObject data) {
 			return false;
 		}

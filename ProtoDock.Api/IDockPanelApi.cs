@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ProtoDock.Api
+﻿namespace ProtoDock.Api
 {
     public interface IDockPanelApi
     {
@@ -10,5 +6,6 @@ namespace ProtoDock.Api
 
         void Add(IDockIcon icon, bool playAppear);
         void Remove(IDockIcon icon, bool playDisappear);
+        bool ScreenRect(IDockIcon icon, out System.Drawing.Rectangle rect);
     }
 }

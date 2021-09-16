@@ -9,6 +9,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ProtoDock.Time;
+using PInvoke;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace ProtoDock.Core
 {
@@ -147,6 +149,27 @@ namespace ProtoDock.Core
         public void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height)
         {
             Graphics.SelectedSkin.Draw(element, g, x, y, width, height);
+        }
+
+        public bool PanelScreenPos(DockPanel panel, out Point outPos)
+        {
+            var left = Graphics.SelectedSkin.Padding.Left;
+            var top = Graphics.SelectedSkin.Padding.Top;
+
+            for (var i = 0; i < _panels.Count; i++)
+            {
+                var p = _panels[i];
+                if (panel == p)
+                {
+                    outPos = Graphics.DockWindow.PointToScreen(
+                        new Point(
+                            (int)(left - Graphics.OffsetX),
+                            (int)(top - Graphics.OffsetY)));
+                    return true;
+                }
+            }
+            outPos = default;
+            return false;
         }
     }
 

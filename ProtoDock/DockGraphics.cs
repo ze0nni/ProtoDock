@@ -28,7 +28,7 @@ namespace ProtoDock
 
         public readonly int IconSize;
         public readonly int IconSpace;
-        private readonly DockWindow _dockWindow;
+        public readonly DockWindow DockWindow;
         private readonly HintWindow _hintWindow;
 
         public float ActiveIconScale = 1f;
@@ -54,7 +54,7 @@ namespace ProtoDock
         {
             IconSize = iconSize;
             IconSpace = iconSpace;
-            _dockWindow = dockWindow;
+            DockWindow = dockWindow;
             _hintWindow = hintWindow;
             Skins = skins;
 
@@ -143,7 +143,7 @@ namespace ProtoDock
             UpdateHoveredIcon(hoveredIcon);
             UpdateIconsDistance(x);
 
-            var screenPos = _dockWindow.PointToScreen(new Point((int)x, (int)0));
+            var screenPos = DockWindow.PointToScreen(new Point((int)x, (int)0));
             switch (Position)
             {
                 case Position.Top:

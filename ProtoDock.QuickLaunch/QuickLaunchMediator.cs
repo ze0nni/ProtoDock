@@ -44,6 +44,10 @@ namespace ProtoDock.QuickLaunch
             }
         }
 
+        public void Update()
+        {
+
+        }
         public bool DragCanAccept(IDataObject data)
         {
             var formats = data.GetFormats();

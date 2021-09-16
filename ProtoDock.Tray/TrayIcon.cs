@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using ManagedShell.WindowsTray;
+using ManagedShell.Common.Helpers;
 
 namespace ProtoDock.Tray
 {
@@ -46,13 +47,28 @@ namespace ProtoDock.Tray
 
         public void Click()
         {
-            _icon.IconMouseDown(MouseButton.Left, 0, System.Windows.Forms.SystemInformation.DoubleClickTime);
-            _icon.IconMouseUp(MouseButton.Left, 0, System.Windows.Forms.SystemInformation.DoubleClickTime);
+
+            if (_mediator.Api.ScreenRect(this, out var screenRect))
+            {
+                _icon.Placement = new ManagedShell.Interop.NativeMethods.Rect(
+                    screenRect.Left,
+                    screenRect.Top,
+                    screenRect.Right,
+                    screenRect.Bottom);
+            }
+            _icon.IconMouseEnter(MouseHelper.GetCursorPositionParam());
+
+
+            _icon.IconMouseDown(MouseButton.Left, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
+            _icon.IconMouseUp(MouseButton.Left, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
         }
 
         public bool ContextClick()
         {
-            return false;
+            _icon.IconMouseDown(MouseButton.Right, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
+            _icon.IconMouseUp(MouseButton.Right, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
+
+            return true;
         }
         
         public void Render(
@@ -69,8 +85,6 @@ namespace ProtoDock.Tray
                     new Rectangle(0, 0, (int)width, (int)height)
                 );
             }
-
-                
         }
         
         public bool Store(out string data)

@@ -98,6 +98,17 @@ namespace ProtoDock.Core
             Dock.SetDirty();
         }
 
+        public bool ScreenRect(IDockIcon icon, out System.Drawing.Rectangle outRect)
+        {
+            if (_dock.PanelScreenPos(this, out var pos))
+            {
+                outRect = new System.Drawing.Rectangle(pos.X, pos.Y, _dock.Graphics.IconSize, _dock.Graphics.IconSize);
+                return true;
+            }
+            outRect = default;
+            return false;
+        }
+
         internal DockPanelConfig Store()
         {
             var config = new DockPanelConfig
