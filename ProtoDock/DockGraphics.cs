@@ -411,7 +411,7 @@ namespace ProtoDock
                 OffsetY
             );
             
-            SelectedSkin.Dock.Draw(_graphics, _dockSize);
+            SelectedSkin.Dock?.Draw(_graphics, _dockSize);
             
             _graphics.TranslateTransform(
                 SelectedSkin.Padding.Left,
