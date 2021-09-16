@@ -184,6 +184,10 @@ namespace ProtoDock {
 			}
 
 			var panelWidth = iconLeft + Math.Max(0, iconsCount - 1) * Dock.IconSpace + Dock.SelectedSkin.PanelPadding.Horizontal;
+			if (_icons.Count == 0) {
+				panelWidth = 0;
+			}
+				
 			var panelHeight = Math.Max(Dock.IconSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
 			dockSize = new SizeF(
 				panelWidth,
@@ -195,7 +199,8 @@ namespace ProtoDock {
 		{
 			var state = graphics.Save();
 			
-			Dock.SelectedSkin.Panel?.Draw(graphics, new SizeF(Width, Height));
+			if (_icons.Count > 0)
+				Dock.SelectedSkin.Panel?.Draw(graphics, new SizeF(Width, Height));
 			
 			graphics.TranslateTransform(
 				Dock.SelectedSkin.PanelPadding.Left,
