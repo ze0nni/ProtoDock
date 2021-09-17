@@ -19,5 +19,10 @@ namespace ProtoDock.Api
         public interface IDockAwakeHook {
             void OnDockAwake();
         }
+
+        public interface ISettingsHook
+        {
+            public void OnSettings(IDockSettingsContext context);
+        }
     }
 }

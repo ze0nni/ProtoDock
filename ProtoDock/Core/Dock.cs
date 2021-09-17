@@ -11,10 +11,11 @@ using System.Linq;
 using ProtoDock.Time;
 using PInvoke;
 using System.DirectoryServices.ActiveDirectory;
+using System.Diagnostics;
 
 namespace ProtoDock.Core
 {
-    public class Dock: IDockApi, IDisposable
+    public class Dock: IDockApi, IDisposable, IDockSettingsSource
     {
         public IntPtr HInstance { get; }
         private bool _disposed;
@@ -182,6 +183,23 @@ namespace ProtoDock.Core
             }
             outPos = default;
             return false;
+        }
+
+        public void Display(IDockSettingsDisplay display)
+        {
+            display.Header("Skin");
+
+            var skins = new List<DockSkin>();
+            display.Combo<DockSkin>(
+                Graphics.SelectedSkin,
+                Graphics.Skins,
+                out _,
+                out _,
+                out _,
+                s =>
+                {
+                    Graphics.UpdateSkin(s);
+                });
         }
     }
 
