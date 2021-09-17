@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using ProtoDock.Core;
+using System.Linq;
 
 namespace ProtoDock
 {
@@ -43,7 +44,9 @@ namespace ProtoDock
         private DockIconGraphics _hoveredIcon;
 
         public bool IsMouseOver { get; private set; }
-        
+
+        public event Action Changed;
+
         public DockGraphics(
             int iconSize,
             int iconSpace,
@@ -65,6 +68,20 @@ namespace ProtoDock
         {
             _graphics?.Dispose();
             Bitmap?.Dispose();
+        }
+
+        internal void Store(Config.DockConfig config)
+        {
+            config.Skin = SelectedSkin.Name;
+        }
+
+        internal void Restore(Config.DockConfig config)
+        {
+            var skin = Skins.FirstOrDefault(s => s.Name == config.Skin);
+            if (skin != null)
+            {
+                UpdateSkin(skin);
+            }
         }
 
         internal void AddPanel(DockPanel model) {
@@ -248,6 +265,8 @@ namespace ProtoDock
             SelectedSkin = skin;
             SelectedSkin.Load();
             SetDirty();
+
+            Changed?.Invoke();
         }
 
         public float OffsetX

@@ -22,7 +22,7 @@ namespace ProtoDock.Core
             _dock = dock;
         }
 
-        public DockPanel(Dock dock, DockPanelConfig config): this(dock)
+        public DockPanel(Dock dock, Config.DockPanelConfig config): this(dock)
         {
             var mediatorsList = new List<IDockPanelMediator>();
             foreach (var mediatorConfig in config.Mediators)
@@ -109,9 +109,9 @@ namespace ProtoDock.Core
             return false;
         }
 
-        internal DockPanelConfig Store()
+        internal Config.DockPanelConfig Store()
         {
-            var config = new DockPanelConfig
+            var config = new Config.DockPanelConfig
             {
                 Mediators = new List<DockPluginMediatorConfig>(),
                 Icons = new List<DockIconConfig>()

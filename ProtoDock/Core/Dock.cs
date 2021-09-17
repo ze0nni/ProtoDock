@@ -58,6 +58,11 @@ namespace ProtoDock.Core
                     dockAwakeHook.OnDockAwake();
                 }
             }
+
+            Graphics.Changed += () =>
+            {
+                Flush();
+            };
         }
 
         public void Dispose() {
@@ -102,7 +107,7 @@ namespace ProtoDock.Core
             return panel;
         }
 
-        public void AddPanel(DockPanelConfig config)
+        public void AddPanel(Config.DockPanelConfig config)
         {
             var panel = new DockPanel(this, config);
             _panels.Add(panel);
@@ -120,11 +125,12 @@ namespace ProtoDock.Core
             try
             {
                 var json = File.ReadAllText(ConfigPath());
-                var config = System.Text.Json.JsonSerializer.Deserialize<DockConfig>(json);
+                var config = System.Text.Json.JsonSerializer.Deserialize<Config.DockConfig>(json);
                 foreach (var panelConfig in config.Panels)
                 {
                     AddPanel(panelConfig);
                 }
+                Graphics.Restore(config);
             }
             catch (Exception e)
             {
@@ -138,10 +144,12 @@ namespace ProtoDock.Core
                 return;
             }
 
-                var config = new DockConfig
+            var config = new Config.DockConfig
             {
-                Panels = new List<DockPanelConfig>()
+                Panels = new List<Config.DockPanelConfig>()
             };
+
+            Graphics.Store(config);
             
             foreach (var panel in _panels)
             {

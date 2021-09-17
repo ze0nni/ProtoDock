@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace ProtoDock.Config
@@ -8,6 +9,9 @@ namespace ProtoDock.Config
     [Serializable]
     public class DockConfig
     {
+
+        [DefaultValue(null)]
+        public string Skin { get; set; }
         public List<DockPanelConfig> Panels { get; set; }
     }
 
