@@ -44,7 +44,19 @@ namespace ProtoDock.Core
             _plugins.Add(new TrayPlugin());
             _plugins.Add(new TimePlugin());
 
+            foreach (var p in _plugins) {
+                if (p.ResolveHook<IDockPlugin.IDockSetupHook>(out var dockSetupHook)) {
+                    dockSetupHook.OnDockSetup();
+                }
+            }
+            
             Restore();
+            
+            foreach (var p in _plugins) {
+                if (p.ResolveHook<IDockPlugin.IDockAwakeHook>(out var dockAwakeHook)) {
+                    dockAwakeHook.OnDockAwake();
+                }
+            }
         }
 
         public void Dispose() {

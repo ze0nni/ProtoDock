@@ -9,5 +9,15 @@ namespace ProtoDock.Api
         int Version { get; }
 
         IDockPanelMediator Create();
+        
+        bool ResolveHook<T>(out T component);
+
+        public interface IDockSetupHook {
+            void OnDockSetup();
+        }
+        
+        public interface IDockAwakeHook {
+            void OnDockAwake();
+        }
     }
 }
