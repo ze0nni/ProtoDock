@@ -8,5 +8,10 @@ namespace ProtoDock.Time {
 		public IDockPanelMediator Create() {
 			return new TimeMediator(this);
 		}
+		
+		public bool ResolveHook<T>(out T hook) {
+			hook = default;
+			return false;
+		}
 	}
 }

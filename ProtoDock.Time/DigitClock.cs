@@ -38,12 +38,20 @@ namespace ProtoDock.Time {
 			}
 		}
 
-		public void Click() {
-			
+		public void MouseEnter() {
 		}
 
-		public bool ContextClick() {
+		public void MouseLeave() {
+		}
+
+		public void MouseDown(int x, int y, MouseButtons button) {
+		}
+
+		public bool MouseUp(int x, int y, MouseButtons button) {
 			return false;
+		}
+        
+		public void MouseMove(int x, int y, MouseButtons button) {
 		}
 
 		private void UpdateFont(float height) {

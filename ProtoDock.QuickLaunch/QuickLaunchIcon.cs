@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Windows.Forms;
 
 namespace ProtoDock.QuickLaunch
 {
@@ -33,14 +34,20 @@ namespace ProtoDock.QuickLaunch
         {
 
         }
-        public void Click()
-        {
-            
+        public void MouseEnter() {
         }
 
-        public bool ContextClick()
-        {
+        public void MouseLeave() {
+        }
+
+        public void MouseDown(int x, int y, MouseButtons button) {
+        }
+
+        public bool MouseUp(int x, int y, MouseButtons button) {
             return false;
+        }
+        
+        public void MouseMove(int x, int y, MouseButtons button) {
         }
 
         public void Render(Graphics graphics, float width, float height, bool isSelected)

@@ -4,11 +4,12 @@ using ProtoDock.Api;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using ManagedShell.WindowsTray;
 using ManagedShell.Common.Helpers;
+using NotifyIcon = ManagedShell.WindowsTray.NotifyIcon;
 
 namespace ProtoDock.Tray
 {
@@ -45,30 +46,40 @@ namespace ProtoDock.Tray
 
         }
 
-        public void Click()
-        {
-
-            if (_mediator.Api.ScreenRect(this, out var screenRect))
-            {
-                _icon.Placement = new ManagedShell.Interop.NativeMethods.Rect(
-                    screenRect.Left,
-                    screenRect.Top,
-                    screenRect.Right,
-                    screenRect.Bottom);
-            }
+        public void MouseEnter() {
             _icon.IconMouseEnter(MouseHelper.GetCursorPositionParam());
-
-
-            _icon.IconMouseDown(MouseButton.Left, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
-            _icon.IconMouseUp(MouseButton.Left, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
         }
 
-        public bool ContextClick()
-        {
-            _icon.IconMouseDown(MouseButton.Right, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
-            _icon.IconMouseUp(MouseButton.Right, MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
+        public void MouseLeave() {
+            _icon.IconMouseLeave(MouseHelper.GetCursorPositionParam());
+        }
 
+        public void MouseDown(int x, int y, MouseButtons button) {
+            _icon.IconMouseDown(GeMouseButton(button), MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
+        }
+
+        public bool MouseUp(int x, int y, MouseButtons button) {
+            _icon.IconMouseUp(GeMouseButton(button), MouseHelper.GetCursorPositionParam(), System.Windows.Forms.SystemInformation.DoubleClickTime);
             return true;
+        }
+
+        private MouseButton GeMouseButton(MouseButtons buttons) {
+            switch (buttons) {
+                case MouseButtons.Left:
+                    return MouseButton.Left;
+                
+                case MouseButtons.Right:
+                    return MouseButton.Right;
+                
+                case MouseButtons.Middle:
+                    return MouseButton.Middle;
+            }
+
+            throw new ArgumentOutOfRangeException();
+        }
+        
+        public void MouseMove(int x, int y, MouseButtons button) {
+            _icon.IconMouseMove(MouseHelper.GetCursorPositionParam());
         }
         
         public void Render(
@@ -84,6 +95,15 @@ namespace ProtoDock.Tray
                     _iconBitmap,
                     new Rectangle(0, 0, (int)width, (int)height)
                 );
+            }
+            
+            if (_mediator.Api.ScreenRect(this, out var screenRect))
+            {
+                _icon.Placement = new ManagedShell.Interop.NativeMethods.Rect(
+                    screenRect.Left,
+                    screenRect.Top,
+                    screenRect.Right,
+                    screenRect.Bottom);
             }
         }
         

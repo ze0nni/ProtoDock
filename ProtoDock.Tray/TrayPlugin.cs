@@ -57,5 +57,10 @@ namespace ProtoDock.Tray
         {
             return new TrayMediator(this);
         }
+
+        public bool ResolveHook<T>(out T hook) {
+            hook = default;
+            return false;
+        }
     }
 }

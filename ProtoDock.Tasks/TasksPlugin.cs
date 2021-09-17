@@ -17,5 +17,10 @@ namespace ProtoDock.Tasks
         {
             return new TasksMediator(this);
         }
+        
+        public bool ResolveHook<T>(out T hook) {
+            hook = default;
+            return false;
+        }
     }
 }

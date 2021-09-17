@@ -17,5 +17,10 @@ namespace ProtoDock.QuickLaunch
         {
             return new QuickLaunchMediator(this);
         }
+        
+        public bool ResolveHook<T>(out T hook) {
+            hook = default;
+            return false;
+        }
     }
 }

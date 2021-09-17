@@ -10,7 +10,7 @@ namespace ProtoDock.Api
 
         IDockPanelMediator Create();
         
-        bool ResolveHook<T>(out T component);
+        bool ResolveHook<T>(out T hook);
 
         public interface IDockSetupHook {
             void OnDockSetup();

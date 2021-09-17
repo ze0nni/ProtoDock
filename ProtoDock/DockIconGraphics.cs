@@ -111,11 +111,13 @@ namespace ProtoDock
         public void MouseEnter()
         {
             _isMouseOver = true;
+            Model.MouseEnter();
         }
 
         public void MouseLeave()
         {
             _isMouseOver = false;
+            Model.MouseLeave();
         }
 
         public void Render(Graphics graphics)

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
 {
@@ -44,7 +45,27 @@ namespace ProtoDock.Tasks
             
         }
 
-        public void Click()
+        public void MouseEnter() {
+        }
+
+        public void MouseLeave() {
+            
+        }
+
+        public void MouseDown(int x, int y, MouseButtons button) {
+        }
+
+        public bool MouseUp(int x, int y, MouseButtons button) {
+            if (button == MouseButtons.Left) {
+                Click();
+            }
+            return true;
+        }
+
+        public void MouseMove(int x, int y, MouseButtons button) {
+        }
+        
+        private void Click()
         {
             var style = (User32.WindowStyles)User32.GetWindowLong(_hWnd, User32.WindowLongIndexFlags.GWL_STYLE);
             var minimized = style.HasFlag(User32.WindowStyles.WS_MINIMIZE);
@@ -61,11 +82,6 @@ namespace ProtoDock.Tasks
             {
                 User32.ShowWindow(_hWnd, User32.WindowShowStyle.SW_MINIMIZE);
             }
-        }
-
-        public bool ContextClick()
-        {
-            return false;
         }
 
         public string Title

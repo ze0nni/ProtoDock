@@ -12,8 +12,13 @@ namespace ProtoDock.Api
         bool Hovered { get; }
 
         void Update();
-        void Click();
-        bool ContextClick();
+
+        void MouseEnter();
+        void MouseLeave();
+        void MouseDown(int x, int y, MouseButtons button);
+        bool MouseUp(int x, int y, MouseButtons button);
+        void MouseMove(int x, int y, MouseButtons button);
+
         void Render(Graphics graphics, float width, float height, bool isSelected);        
         bool Store(out string data);
     }

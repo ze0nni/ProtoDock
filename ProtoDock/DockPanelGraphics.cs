@@ -68,41 +68,24 @@ namespace ProtoDock {
 
 		public void MouseDown(float x, float y, MouseButtons button)
 		{
+			GetIconFromX(x, out _draggedIcon, out _, out _);
+			
 			switch (button) {
 				case MouseButtons.Left:
-					GetIconFromX(x, out _draggedIcon, out _, out _);
 					_mouseDownPoint = new PointF(x, y);
 					SetState(State.LeftDown);
 					break;
-			} 
+			}
+			
+			_draggedIcon?.Model.MouseDown(0, 0, button);
 		}
 
 		public bool MouseUp(float x, float y, MouseButtons button) {
+			var icon = _draggedIcon;
 			_draggedIcon = null;
 			SetState(State.Idle);
 
-			switch (button) {
-				case MouseButtons.Left:
-				{
-					if (GetIconFromX(x, out var icon, out var _, out var _)) {
-						icon.Model.Click();
-						return true;
-					}
-
-					return false;
-				}
-
-				case MouseButtons.Right:
-				{
-					if (GetIconFromX(x, out var icon, out var _, out var _)) {
-						return icon.Model.ContextClick();
-					}
-
-					return false;
-				}
-			}
-
-			return false;
+			return icon?.Model.MouseUp(0, 0, button) ?? false;
 		}
 
 		public void MouseMove(float x, float y) {
