@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ProtoDock.Api
 {
@@ -24,5 +23,29 @@ namespace ProtoDock.Api
             out Action<T> addItem,
             out Action<T> removeItem,
             Action<T> onValueChanged);
+    }
+
+    public static class IDockSettingsDisplayTools
+    {
+        public static void Combo<T>(
+            this IDockSettingsDisplay display,
+            T selected,
+            out Func<T> getValue,
+            out Action<T> addItem,
+            out Action<T> removeItem,
+            Action<T> onValueChanged) where T: Enum
+        {
+            getValue = default;
+            addItem = default;
+            removeItem = default;
+            
+            display.Combo<T>(
+                selected,
+                (T[])Enum.GetValues(typeof(T)),
+                out getValue,
+                out addItem,
+                out removeItem,
+                onValueChanged);
+        }
     }
 }

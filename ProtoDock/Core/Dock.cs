@@ -193,6 +193,11 @@ namespace ProtoDock.Core
             return false;
         }
 
+        public override string ToString()
+        {
+            return "Dock";
+        }
+
         public void Display(IDockSettingsDisplay display)
         {
             display.Header("Skin");
@@ -207,6 +212,18 @@ namespace ProtoDock.Core
                 s =>
                 {
                     Graphics.UpdateSkin(s);
+                });
+
+            display.Header("Position");
+
+            display.Combo<Position>(
+                Graphics.Position,
+                out _,
+                out _,
+                out _,
+                p =>
+                {
+                    Graphics.UpdatePosition(p);
                 });
         }
     }

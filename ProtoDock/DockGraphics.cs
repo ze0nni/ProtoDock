@@ -18,7 +18,7 @@ namespace ProtoDock
 
     public sealed class DockGraphics : IDisposable
     {
-        public Position Position => Position.Bottom;
+        public Position Position { get; private set; }
 
         public bool IsDirty { get; private set; }
 
@@ -73,6 +73,7 @@ namespace ProtoDock
         internal void Store(Config.DockConfig config)
         {
             config.Skin = SelectedSkin.Name;
+            config.Position = Position;
         }
 
         internal void Restore(Config.DockConfig config)
@@ -82,6 +83,9 @@ namespace ProtoDock
             {
                 UpdateSkin(skin);
             }
+
+            UpdatePosition(config.Position);
+
         }
 
         internal void AddPanel(DockPanel model) {
@@ -257,6 +261,14 @@ namespace ProtoDock
             }
 
             SetDirty();
+        }
+
+        public void UpdatePosition(Position position)
+        {
+            Position = position;
+            SetDirty();
+
+            Changed?.Invoke();
         }
 
         public void UpdateSkin(DockSkin skin)

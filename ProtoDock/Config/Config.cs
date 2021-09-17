@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ProtoDock.Api;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ProtoDock.Config
 {
@@ -9,6 +11,9 @@ namespace ProtoDock.Config
     [Serializable]
     public class DockConfig
     {
+        [DefaultValue(nameof(Position.Bottom))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public Position Position { get; set; }
 
         [DefaultValue(null)]
         public string Skin { get; set; }
