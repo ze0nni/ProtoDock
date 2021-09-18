@@ -15,6 +15,7 @@ namespace ProtoDock.Settings
             out Func<T> getValue,
             out Action<T> addItem,
             out Action<T> removeItem,
+            out Action<T> select,
             Action<T> onChangeValue
             )
         {
@@ -30,6 +31,7 @@ namespace ProtoDock.Settings
             getValue = () => { return (T)this.SelectedItem; };
             addItem = i => { this.Items.Add(i); };
             removeItem = i => { this.Items.Remove(i); };
+            select = i => { this.SelectedItem = i; };
             this.SelectedIndexChanged += (s, e) => {
                 onChangeValue?.Invoke((T)this.SelectedItem);
             };

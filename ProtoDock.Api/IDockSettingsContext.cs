@@ -17,11 +17,13 @@ namespace ProtoDock.Api
     {
         void Header(string text);
         void Combo<T>(
+            string label,
             T selected,
             IEnumerable<T> items,
             out Func<T> getValue,
             out Action<T> addItem,
             out Action<T> removeItem,
+            out Action<T> select,
             Action<T> onValueChanged);
     }
 
@@ -29,22 +31,27 @@ namespace ProtoDock.Api
     {
         public static void Combo<T>(
             this IDockSettingsDisplay display,
+            string label,
             T selected,
             out Func<T> getValue,
             out Action<T> addItem,
             out Action<T> removeItem,
+            out Action<T> select,
             Action<T> onValueChanged) where T: Enum
         {
             getValue = default;
             addItem = default;
             removeItem = default;
+            select = default;
             
             display.Combo<T>(
+                label,
                 selected,
                 (T[])Enum.GetValues(typeof(T)),
                 out getValue,
                 out addItem,
                 out removeItem,
+                out select,
                 onValueChanged);
         }
     }

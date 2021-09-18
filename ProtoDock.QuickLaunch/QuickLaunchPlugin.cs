@@ -18,7 +18,8 @@ namespace ProtoDock.QuickLaunch
             return new QuickLaunchMediator(this);
         }
         
-        public bool ResolveHook<T>(out T hook) {
+        public bool ResolveHook<T>(out T hook) where T : class
+        {
             hook = default;
             return false;
         }

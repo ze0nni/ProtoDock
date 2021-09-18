@@ -14,9 +14,9 @@ namespace ProtoDock.Settings
         {
             this.Text = text;
 
+            this.TextAlign = ContentAlignment.MiddleLeft;
             this.BackColor = SystemColors.ActiveCaption;
             this.ForeColor = SystemColors.ActiveCaptionText;
-            this.BorderStyle = BorderStyle.Fixed3D;
         }
 
         public void Dispose()

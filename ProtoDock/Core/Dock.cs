@@ -200,12 +200,14 @@ namespace ProtoDock.Core
 
         public void Display(IDockSettingsDisplay display)
         {
-            display.Header("Skin");
+            display.Header("View");
 
             var skins = new List<DockSkin>();
             display.Combo<DockSkin>(
+                "Skin",
                 Graphics.SelectedSkin,
                 Graphics.Skins,
+                out _,
                 out _,
                 out _,
                 out _,
@@ -214,10 +216,12 @@ namespace ProtoDock.Core
                     Graphics.UpdateSkin(s);
                 });
 
-            display.Header("Position");
+            display.Header("Behaviour");
 
             display.Combo<Position>(
+                "Position",
                 Graphics.Position,
+                out _,
                 out _,
                 out _,
                 out _,

@@ -7,6 +7,7 @@ using ProtoDock.Settings;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
+using System.Diagnostics;
 
 namespace ProtoDock
 {
@@ -49,32 +50,62 @@ namespace ProtoDock
             source.Display(this);
         }
 
-        private readonly List<ISettingsLine> _lines = new List<ISettingsLine>();
+        private readonly List<(Label label, ISettingsLine line)> _lines = new List<(Label, ISettingsLine)>();
 
         private void Clear()
         {
             foreach (var line in _lines)
             {
-                Content.Controls.Remove(line.Control);
-                line.Dispose();
+                if (line.label != null)
+                {
+                    Content.Controls.Remove(line.label);
+                    line.label.Dispose();
+                }
+                Content.Controls.Remove(line.line.Control);
+                line.line.Control.Dispose();
             }
             _lines.Clear();
         }
 
-        private T Add<T>(T line) where T : ISettingsLine
+        private T Add<T>(string labelText, T line) where T : ISettingsLine
         {
 
+            var left = 0;
+            var top = 0;
+            if (_lines.Count > 0)
+            {
+                var lastLine = _lines[_lines.Count - 1];
+                top = lastLine.line.Control.Top + lastLine.line.Control.Height + 8;
+            }
 
-            line.Control.Width = Content.Width;
+
+            Label label = null;
+            if (!string.IsNullOrEmpty(labelText))
+            {
+                label = new Label();
+                label.AutoSize = false;
+                label.Width = 200;
+                label.Text = labelText;                
+                label.Top = top;
+                label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+                Content.Controls.Add(label);
+                
+                left += 200 + 8;
+            }
+
+            line.Control.Left = left;
+            line.Control.Top = top;
+            line.Control.Width = Content.Width - left;
             line.Control.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
 
             if (_lines.Count > 0)
             {
                 var lastLine = _lines[_lines.Count - 1];
-                line.Control.Top = lastLine.Control.Top + lastLine.Control.Height + 8;
+                line.Control.Top = lastLine.line.Control.Top + lastLine.line.Control.Height + 8;
             }
 
-            _lines.Add(line);
+            _lines.Add((label, line));
             Content.Controls.Add(line.Control);
 
             return line;
@@ -82,21 +113,24 @@ namespace ProtoDock
 
         void IDockSettingsDisplay.Header(string text)
         {
-            Add(new SettingsHeader(text));
+            Add(null, new SettingsHeader(text));
         }
 
         void IDockSettingsDisplay.Combo<T>(
+            string label,
             T selected,
             IEnumerable<T> items,
             out Func<T> getValue,
             out Action<T> addItem,
             out Action<T> removeItem,
+            out Action<T> select,
             Action<T> onValueChanged)
         {
             getValue = default;
             addItem = default;
             removeItem = default;
-            Add(new SettingsCombo<T>(selected, items, out getValue, out addItem, out removeItem, onValueChanged));
+            select = default;
+            Add(label, new SettingsCombo<T>(selected, items, out getValue, out addItem, out removeItem, out select, onValueChanged));
         }
     }
 }

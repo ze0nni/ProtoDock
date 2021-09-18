@@ -222,6 +222,7 @@ namespace ProtoDock
         public DockSkinImage HighlightFg { get; set; }
 
         public DockSkin(
+            string name,
             int vOffset,
             Padding padding,
             Padding panelPadding,
@@ -233,6 +234,7 @@ namespace ProtoDock
             DockSkinImage highlightFg
         )
         {
+            this.Name = name;
             this.VOffset = vOffset;
             this.Padding = padding;
             this.PanelPadding = panelPadding;

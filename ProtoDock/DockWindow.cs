@@ -119,6 +119,7 @@ namespace ProtoDock
 
             list.Add(
                 new DockSkin(
+                    "Classic",
                     0,
                     new Padding(14, 14, 14, 14),
                     new Padding(2, 2, 2, 2),

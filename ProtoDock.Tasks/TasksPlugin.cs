@@ -18,7 +18,8 @@ namespace ProtoDock.Tasks
             return new TasksMediator(this);
         }
         
-        public bool ResolveHook<T>(out T hook) {
+        public bool ResolveHook<T>(out T hook) where T : class
+        {
             hook = default;
             return false;
         }
