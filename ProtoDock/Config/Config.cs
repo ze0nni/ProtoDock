@@ -18,6 +18,8 @@ namespace ProtoDock.Config
         [DefaultValue(null)]
         public string Skin { get; set; }
         public List<DockPanelConfig> Panels { get; set; }
+
+        public Dictionary<string, DockPluginConfig> Plugins { get; set; }
     }
 
     [Serializable]
@@ -37,6 +39,13 @@ namespace ProtoDock.Config
     public class DockIconConfig
     {
         public int MediatorId { get; set; }
+        public int PluginVersion { get; set; }
+        public string Data { get; set; }
+    }
+
+    [Serializable]
+    public class DockPluginConfig
+    {
         public int PluginVersion { get; set; }
         public string Data { get; set; }
     }

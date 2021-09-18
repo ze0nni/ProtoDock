@@ -32,6 +32,17 @@ namespace ProtoDock.Time {
 			context.Register(this);
 		}
 
+		void IDockPlugin.ISettingsHook.OnSettingsRestore(int vertsion, string data)
+		{
+
+		}
+
+		bool IDockPlugin.ISettingsHook.OnSettingsStore(out string data)
+		{
+			data = default;
+			return false;
+		}
+
 		void IDockSettingsSource.Display(IDockSettingsDisplay display)
 		{
 			

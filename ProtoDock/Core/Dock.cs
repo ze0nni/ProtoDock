@@ -12,6 +12,7 @@ using ProtoDock.Time;
 using PInvoke;
 using System.DirectoryServices.ActiveDirectory;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace ProtoDock.Core
 {
@@ -121,16 +122,30 @@ namespace ProtoDock.Core
         }
 
         public void Restore()
-        {            
+        {
             try
             {
                 var json = File.ReadAllText(ConfigPath());
                 var config = System.Text.Json.JsonSerializer.Deserialize<Config.DockConfig>(json);
+
+                if (config.Plugins != null)
+                {
+                    foreach (var p in Plugins)
+                    {
+                        if (p.ResolveHook<IDockPlugin.ISettingsHook>(out var settingsHook) &&
+                            config.Plugins.TryGetValue(p.GUID, out var pluginData))
+                        {
+                            settingsHook.OnSettingsRestore(pluginData.PluginVersion, pluginData.Data);
+                        }
+                    }
+                }
+
+                Graphics.Restore(config);
+
                 foreach (var panelConfig in config.Panels)
                 {
                     AddPanel(panelConfig);
-                }
-                Graphics.Restore(config);
+                }                
             }
             catch (Exception e)
             {
@@ -146,17 +161,36 @@ namespace ProtoDock.Core
 
             var config = new Config.DockConfig
             {
-                Panels = new List<Config.DockPanelConfig>()
+                Panels = new List<Config.DockPanelConfig>(),
+                Plugins = new Dictionary<string, DockPluginConfig>()
             };
 
             Graphics.Store(config);
-            
+
+            foreach (var p in Plugins)
+            {
+                if (p.ResolveHook<IDockPlugin.ISettingsHook>(out var settingsHook))
+                {
+                    if (settingsHook.OnSettingsStore(out var pluginData))
+                    {
+                        config.Plugins[p.GUID] = new DockPluginConfig
+                        {
+                            PluginVersion = p.Version,
+                            Data = pluginData
+                        };
+                    }
+                }
+            }
+
             foreach (var panel in _panels)
             {
                 config.Panels.Add(panel.Store());
             }
 
-            var json = System.Text.Json.JsonSerializer.Serialize(config);            
+            var options = new JsonSerializerOptions();
+            options.WriteIndented = true;
+
+            var json = System.Text.Json.JsonSerializer.Serialize(config, options);
             System.IO.File.WriteAllText(ConfigPath(), json);
         }
 

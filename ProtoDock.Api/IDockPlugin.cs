@@ -23,6 +23,8 @@ namespace ProtoDock.Api
         public interface ISettingsHook
         {
             public void OnSettings(IDockSettingsContext context);
+            public void OnSettingsRestore(int version, string data);
+            public bool OnSettingsStore(out string data);
         }
     }
 }
