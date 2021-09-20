@@ -359,7 +359,7 @@ namespace ProtoDock
             }
         }
         
-        public void UpdateIconsDistance(float x) {
+        private void UpdateIconsDistance(float x) {
             var left = (float)SelectedSkin.Padding.Left;
             
             for (var pi = 0; pi < _panels.Count; pi++) {

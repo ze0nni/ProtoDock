@@ -91,11 +91,9 @@ namespace ProtoDock {
 		public void MouseMove(float x, float y) {
 			switch (_state) {
 				case State.Idle:
-					Dock.UpdateIconsDistance(x);
 					break;
 				
 				case State.LeftDown:
-					Dock.UpdateIconsDistance(x);
 					if (MathF.Abs(_mouseDownPoint.X - x) > Dock.IconSize * 0.5f) {
 						SetState(State.DragIcon);
 					}
