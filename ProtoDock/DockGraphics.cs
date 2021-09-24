@@ -369,6 +369,10 @@ namespace ProtoDock
                     var icon = panel.Icons[ii];
                     var panelX = x - left;
 
+                    if (icon.State != DockIconGraphics.DisplayState.Display) {
+                        continue;
+                    }
+                    
                     var iconCenter = iconLeft + icon.Width * 0.5f;
                     var distance = MathF.Abs(iconCenter - panelX);
                     float ratio;
