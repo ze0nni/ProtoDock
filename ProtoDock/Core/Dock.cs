@@ -9,10 +9,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ProtoDock.Time;
-using PInvoke;
-using System.DirectoryServices.ActiveDirectory;
-using System.Diagnostics;
 using System.Text.Json;
+using System.Linq;
 
 namespace ProtoDock.Core
 {
@@ -236,15 +234,11 @@ namespace ProtoDock.Core
         {
             display.Header("View");
 
-            var skins = new List<DockSkin>();
             display.Combo<DockSkin>(
                 "Skin",
                 Graphics.SelectedSkin,
                 Graphics.Skins,
-                out _,
-                out _,
-                out _,
-                out _,
+                out _,               
                 s =>
                 {
                     Graphics.UpdateSkin(s);
@@ -252,12 +246,19 @@ namespace ProtoDock.Core
 
             display.Header("Behaviour");
 
+            display.Combo<string>(
+                "Screen",
+                Graphics.ActiveScreen.DeviceName,
+                System.Windows.Forms.Screen.AllScreens.Select(s => s.DeviceName),
+                out _,
+                s =>
+                {
+                    Graphics.UpdateScreen(s);
+                });
+
             display.Combo<Position>(
                 "Position",
                 Graphics.Position,
-                out _,
-                out _,
-                out _,
                 out _,
                 p =>
                 {

@@ -39,6 +39,9 @@ namespace ProtoDock
         public readonly IReadOnlyCollection<DockSkin> Skins;
         public DockSkin SelectedSkin { get; private set; }
 
+        private string _screenName;
+        public Screen ActiveScreen { get; private set;  }
+
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;
         private DockIconGraphics _hoveredIcon;
@@ -60,8 +63,6 @@ namespace ProtoDock
             DockWindow = dockWindow;
             _hintWindow = hintWindow;
             Skins = skins;
-
-            UpdateSkin(Skins.First());
         }
 
         public void Dispose()
@@ -73,6 +74,7 @@ namespace ProtoDock
         internal void Store(Config.DockConfig config)
         {
             config.Skin = SelectedSkin.Name;
+            config.ScreenName = _screenName;
             config.Position = Position;
         }
 
@@ -84,6 +86,7 @@ namespace ProtoDock
                 UpdateSkin(skin);
             }
 
+            UpdateScreen(config.ScreenName);
             UpdatePosition(config.Position);
 
         }
@@ -261,6 +264,34 @@ namespace ProtoDock
             }
 
             SetDirty();
+        }
+
+        public void UpdateScreen(string deviceName)
+        {
+            if (ActiveScreen != null && ActiveScreen.DeviceName == deviceName)
+            {
+                return;
+            }
+
+            foreach (var screen in Screen.AllScreens)
+            {
+                if (screen.DeviceName == deviceName)
+                {
+                    ActiveScreen = screen;
+                    _screenName = deviceName;
+
+                    SetDirty();
+                    Changed?.Invoke();
+                    return;
+                }
+            }
+
+            ActiveScreen = Screen.AllScreens[0];
+            _screenName = ActiveScreen.DeviceName;
+
+            SetDirty();
+            Changed?.Invoke();
+
         }
 
         public void UpdatePosition(Position position)

@@ -71,7 +71,7 @@ namespace ProtoDock
         {
 
             var left = 0;
-            var top = 0;
+            var top = 8;
             if (_lines.Count > 0)
             {
                 var lastLine = _lines[_lines.Count - 1];
@@ -120,17 +120,20 @@ namespace ProtoDock
             string label,
             T selected,
             IEnumerable<T> items,
-            out Func<T> getValue,
-            out Action<T> addItem,
-            out Action<T> removeItem,
-            out Action<T> select,
+            out ICollectionController<T> controller,
             Action<T> onValueChanged)
         {
+            var c = new SettingsCombo<T>(selected, items, onValueChanged);
+            controller = c;
+
+            Add(label, c);
+        }
+
+        void IDockSettingsDisplay.Toggle(string label, bool value, out Func<bool> getValue, out Action<bool> setValue, Action<bool> onValueChanged)
+        {
             getValue = default;
-            addItem = default;
-            removeItem = default;
-            select = default;
-            Add(label, new SettingsCombo<T>(selected, items, out getValue, out addItem, out removeItem, out select, onValueChanged));
+            setValue = default;
+            Add(label, new SettingsToggle(value, out getValue, out setValue, onValueChanged));
         }
     }
 }

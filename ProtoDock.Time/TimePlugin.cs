@@ -1,6 +1,13 @@
 ﻿using ProtoDock.Api;
 
 namespace ProtoDock.Time {
+
+	public enum ClockType
+	{
+		DigitWhite,
+		DigitBlack
+	}
+
 	public class TimePlugin : IDockPlugin, IDockPlugin.ISettingsHook, IDockSettingsSource
 	{
 		public string Name => "Time";
@@ -39,13 +46,20 @@ namespace ProtoDock.Time {
 
 		bool IDockPlugin.ISettingsHook.OnSettingsStore(out string data)
 		{
-			data = default;
-			return false;
+			data = "-";
+			return true;
 		}
 
 		void IDockSettingsSource.Display(IDockSettingsDisplay display)
 		{
-			
+			display.Combo<ClockType>(
+				"Clock type",
+				ClockType.DigitBlack,
+				out _,				
+				t =>
+				{
+
+				});
 		}
 	}
 }

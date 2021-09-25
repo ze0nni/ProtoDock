@@ -178,26 +178,32 @@ namespace ProtoDock
 
         public void Render()
         {
-            var screen = Screen.AllScreens[0];
+            var screen = _dock.Graphics.ActiveScreen;
             var bounds = screen.Bounds;
 
             _graphics.Render();
             FormApi.SetImage(this, _graphics.Bitmap);
 
-            this.Left = (bounds.Width - _graphics.Bitmap.Width) / 2;
+            int left;
+            int top;
+
+            left = (bounds.Width - _graphics.Bitmap.Width) / 2;
             switch (_graphics.Position)
             {
                 case Api.Position.Top:
-                    this.Top = -_graphics.SelectedSkin.VOffset;
+                    top = -_graphics.SelectedSkin.VOffset;
                     break;
 
                 case Api.Position.Bottom:
-                    this.Top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset;
+                    top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset;
                     break;
 
                 default:
                     throw new ArgumentException(_graphics.Position.ToString());
-            }            
+            }
+
+            this.Left = bounds.X + left;
+            this.Top = bounds.Y + top;
         }
 
         private void OnTick(Object sender, EventArgs e) {

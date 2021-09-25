@@ -114,6 +114,7 @@ namespace ProtoDock.Tray
         }
 
         private void UpdateView() {
+            //ERROR
             if (_iconBitmap == null  || _iconBitmap.Width != _icon.Icon.Width || _iconBitmap.Height != _icon.Icon.Height)
             _iconBitmap?.Dispose();
             _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);

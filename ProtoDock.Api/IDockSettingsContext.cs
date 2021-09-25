@@ -20,11 +20,24 @@ namespace ProtoDock.Api
             string label,
             T selected,
             IEnumerable<T> items,
-            out Func<T> getValue,
-            out Action<T> addItem,
-            out Action<T> removeItem,
-            out Action<T> select,
+            out ICollectionController<T> controller,
             Action<T> onValueChanged);
+
+        void Toggle(
+            string label,
+            bool value,
+            out Func<bool> getValue,
+            out Action<bool> setValue,
+            Action<bool> onValueChanged
+            );
+    }
+
+    public interface ICollectionController<T>
+    {
+        T getValue();
+        void addItem(T i);
+        void removeItem(T i);
+        void select(T i);
     }
 
     public static class IDockSettingsDisplayTools
@@ -33,25 +46,16 @@ namespace ProtoDock.Api
             this IDockSettingsDisplay display,
             string label,
             T selected,
-            out Func<T> getValue,
-            out Action<T> addItem,
-            out Action<T> removeItem,
-            out Action<T> select,
+            out ICollectionController<T> controller,
             Action<T> onValueChanged) where T: Enum
         {
-            getValue = default;
-            addItem = default;
-            removeItem = default;
-            select = default;
-            
+            controller = default;
+
             display.Combo<T>(
                 label,
                 selected,
                 (T[])Enum.GetValues(typeof(T)),
-                out getValue,
-                out addItem,
-                out removeItem,
-                out select,
+                out controller,
                 onValueChanged);
         }
     }
