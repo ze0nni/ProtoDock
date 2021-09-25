@@ -20,11 +20,5 @@
     <Compile Update="Settings\SettingsToggle.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="SkinEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SkinEditorChooseImage.cs">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
 </Project>

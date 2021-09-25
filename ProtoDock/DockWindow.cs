@@ -23,6 +23,7 @@ namespace ProtoDock
         private long _lastUpdate;
 
         private readonly ContextMenuStrip _contextMenu = new ContextMenuStrip();
+        private SettingsWindow _settingsWindow;
 
         private bool _doExit;
 
@@ -89,7 +90,6 @@ namespace ProtoDock
         private void CreateContextMenu()
         {
             _contextMenu.Items.Add(new ToolStripMenuItem("Settings", null, OnSettingsClick));
-            _contextMenu.Items.Add(new ToolStripMenuItem("Skin", null, OnSkinClick));
 
             _contextMenu.Items.Add(new ToolStripSeparator());
 
@@ -266,12 +266,15 @@ namespace ProtoDock
 
         private void OnSettingsClick(object sender, EventArgs e)
         {
-            new SettingsWindow(_dock, _graphics).Show();
-        }
-
-        private void OnSkinClick(object sender, EventArgs e)
-        {
-            new SkinEditor(_graphics).Show();
+            if (_settingsWindow != null && !_settingsWindow.IsDisposed)
+            {
+                _settingsWindow.BringToFront();
+            }
+            else
+            {
+                _settingsWindow = new SettingsWindow(_dock, _graphics);
+                _settingsWindow.Show();
+            }
         }
 
         private void OnExitClick(object sender, EventArgs e)
