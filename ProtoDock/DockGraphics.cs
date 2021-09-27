@@ -81,10 +81,7 @@ namespace ProtoDock
         internal void Restore(Config.DockConfig config)
         {
             var skin = Skins.FirstOrDefault(s => s.Name == config.Skin);
-            if (skin != null)
-            {
-                UpdateSkin(skin);
-            }
+            UpdateSkin(skin);
 
             UpdateScreen(config.ScreenName);
             UpdatePosition(config.Position);
@@ -305,6 +302,10 @@ namespace ProtoDock
         public void UpdateSkin(DockSkin skin)
         {
             SelectedSkin?.Unload();
+
+            if (skin == null) {
+                skin = Skins.First();
+            }
             SelectedSkin = skin;
             SelectedSkin.Load();
             SetDirty();
