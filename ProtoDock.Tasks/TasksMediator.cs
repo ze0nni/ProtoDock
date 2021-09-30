@@ -20,6 +20,7 @@ namespace ProtoDock.Tasks
 
         private readonly List<IntPtr> _windows = new List<IntPtr>();
         private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
+        private readonly Dictionary<IntPtr, TaskIcon> _hiddenIcons = new Dictionary<IntPtr, TaskIcon>();
 
         public TasksMediator(IDockPlugin plugin): base()
         {
@@ -27,8 +28,6 @@ namespace ProtoDock.Tasks
         }
 
         private Kernel32.SafeLibraryHandle _shellHookLib;
-        private delegate IntPtr SetListener();
-        private delegate void RemoveListener();
 
         public void Setup(IDockPanelApi api)
         {
@@ -126,6 +125,7 @@ namespace ProtoDock.Tasks
                 case HShellMsg.HSHELL_WINDOWCREATED:
                     {
                         _windows.Add(wnd);
+                        CreateIcon(wnd, true);
                         UpdateWindows(true);
                         break;
                     }
@@ -218,11 +218,16 @@ namespace ProtoDock.Tasks
 
                 if (visible)
                 {
-                    CreateIcon(wnd, playAnimation);
+                    if (!_hiddenIcons.ContainsKey(wnd)) {
+                        CreateIcon(wnd, playAnimation);
+                    }
+                    else {
+                        ShowIcon(wnd, playAnimation);
+                    }
                 }
                 else
                 {
-                    DestroyIcon(wnd, playAnimation);
+                    HideIcon(wnd, playAnimation);
                 }
             }
         }
@@ -249,8 +254,26 @@ namespace ProtoDock.Tasks
                 _api.Remove(icon, playDisappear);
                 icon.Dispose();
             }
+
+            if (_hiddenIcons.Remove(wnd, out icon)) {
+                icon.Dispose();
+            }
         }
-        
+
+        private void ShowIcon(IntPtr wnd, bool playAppear) {
+            if (_hiddenIcons.Remove(wnd, out var icon)) {
+                _icons.Add(wnd, icon);
+                _api.Add(icon, playAppear);
+            }
+        }
+
+        private void HideIcon(IntPtr wnd, bool playDisappear) {
+            if (_icons.Remove(wnd, out var icon)) {
+                _hiddenIcons.Add(wnd, icon);
+                _api.Remove(icon, playDisappear);
+            }
+        }
+
         [DllImport("user32.dll")]
         private static extern bool SetTaskmanWindow(IntPtr hWnd);
 
