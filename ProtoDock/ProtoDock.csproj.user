@@ -17,6 +17,9 @@
     <Compile Update="Settings\SettingsHeader.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Settings\SettingsNumber.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Settings\SettingsToggle.cs">
       <SubType>Component</SubType>
     </Compile>

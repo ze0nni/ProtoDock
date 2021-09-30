@@ -32,6 +32,15 @@ namespace ProtoDock.Api
             out Action<bool> setValue,
             Action<bool> onValueChanged
             );
+
+        void Number(
+            string label,
+            int value,
+            int min,
+            int max,
+            out Action<int> setValue,
+            Action<int> onValueChange
+            );
     }
 
     public interface ICollectionController<T>

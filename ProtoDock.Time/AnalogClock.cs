@@ -16,6 +16,8 @@ namespace ProtoDock.Time {
 		
 		private TimeMediator _mediator;
 
+		private int _lastStoredValue = -1;
+
 		private Bitmap _clockBg;
 		private Bitmap _clockFg;
 
@@ -31,8 +33,15 @@ namespace ProtoDock.Time {
 			_clockFg.Dispose();
 		}
 		
+
 		public void Update() {
-			
+			var value = DateTime.Now.Minute;
+			if (_lastStoredValue != value)
+            {
+				_mediator.Api.Dock.SetDirty();
+				_lastStoredValue = value;
+
+			}
 		}
 		
 		public void Render(Graphics graphics, float width, float height, bool isSelected) {
@@ -40,7 +49,7 @@ namespace ProtoDock.Time {
 
 			var now = DateTime.Now;
 
-			DrawArrow(graphics, width, height, width * 0.2f, 10, now.Hour + (now.Minute / 60), 12);
+			DrawArrow(graphics, width, height, width * 0.2f, 10, now.Hour + ((float)now.Minute / 60), 12);
 			DrawArrow(graphics, width, height, width * 0.40f, 5, now.Minute, 60);
 			
 			graphics.DrawImage(_clockFg, 0, 0, width, height);

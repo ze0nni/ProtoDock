@@ -24,7 +24,6 @@ namespace ProtoDock
 
         private readonly ContextMenuStrip _contextMenu = new ContextMenuStrip();
         private SettingsWindow _settingsWindow;
-
         private bool _doExit;
 
         public DockWindow(): base()
@@ -45,8 +44,6 @@ namespace ProtoDock
             _hint = new HintWindow();
 
             _graphics = new DockGraphics(
-                48,
-                8,
                 this,
                 _hint,
                 LoadSkins()

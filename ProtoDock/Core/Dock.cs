@@ -147,7 +147,7 @@ namespace ProtoDock.Core
             }
             catch (Exception e)
             {
-                //
+                Graphics.Restore(null);
             }
         }
 
@@ -242,6 +242,28 @@ namespace ProtoDock.Core
                 s =>
                 {
                     Graphics.UpdateSkin(s);
+                });
+
+            display.Number(
+                "Icons size",
+                Graphics.IconSize,
+                DockGraphics.MIN_ICON_SIZE,
+                DockGraphics.MAX_ICON_SIZE,
+                out _,
+                v =>
+                {
+                    Graphics.UpdateIconSize(v);
+                });
+
+            display.Number(
+                "Icons space",
+                Graphics.IconSpace,
+                DockGraphics.MIN_ICON_SPACE,
+                DockGraphics.MAX_ICON_SPACE,
+                out _,
+                v =>
+                {
+                    Graphics.UpdateIconSpace(v);
                 });
 
             display.Header("Behaviour");

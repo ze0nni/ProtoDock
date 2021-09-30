@@ -18,6 +18,11 @@ namespace ProtoDock
 
     public sealed class DockGraphics : IDisposable
     {
+        public const int MIN_ICON_SIZE = 8;
+        public const int MAX_ICON_SIZE = 512;
+        public const int MIN_ICON_SPACE = 0;
+        public const int MAX_ICON_SPACE = 512;
+
         public Position Position { get; private set; }
 
         public bool IsDirty { get; private set; }
@@ -27,8 +32,8 @@ namespace ProtoDock
         private SizeF _dockSize;
         private Size _drawSize;
 
-        public readonly int IconSize;
-        public readonly int IconSpace;
+        public int IconSize { get; private set; } = 48;
+        public int IconSpace { get; private set; } = 8;
         public readonly DockWindow DockWindow;
         private readonly HintWindow _hintWindow;
 
@@ -51,15 +56,11 @@ namespace ProtoDock
         public event Action Changed;
 
         public DockGraphics(
-            int iconSize,
-            int iconSpace,
             DockWindow dockWindow,
             HintWindow hintWindow,
             List<DockSkin> skins
         )
         {
-            IconSize = iconSize;
-            IconSpace = iconSpace;
             DockWindow = dockWindow;
             _hintWindow = hintWindow;
             Skins = skins;
@@ -74,18 +75,32 @@ namespace ProtoDock
         internal void Store(Config.DockConfig config)
         {
             config.Skin = SelectedSkin.Name;
+            config.IconSize = IconSize;
+            config.IconSpace = IconSpace;
             config.ScreenName = _screenName;
             config.Position = Position;
         }
 
         internal void Restore(Config.DockConfig config)
         {
-            var skin = Skins.FirstOrDefault(s => s.Name == config.Skin);
-            UpdateSkin(skin);
+            if (config == null)
+            {
+                UpdateSkin(null);
+                UpdateIconSize(48);
+                UpdateIconSpace(8);
+                UpdateScreen(null);
+                UpdatePosition(Position.Bottom);
+            }
+            else
+            {
+                var skin = Skins.FirstOrDefault(s => s.Name == config.Skin);
+                UpdateSkin(skin);
+                UpdateIconSize(config.IconSize);
+                UpdateIconSpace(config.IconSpace);
 
-            UpdateScreen(config.ScreenName);
-            UpdatePosition(config.Position);
-
+                UpdateScreen(config.ScreenName);
+                UpdatePosition(config.Position);
+            }
         }
 
         internal void AddPanel(DockPanel model) {
@@ -310,6 +325,22 @@ namespace ProtoDock
             SelectedSkin.Load();
             SetDirty();
 
+            Changed?.Invoke();
+        }
+
+        public void UpdateIconSize(int value)
+        {
+            IconSize = Math.Max(MIN_ICON_SIZE, Math.Min(MAX_ICON_SIZE, value));
+
+            SetDirty();
+            Changed?.Invoke();
+        }
+
+        public void UpdateIconSpace(int value)
+        {
+            IconSpace = Math.Max(MIN_ICON_SPACE, Math.Min(MAX_ICON_SPACE, value));
+
+            SetDirty();
             Changed?.Invoke();
         }
 

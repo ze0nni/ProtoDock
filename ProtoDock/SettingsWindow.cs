@@ -136,11 +136,27 @@ namespace ProtoDock
             Add(label, c);
         }
 
-        void IDockSettingsDisplay.Toggle(string label, bool value, out Func<bool> getValue, out Action<bool> setValue, Action<bool> onValueChanged)
+        void IDockSettingsDisplay.Toggle(
+            string label,
+            bool value,
+            out Func<bool> getValue,
+            out Action<bool> setValue,
+            Action<bool> onValueChanged)
         {
             getValue = default;
             setValue = default;
             Add(label, new SettingsToggle(value, out getValue, out setValue, onValueChanged));
+        }
+
+        void IDockSettingsDisplay.Number(
+            string label,
+            int value,
+            int min,
+            int max,
+            out Action<int> setValue,
+            Action<int> onValueChange)
+        {
+            Add(label, new SettingsNumber(value, min, max, out setValue, onValueChange));
         }
     }
 }

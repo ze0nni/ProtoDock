@@ -18,6 +18,12 @@ namespace ProtoDock.Config
         [DefaultValue(null)]
         public string Skin { get; set; }
 
+        [DefaultValue(48)]
+        public int IconSize { get; set; }
+
+        [DefaultValue(8)]
+        public int IconSpace { get; set; }
+
         public string ScreenName { get; set; }
         public List<DockPanelConfig> Panels { get; set; }
 
