@@ -179,18 +179,20 @@ namespace ProtoDock
             UpdateHoveredIcon(hoveredIcon);
             UpdateIconsDistance(x);
 
+            var dx2 = (Bitmap.Width - (int)_dockSize.Width) / 2;
+
             var screenPos = DockWindow.PointToScreen(new Point((int)x, (int)0));
             switch (Position)
             {
                 case Position.Top:
                     _hintWindow.SetPosition(
-                        screenPos.X,
+                        screenPos.X + dx2,
                         (int)(_dockSize.Height + IconSize * ActiveIconScale),
                         Position);
                     break;
                 case Position.Bottom:
                     _hintWindow.SetPosition(
-                        screenPos.X,
+                        screenPos.X + dx2,
                         (int)(screenPos.Y + OffsetY - IconSize * ActiveIconScale),
                         Position
                     );
