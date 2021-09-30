@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Security.Cryptography.X509Certificates;
@@ -8,8 +9,12 @@ namespace ProtoDock
 {
     public class HintWindow: Form
     {
+        public const int MIN_FONT_SIZE = 8;
+        public const int MAX_FONT_SIZE = 128;
+
         private Bitmap _bitmap;
         private Graphics _graphics;
+        public int FontSize { get; private set; }
         private Font _font;
 
         private Brush _bgBrush;
@@ -25,7 +30,8 @@ namespace ProtoDock
             this.ShowIcon = false;
             this.FormBorderStyle = FormBorderStyle.None;
 
-            _font = new Font(FontFamily.GenericSansSerif, 24);
+            FontSize = 24;
+            _font = new Font(FontFamily.GenericSansSerif, FontSize);
 
             _bgBrush = new SolidBrush(Color.Black);
             _fgBrush = new SolidBrush(Color.White);
@@ -111,6 +117,15 @@ namespace ProtoDock
             }
 
             _text = value;
+
+            _isDirty = true;
+        }
+
+        public void UpdateFontSize(int value)
+        {
+            FontSize = Math.Max(MIN_FONT_SIZE, Math.Min(MAX_FONT_SIZE, value));
+            _font?.Dispose();
+            _font = new Font(FontFamily.GenericSansSerif, FontSize);
 
             _isDirty = true;
         }

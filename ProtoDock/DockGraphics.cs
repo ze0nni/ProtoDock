@@ -33,9 +33,10 @@ namespace ProtoDock
         private Size _drawSize;
 
         public int IconSize { get; private set; } = 48;
-        public int IconSpace { get; private set; } = 8;
+        public int IconSpace { get; private set; } = 8;        
+
         public readonly DockWindow DockWindow;
-        private readonly HintWindow _hintWindow;
+        public HintWindow Hint { get; private set; }
 
         public float ActiveIconScale = 1f;
         public float ActiveIconScaleDistance => IconSize * 3;
@@ -62,7 +63,7 @@ namespace ProtoDock
         )
         {
             DockWindow = dockWindow;
-            _hintWindow = hintWindow;
+            Hint = hintWindow;
             Skins = skins;
         }
 
@@ -79,6 +80,7 @@ namespace ProtoDock
             config.IconSpace = IconSpace;
             config.ScreenName = _screenName;
             config.Position = Position;
+            config.HintFontSize = Hint.FontSize;
         }
 
         internal void Restore(Config.DockConfig config)
@@ -90,6 +92,7 @@ namespace ProtoDock
                 UpdateIconSpace(8);
                 UpdateScreen(null);
                 UpdatePosition(Position.Bottom);
+                Hint.UpdateFontSize(24);
             }
             else
             {
@@ -100,6 +103,7 @@ namespace ProtoDock
 
                 UpdateScreen(config.ScreenName);
                 UpdatePosition(config.Position);
+                Hint.UpdateFontSize(config.HintFontSize);
             }
         }
 
@@ -185,13 +189,13 @@ namespace ProtoDock
             switch (Position)
             {
                 case Position.Top:
-                    _hintWindow.SetPosition(
+                    Hint.SetPosition(
                         screenPos.X + dx2,
                         (int)(_dockSize.Height + IconSize * ActiveIconScale),
                         Position);
                     break;
                 case Position.Bottom:
-                    _hintWindow.SetPosition(
+                    Hint.SetPosition(
                         screenPos.X + dx2,
                         (int)(screenPos.Y + OffsetY - IconSize * ActiveIconScale),
                         Position
@@ -210,7 +214,7 @@ namespace ProtoDock
 
             UpdateHoveredIcon(null);
             ClearIconsDistance();
-            _hintWindow.Hide();
+            Hint.Hide();
             SetDirty();
         }
         
@@ -270,11 +274,11 @@ namespace ProtoDock
 
             if (_hoveredIcon != null)
             {
-                _hintWindow.SetText(icon.Model.Title);
+                Hint.SetText(icon.Model.Title);
             }
             else
             {
-                _hintWindow.SetText("");
+                Hint.SetText("");
             }
 
             SetDirty();

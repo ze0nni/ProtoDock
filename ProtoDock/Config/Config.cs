@@ -24,6 +24,9 @@ namespace ProtoDock.Config
         [DefaultValue(8)]
         public int IconSpace { get; set; }
 
+        [DefaultValue(24)]
+        public int HintFontSize { get; set; }
+
         public string ScreenName { get; set; }
         public List<DockPanelConfig> Panels { get; set; }
 

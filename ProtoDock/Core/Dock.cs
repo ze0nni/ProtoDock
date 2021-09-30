@@ -266,6 +266,17 @@ namespace ProtoDock.Core
                     Graphics.UpdateIconSpace(v);
                 });
 
+            display.Number(
+                "Hint font size",
+                Graphics.Hint.FontSize,
+                HintWindow.MIN_FONT_SIZE,
+                HintWindow.MAX_FONT_SIZE,
+                out _,
+                v =>
+                {
+                    Graphics.Hint.UpdateFontSize(v);
+                });
+
             display.Header("Behaviour");
 
             display.Combo<string>(
