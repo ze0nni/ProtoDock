@@ -8,6 +8,7 @@ namespace ProtoDock.Time {
 		public IDockPanelApi Api { get; private set; }
 
 		private DigitClock _clock;
+		private AnalogClock _analog;
 		
 		public TimeMediator(IDockPlugin plugin) {
 			Plugin = plugin;
@@ -23,14 +24,21 @@ namespace ProtoDock.Time {
 
 		public void Awake() {
 			_clock = new DigitClock(this);
+			_analog = new AnalogClock(this);
 			Api.Add(_clock, false);
+			Api.Add(_analog, false);
 		}
 
 		public void Destroy() {
 			if (_clock != null) {
 				Api.Remove(_clock, false);
 				_clock.Dispose();
-			}			
+			}
+
+			if (_analog != null) {
+				Api.Remove(_analog, false);
+				_analog.Dispose();
+			}
 		}
 
 		public void Update()

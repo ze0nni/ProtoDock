@@ -8,4 +8,14 @@
       <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
     </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Embeded\Analog_bg.png" />
+    <None Remove="Embeded\Analog_fg.png" />
+  </ItemGroup>
+
+   <ItemGroup>
+    <EmbeddedResource Include="Embeded\Analog_bg.png" />
+    <EmbeddedResource Include="Embeded\Analog_fg.png" />
+  </ItemGroup>
+
 </Project>
