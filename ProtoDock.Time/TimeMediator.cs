@@ -1,17 +1,19 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.Windows.Forms;
 using ProtoDock.Api;
 
 namespace ProtoDock.Time {
 	internal class TimeMediator: IDockPanelMediator {
-		public IDockPlugin Plugin { get; }
+		public IDockPlugin Plugin => _plugin;
+		private TimePlugin _plugin;
 
 		public IDockPanelApi Api { get; private set; }
 
-		private DigitClock _clock;
+		private DigitClock _digit;
 		private AnalogClock _analog;
 		
-		public TimeMediator(IDockPlugin plugin) {
-			Plugin = plugin;
+		public TimeMediator(TimePlugin plugin) {
+			_plugin = plugin;
 		}
 
 		public void Setup(IDockPanelApi api) {
@@ -23,16 +25,25 @@ namespace ProtoDock.Time {
 		}
 
 		public void Awake() {
-			_clock = new DigitClock(this);
-			_analog = new AnalogClock(this);
-			Api.Add(_clock, false);
-			Api.Add(_analog, false);
+			Reload();
 		}
 
 		public void Destroy() {
-			if (_clock != null) {
-				Api.Remove(_clock, false);
-				_clock.Dispose();
+			_plugin.removeMediator(this);
+			_plugin = null;
+			Clear();
+		}
+
+		public void Update()
+		{
+
+		}
+
+		private void Clear() {
+			
+			if (_digit != null) {
+				Api.Remove(_digit, false);
+				_digit.Dispose();
 			}
 
 			if (_analog != null) {
@@ -40,10 +51,21 @@ namespace ProtoDock.Time {
 				_analog.Dispose();
 			}
 		}
+		
+		public void Reload() {
+			Clear();
 
-		public void Update()
-		{
-
+			switch (_plugin.ClockType) {
+				case ClockType.Digit:
+					_digit = new DigitClock(this);
+					Api.Add(_digit, false);
+					break;
+				
+				case ClockType.Analog:
+					_analog = new AnalogClock(this);
+					Api.Add(_analog, false);
+					break;
+			}
 		}
 		
 		public bool DragCanAccept(IDataObject data) {

@@ -14,12 +14,11 @@ namespace ProtoDock
     public partial class SettingsWindow : Form, IDockSettingsContext, IDockSettingsDisplay
     {
         private readonly Dock _dock;
-        private readonly DockGraphics _graphics;
 
-        internal SettingsWindow(Dock dock, DockGraphics graphics) : base()
+        internal SettingsWindow(Dock dock) : base()
         {
-
             InitializeComponent();
+            _dock = dock;
 
             Register(dock);
 
@@ -109,6 +108,14 @@ namespace ProtoDock
             Content.Controls.Add(line.Control);
 
             return line;
+        }
+
+        void IDockSettingsDisplay.Flush() {
+            _dock.Flush();
+        }
+
+        void IDockSettingsDisplay.SetDirty() {
+            _dock.Graphics.SetDirty();
         }
 
         void IDockSettingsDisplay.Header(string text)

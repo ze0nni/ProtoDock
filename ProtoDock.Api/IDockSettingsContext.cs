@@ -13,8 +13,10 @@ namespace ProtoDock.Api
         void Display(IDockSettingsDisplay display);
     }
 
-    public interface IDockSettingsDisplay
-    {
+    public interface IDockSettingsDisplay {
+        void Flush();
+        void SetDirty();
+        
         void Header(string text);
         void Combo<T>(
             string label,

@@ -1,20 +1,32 @@
-﻿using ProtoDock.Api;
+﻿using System;
+using System.Collections.Generic;
+using ProtoDock.Api;
 
 namespace ProtoDock.Time {
 
 	public enum ClockType
 	{
-		DigitWhite,
-		DigitBlack
+		Digit,
+		Analog
 	}
 
-	public class TimePlugin : IDockPlugin, IDockPlugin.ISettingsHook, IDockSettingsSource
-	{
+	public class TimePlugin : IDockPlugin, IDockPlugin.ISettingsHook, IDockSettingsSource {
+		private List<TimeMediator> _mediators = new List<TimeMediator>();
+		
 		public string Name => "Time";
 		public string GUID => "{20FCE949-44CA-4F34-A0D4-30FED4972561}";
 		public int Version => 1;
+
+		public ClockType ClockType { get; private set; }
+
 		public IDockPanelMediator Create() {
-			return new TimeMediator(this);
+			var mediator = new TimeMediator(this);
+			_mediators.Add(mediator);
+			return mediator;
+		}
+
+		internal void removeMediator(TimeMediator mediator) {
+			_mediators.Remove(mediator);
 		}
 
 		public bool ResolveHook<T>(out T hook) where T : class {
@@ -39,14 +51,14 @@ namespace ProtoDock.Time {
 			context.Register(this);
 		}
 
-		void IDockPlugin.ISettingsHook.OnSettingsRestore(int vertsion, string data)
-		{
-
+		void IDockPlugin.ISettingsHook.OnSettingsRestore(int vertsion, string data) {
+			Enum.TryParse<ClockType>(data, out var clockType);
+			ClockType = clockType;
 		}
 
 		bool IDockPlugin.ISettingsHook.OnSettingsStore(out string data)
 		{
-			data = "-";
+			data = ClockType.ToString();
 			return true;
 		}
 
@@ -54,11 +66,16 @@ namespace ProtoDock.Time {
 		{
 			display.Combo<ClockType>(
 				"Clock type",
-				ClockType.DigitBlack,
+				ClockType,
 				out _,				
-				t =>
-				{
+				t => {
+					ClockType = t;
 
+					foreach (var m in _mediators) {
+						m.Reload();
+					}
+					
+					display.Flush();
 				});
 		}
 	}

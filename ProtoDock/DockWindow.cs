@@ -272,7 +272,7 @@ namespace ProtoDock
             }
             else
             {
-                _settingsWindow = new SettingsWindow(_dock, _graphics);
+                _settingsWindow = new SettingsWindow(_dock);
                 _settingsWindow.Show();
             }
         }

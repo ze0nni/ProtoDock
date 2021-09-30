@@ -40,8 +40,8 @@ namespace ProtoDock.Time {
 
 			var now = DateTime.Now;
 
-			DrawArrow(graphics, width, height, width * 0.4f, 10, now.Hour + (60 / now.Minute), 12);
-			DrawArrow(graphics, width, height, width * 0.25f, 5, now.Minute, 60);
+			DrawArrow(graphics, width, height, width * 0.4f, 10, now.Hour + now.Minute == 0 ? 0 : (60 / now.Minute), 12);
+			DrawArrow(graphics, width, height, width * 0.20f, 5, now.Minute, 60);
 			
 			graphics.DrawImage(_clockFg, 0, 0, width, height);
 		}
