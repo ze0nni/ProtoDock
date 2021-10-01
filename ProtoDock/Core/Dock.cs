@@ -33,6 +33,8 @@ namespace ProtoDock.Core
         public IReadOnlyList<DockPanel> Panels => _panels;
         private readonly List<DockPanel> _panels = new List<DockPanel>();
 
+        private bool _flush;
+        
         public Dock(IntPtr hInstance, IntPtr hWnd, DockGraphics graphics)
         {
             HInstance = hInstance;
@@ -65,7 +67,7 @@ namespace ProtoDock.Core
         }
 
         public void Dispose() {
-            Flush();
+            Store();
             _disposed = true;
             
             foreach (var panel in _panels) {
@@ -74,6 +76,13 @@ namespace ProtoDock.Core
             _panels.Clear();
         }
 
+        public void Update() {
+            if (_flush) {
+                Store();
+                _flush = true;
+            }
+        }
+        
         private readonly DropMediator _dropMediator = new DropMediator();
         public IDropMediator GetDropMediator(DockPanel forPanel)
         {
@@ -151,8 +160,11 @@ namespace ProtoDock.Core
             }
         }
 
-        public void Flush()
-        {
+        public void Flush() {
+            _flush = true;
+        }
+        
+        private void Store() {
             if (_disposed) {
                 return;
             }

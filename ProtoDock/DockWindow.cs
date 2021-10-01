@@ -207,7 +207,8 @@ namespace ProtoDock
             var ticks = DateTime.Now.Ticks;
             var delta = ticks - _lastUpdate;
             _lastUpdate = ticks;
-            
+
+            _dock.Update();
             _graphics.Update(delta / (1000f * 10000f));
 
             if (_graphics.IsDirty)
