@@ -16,7 +16,11 @@
 		}
 	},
 	"SelectedFg": {
-		"Align": "Bottom",
+		"Align": "BottomRaw",
 		"BitmapSource": "Skins/PanelDark/PanelDark_selected.png"
+	},
+	"SelectedFgOffset": {
+		"X": 0,
+		"Y": 21
 	}
 }
