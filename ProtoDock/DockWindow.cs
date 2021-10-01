@@ -46,7 +46,7 @@ namespace ProtoDock
             _graphics = new DockGraphics(
                 this,
                 _hint,
-                LoadSkins()
+                DockWindowSkinsLoader.LoadSkins()
             );
             _dock = new Dock(HInstance, Handle, _graphics);
 
@@ -104,75 +104,7 @@ namespace ProtoDock
 
             _contextMenu.Items.Add(new ToolStripMenuItem("Exit", null, OnExitClick));
         }
-
-        private List<DockSkin> LoadSkins()
-        {
-            var list = new List<DockSkin>();
-
-            foreach (var r  in Assembly.GetExecutingAssembly().GetManifestResourceNames())
-            {
-                Debug.WriteLine(r);
-            }
-
-            list.Add(
-                new DockSkin(
-                    "Classic",
-                    0,
-                    new Padding(14, 14, 14, 14),
-                    new Padding(2, 2, 2, 2),
-                    new DockSkinImage(
-                        DockSkinImageAlign.Scale9,
-                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default.png")),
-                        new Padding(32, 32, 32, 32)
-                    ),
-                    new DockSkinImage(
-                        DockSkinImageAlign.Scale9,
-                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_panel.png")),
-                        new Padding(8,8,8,8)
-                    ),
-                    new DockSkinImage(
-                        DockSkinImageAlign.Bottom,
-                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_selected.png")),
-                        new Padding()
-                    ),
-                    new DockSkinImage(
-                        DockSkinImageAlign.Bottom,
-                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_selected_fg.png")),
-                        new Padding()
-                    ),
-                    new DockSkinImage(
-                        DockSkinImageAlign.Stretch,
-                        new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_highlight.png")),
-                        new Padding(32, 32, 32, 32)
-                    ),
-                    null
-                )
-            );
-
-            try
-            {
-                foreach (var file in Directory.GetFiles("./Skins/", "*.json"))
-                {
-                    try
-                    {
-                        var data = File.ReadAllText(file);
-                        var skin = JsonSerializer.Deserialize<DockSkin>(data);
-                        skin.Name = file;
-                        list.Add(skin);
-                    }
-                    catch (Exception exc)
-                    {
-                        Debug.WriteLine(exc);
-                    }
-                }
-            } catch
-            {
-                //
-            }
-
-            return list;
-        }
-
+        
         public void Render()
         {
             var screen = _dock.Graphics.ActiveScreen;

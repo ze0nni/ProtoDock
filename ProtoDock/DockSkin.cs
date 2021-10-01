@@ -18,6 +18,10 @@ namespace ProtoDock
         Right,
         Bottom,
         Left,
+        TopRaw,
+        RightRaw,
+        BottomRaw,
+        LeftRaw
     }
 
     [Serializable]
@@ -80,37 +84,76 @@ namespace ProtoDock
                     size.Height / Bitmap.Height
                 );
                 var bmpSize = new SizeF(Bitmap.Width * scale, Bitmap.Height * scale);
+                var bmpSizeRaw = new SizeF(Bitmap.Width, Bitmap.Height);
                 float x;
                 float y;
+                float width;
+                float height;
 
                 switch (Align)
                 {
+                    // Common
                     case DockSkinImageAlign.Top:
                         x = (size.Width - bmpSize.Width) * 0.5f;
                         y = 0;
+                        width = bmpSize.Width;
+                        height = bmpSize.Height;
                         break;
 
                     case DockSkinImageAlign.Right:
                         x = size.Width - bmpSize.Width;
                         y = (size.Height - bmpSize.Height) * 0.5f;
+                        width = bmpSize.Width;
+                        height = bmpSize.Height;
                         break;
 
                     case DockSkinImageAlign.Bottom:
                         x = (size.Width - bmpSize.Width) * 0.5f;
                         y = size.Height - bmpSize.Height;
+                        width = bmpSize.Width;
+                        height = bmpSize.Height;
                         break;
 
                     case DockSkinImageAlign.Left:
                         x = 0;
                         y = (size.Height - bmpSize.Height) * 0.5f;
+                        width = bmpSize.Width;
+                        height = bmpSize.Height;
+                        break;
+                    // Raw
+                    case DockSkinImageAlign.TopRaw:
+                        x = (size.Width - bmpSizeRaw.Width) * 0.5f;
+                        y = 0;
+                        width = bmpSizeRaw.Width;
+                        height = bmpSizeRaw.Height;
                         break;
 
+                    case DockSkinImageAlign.RightRaw:
+                        x = size.Width - bmpSizeRaw.Width;
+                        y = (size.Height - bmpSizeRaw.Height) * 0.5f;
+                        width = bmpSizeRaw.Width;
+                        height = bmpSizeRaw.Height;
+                        break;
 
+                    case DockSkinImageAlign.BottomRaw:
+                        x = (size.Width - bmpSizeRaw.Width) * 0.5f;
+                        y = size.Height - bmpSizeRaw.Height;
+                        width = bmpSizeRaw.Width;
+                        height = bmpSizeRaw.Height;
+                        break;
+
+                    case DockSkinImageAlign.LeftRaw:
+                        x = 0;
+                        y = (size.Height - bmpSizeRaw.Height) * 0.5f;
+                        width = bmpSizeRaw.Width;
+                        height = bmpSizeRaw.Height;
+                        break;
+                    
                     default:
-                        return;
+                        throw new ArgumentException();
                 }
 
-                g.DrawImage(Bitmap, x, y, bmpSize.Width, bmpSize.Height);
+                g.DrawImage(Bitmap, x, y, width, height);
             }
                     
         }
@@ -215,7 +258,11 @@ namespace ProtoDock
         
         public DockSkinImage SelectedBg { get; set; }
 
+        public Point SelectedBgOffset { get; set; }
+        
         public DockSkinImage SelectedFg { get; set; }
+        
+        public Point SelectedFgOffset { get; set; }
 
         public DockSkinImage HighlightBg { get; set; }
 
@@ -287,6 +334,9 @@ namespace ProtoDock
         {
             g.TranslateTransform(x, y);
 
+            var ox = 0;
+            var oy = 0;
+            
             switch (element)
             {
                 case SkinElement.Dock:
@@ -294,10 +344,16 @@ namespace ProtoDock
                     break;
 
                 case SkinElement.SelectedBg:
+                    ox = SelectedBgOffset.X;
+                    oy = SelectedBgOffset.Y;
+                    g.TranslateTransform(ox, oy);
                     SelectedBg?.Draw(g, new SizeF(width, height));
                     break;
 
                 case SkinElement.SelectedFg:
+                    ox = SelectedFgOffset.X;
+                    oy = SelectedFgOffset.Y;
+                    g.TranslateTransform(ox, oy);
                     SelectedFg?.Draw(g, new SizeF(width, height));
                     break;
 
@@ -310,7 +366,7 @@ namespace ProtoDock
                     break;
             }
 
-            g.TranslateTransform(-x, -y);
+            g.TranslateTransform(-(x + ox), -(y + oy));
         }
     }
 }
