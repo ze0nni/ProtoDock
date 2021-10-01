@@ -25,6 +25,13 @@ namespace ProtoDock.Api
             out ICollectionController<T> controller,
             Action<T> onValueChanged);
 
+        void List<T>(
+            string label,
+            T selected,
+            IEnumerable<T> items,
+            out ICollectionController<T> controller,
+            Action<T> onValueChanged);
+        
         void Toggle(
             string label,
             bool value,

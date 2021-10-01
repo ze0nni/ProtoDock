@@ -136,6 +136,19 @@ namespace ProtoDock
 
             Add(label, c);
         }
+        
+        void IDockSettingsDisplay.List<T>(
+            string label,
+            T selected,
+            IEnumerable<T> items,
+            out ICollectionController<T> controller,
+            Action<T> onValueChanged)
+        {
+            var c = new SettingsList<T>(selected, items, onValueChanged);
+            controller = c;
+
+            Add(label, c);
+        }
 
         void IDockSettingsDisplay.Toggle(
             string label,

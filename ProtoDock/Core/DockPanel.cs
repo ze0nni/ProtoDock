@@ -140,5 +140,12 @@ namespace ProtoDock.Core
 
             return config;
         }
+
+        public override string ToString() {
+            if (_mediators.Count == 0) {
+                return "";
+            }
+            return _mediators[0].Plugin.Name;
+        }
     }
 }

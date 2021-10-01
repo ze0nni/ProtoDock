@@ -10,7 +10,20 @@ namespace ProtoDock.Core {
 		}
 
 		public void Display(IDockSettingsDisplay display) {
+			display.List(
+				"",
+				null,
+				_dock.Panels,
+				out var controllerr,
+				v => { }
+			);
 			
+			display.Combo(
+				"Plugins",
+				null,
+				_dock.Plugins,
+				out _,
+				v => {});
 		}
 
 		public override string ToString() {
