@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace ProtoDock.Core
 {
-    public class Dock: IDockApi, IDisposable, IDockSettingsSource
+    public class Dock: IDockApi, IDisposable
     {
         public IntPtr HInstance { get; }
         private bool _disposed;
@@ -235,80 +235,6 @@ namespace ProtoDock.Core
             }
             outPos = default;
             return false;
-        }
-
-        public override string ToString()
-        {
-            return "Dock";
-        }
-
-        public void Display(IDockSettingsDisplay display)
-        {
-            display.Header("View");
-
-            display.Combo<DockSkin>(
-                "Skin",
-                Graphics.SelectedSkin,
-                Graphics.Skins,
-                out _,               
-                s =>
-                {
-                    Graphics.UpdateSkin(s);
-                });
-
-            display.Number(
-                "Icons size",
-                Graphics.IconSize,
-                DockGraphics.MIN_ICON_SIZE,
-                DockGraphics.MAX_ICON_SIZE,
-                out _,
-                v =>
-                {
-                    Graphics.UpdateIconSize(v);
-                });
-
-            display.Number(
-                "Icons space",
-                Graphics.IconSpace,
-                DockGraphics.MIN_ICON_SPACE,
-                DockGraphics.MAX_ICON_SPACE,
-                out _,
-                v =>
-                {
-                    Graphics.UpdateIconSpace(v);
-                });
-
-            display.Number(
-                "Hint font size",
-                Graphics.Hint.FontSize,
-                HintWindow.MIN_FONT_SIZE,
-                HintWindow.MAX_FONT_SIZE,
-                out _,
-                v =>
-                {
-                    Graphics.Hint.UpdateFontSize(v);
-                });
-
-            display.Header("Behaviour");
-
-            display.Combo<string>(
-                "Screen",
-                Graphics.ActiveScreen.DeviceName,
-                System.Windows.Forms.Screen.AllScreens.Select(s => s.DeviceName),
-                out _,
-                s =>
-                {
-                    Graphics.UpdateScreen(s);
-                });
-
-            display.Combo<Position>(
-                "Position",
-                Graphics.Position,
-                out _,
-                p =>
-                {
-                    Graphics.UpdatePosition(p);
-                });
         }
     }
 

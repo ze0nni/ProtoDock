@@ -20,7 +20,8 @@ namespace ProtoDock
             InitializeComponent();
             _dock = dock;
 
-            Register(dock);
+            Register(new DockViewSettings(_dock.Graphics));
+            Register(new DockPanelsSettings(_dock));
 
             foreach (var p in dock.Plugins)
             {
