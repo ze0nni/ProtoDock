@@ -413,11 +413,27 @@ namespace ProtoDock
         private bool PanelFromPosition(float x, float y, out DockPanelGraphics outPanel) {
             for (var i = 0; i < _panels.Count; i++) {
                 var panel = _panels[i];
-                if (x < panel.Left || x > panel.Right ||
-                    y < panel.Top || y  > panel.Bottom)
+                if (x < panel.Left || x > panel.Right)
                     continue;
+
+                bool onPanel;
+                switch (Position) {
+                    case Position.Top:
+                        onPanel = y > panel.Top;
+                        break;
+                    
+                    case Position.Bottom:
+                        onPanel = y < panel.Bottom;
+                        break;
+                    
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                if (!onPanel) {
+                    continue;
+                }
                 
-                //todo: check icons
                 outPanel = panel;
                 return true;
             }
