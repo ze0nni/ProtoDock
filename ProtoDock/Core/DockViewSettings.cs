@@ -13,17 +13,28 @@ namespace ProtoDock.Core {
         public void Display(IDockSettingsDisplay display)
         {
             display.Header("View");
-
-            display.Combo<DockSkin>(
+            
+            display.Combo(
                 "Skin",
                 _graphics.SelectedSkin,
-                _graphics.Skins,
-                out _,               
+                _graphics.Skins.List,
+                out var skins,               
                 s =>
                 {
                     _graphics.UpdateSkin(s);
                 });
 
+            display.Buttons()
+                .Add("Reload", () => {
+                    var selectedName = _graphics.SelectedSkin.Name;
+                    _graphics.Skins.Reload();
+                    _graphics.UpdateSkin(_graphics.Skins.List.FirstOrDefault(s => s.Name == selectedName));
+                    skins.update(_graphics.Skins.List);
+                    skins.@select(_graphics.SelectedSkin);
+                    
+                    _graphics.SetDirty();
+                });
+            
             display.Number(
                 "Icons size",
                 _graphics.IconSize,

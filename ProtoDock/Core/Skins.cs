@@ -7,13 +7,19 @@ using System.Reflection;
 using System.Text.Json;
 using System.Windows.Forms;
 
-namespace ProtoDock {
-	public class DockWindowSkinsLoader {
-		public static List<DockSkin> LoadSkins()
-        {
-            var list = new List<DockSkin>();
+namespace ProtoDock.Core {
+	public sealed class Skins {
+        private static List<DockSkin> _list = new List<DockSkin>();
+        public IReadOnlyCollection<DockSkin> List => _list;
+
+        public Skins() {
+            Reload();
+        }
+
+        public void Reload() {
+            _list.Clear();
             
-            list.Add(
+            _list.Add(
                 new DockSkin{
                     Name = "Classic",
                     VOffset = 0,
@@ -59,7 +65,7 @@ namespace ProtoDock {
                         var data = File.ReadAllText(file);
                         var skin = JsonSerializer.Deserialize<DockSkin>(data);
                         skin.Name = file;
-                        list.Add(skin);
+                        _list.Add(skin);
                     }
                     catch (Exception exc)
                     {
@@ -70,8 +76,6 @@ namespace ProtoDock {
             {
                 //
             }
-
-            return list;
         }
 	}
 }

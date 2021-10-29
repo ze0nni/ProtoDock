@@ -45,8 +45,7 @@ namespace ProtoDock
 
             _graphics = new DockGraphics(
                 this,
-                _hint,
-                DockWindowSkinsLoader.LoadSkins()
+                _hint
             );
             _dock = new Dock(HInstance, Handle, _graphics);
 

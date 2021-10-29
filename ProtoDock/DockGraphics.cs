@@ -42,7 +42,7 @@ namespace ProtoDock
         public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
 
-        public readonly IReadOnlyCollection<DockSkin> Skins;
+        public readonly Skins Skins;
         public DockSkin SelectedSkin { get; private set; }
 
         private string _screenName;
@@ -59,13 +59,12 @@ namespace ProtoDock
 
         public DockGraphics(
             DockWindow dockWindow,
-            HintWindow hintWindow,
-            List<DockSkin> skins
+            HintWindow hintWindow
         )
         {
             DockWindow = dockWindow;
             Hint = hintWindow;
-            Skins = skins;
+            Skins = new Skins();
         }
 
         public void Dispose()
@@ -97,7 +96,7 @@ namespace ProtoDock
             }
             else
             {
-                var skin = Skins.FirstOrDefault(s => s.Name == config.Skin);
+                var skin = Skins.List.FirstOrDefault(s => s.Name == config.Skin);
                 UpdateSkin(skin);
                 UpdateIconSize(config.IconSize);
                 UpdateIconSpace(config.IconSpace);
@@ -336,7 +335,7 @@ namespace ProtoDock
             SelectedSkin?.Unload();
 
             if (skin == null) {
-                skin = Skins.First();
+                skin = Skins.List.First();
             }
             SelectedSkin = skin;
             SelectedSkin.Load();
