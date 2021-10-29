@@ -12,10 +12,7 @@ namespace ProtoDock.Settings {
 			IEnumerable<T> items,
 			Action<T> onChangeValue)
 		{
-			foreach (var item in items) {
-				this.Items.Add(item);
-			}
-
+			update(items);
 			this.SelectedItem = selected;
 
 			this.SelectedValueChanged += (s, e) => {
@@ -29,7 +26,7 @@ namespace ProtoDock.Settings {
 		}
 
 		public T getValue() {
-			throw new System.NotImplementedException();
+			return (T)SelectedItem;
 		}
 
 		public void addItem(T i) {
@@ -42,6 +39,15 @@ namespace ProtoDock.Settings {
 
 		public void @select(T i) {
 			throw new System.NotImplementedException();
+		}
+		
+		public void update(IEnumerable<T> items) {
+			var selected = SelectedItem;
+			Items.Clear();
+			foreach (var i in items) {
+				Items.Add(i);
+			}
+			SelectedItem = selected;
 		}
 	}
 }

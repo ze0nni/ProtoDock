@@ -103,6 +103,12 @@ namespace ProtoDock.Core
             return _dropMediator;
         }
 
+        public DockPanel AddPanel(IDockPlugin plugin) {
+            var panel = AddPanel();
+            panel.AddMediator(plugin.Create());
+            return panel;
+        }
+        
         public DockPanel AddPanel()
         {
             var panel = new DockPanel(this);
@@ -115,12 +121,19 @@ namespace ProtoDock.Core
             return panel;
         }
 
-        public void AddPanel(Config.DockPanelConfig config)
+        public void AddPanel(DockPanelConfig config)
         {
             var panel = new DockPanel(this, config);
             _panels.Add(panel);
             Graphics.AddPanel(panel);
             panel.Awake();
+        }
+
+        public void RemovePanel(DockPanel panel) {
+            _panels.Remove(panel);
+            panel.Dispose();
+            Flush();
+            SetDirty();
         }
 
         public void SetDirty()

@@ -18,11 +18,7 @@ namespace ProtoDock.Settings
         {
             this.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            foreach (var i in items)
-            {
-                this.Items.Add(i);
-            }
-
+            update(items);
             SelectedItem = selected;
 
             this.SelectedIndexChanged += (s, e) => {
@@ -53,6 +49,15 @@ namespace ProtoDock.Settings
         void ICollectionController<T>.select(T i)
         {
             this.SelectedItem = i;
+        }
+
+        public void update(IEnumerable<T> items) {
+            var selected = SelectedItem;
+            Items.Clear();
+            foreach (var i in items) {
+                Items.Add(i);
+            }
+            SelectedItem = selected;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace ProtoDock.Core {
 				"",
 				null,
 				_dock.Panels,
-				out var controllerr,
+				out var panels,
 				v => { }
 			);
 			
@@ -22,8 +22,27 @@ namespace ProtoDock.Core {
 				"Plugins",
 				null,
 				_dock.Plugins,
-				out _,
+				out var plugins,
 				v => {});
+
+			display.Buttons()
+				.Add("Insert", () => {
+					if (plugins.getValue() == null) {
+						return;
+					}
+					_dock.AddPanel(plugins.getValue());
+					panels.update(_dock.Panels);
+				})
+				.Add("Remove", () => {
+					if (panels.getValue() == null) {
+						return;
+					}
+
+					_dock.RemovePanel(panels.getValue());
+					panels.update(_dock.Panels);
+				})
+				.Add("Up", () => { })
+				.Add("Down", () => { });
 		}
 
 		public override string ToString() {

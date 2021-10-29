@@ -48,6 +48,8 @@ namespace ProtoDock.Api
             out Action<int> setValue,
             Action<int> onValueChange
             );
+
+        IButtonsPanel Buttons();
     }
 
     public interface ICollectionController<T>
@@ -56,6 +58,11 @@ namespace ProtoDock.Api
         void addItem(T i);
         void removeItem(T i);
         void select(T i);
+        void update(IEnumerable<T> items);
+    }
+
+    public interface IButtonsPanel {
+        IButtonsPanel Add(string text, Action onClick);
     }
 
     public static class IDockSettingsDisplayTools

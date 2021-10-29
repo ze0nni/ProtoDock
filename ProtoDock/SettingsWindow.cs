@@ -172,5 +172,9 @@ namespace ProtoDock
         {
             Add(label, new SettingsNumber(value, min, max, out setValue, onValueChange));
         }
+
+        public IButtonsPanel Buttons() {
+            return Add(null, new SettingsButtonsPanel());
+        }
     }
 }
