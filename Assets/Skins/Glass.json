@@ -1,0 +1,26 @@
+{
+	"VOffset": 15,
+	"Padding": {
+		"Left": 24,
+		"Top": 24,
+		"Right": 24,
+		"Bottom": 24
+	},
+	"Dock" : {
+		"BitmapSource": "Skins/Glass/Glass_bg.png",
+		"Scale9": {
+			"Left": 42,
+			"Top": 42,
+			"Right": 42,
+			"Bottom": 42
+		}
+	},
+	"SelectedBg": {
+		"Align": "Bottom",
+		"BitmapSource": "Skins/Glass/Selected.png"
+	},
+	"SelectedFg": {
+		"Align": "Bottom",
+		"BitmapSource": "Skins/Glass/Selected_fg.png"
+	}
+}
