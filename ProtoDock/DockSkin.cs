@@ -51,7 +51,9 @@ namespace ProtoDock
             if (!string.IsNullOrEmpty(BitmapSource))
             {
                 Bitmap?.Dispose();
-                Bitmap = new Bitmap(BitmapSource);
+                using (var stream = File.Open(BitmapSource, FileMode.Open, FileAccess.Read)) {
+                    Bitmap = new Bitmap(stream);
+                }
             }
         }
 
