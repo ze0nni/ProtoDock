@@ -1,4 +1,7 @@
-﻿using ProtoDock.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ProtoDock.Api;
 
 namespace ProtoDock.Core {
 	public class DockPanelsSettings : IDockSettingsSource {
@@ -30,6 +33,7 @@ namespace ProtoDock.Core {
 					if (plugins.getValue() == null) {
 						return;
 					}
+
 					_dock.AddPanel(plugins.getValue());
 					panels.update(_dock.Panels);
 				})
@@ -41,12 +45,37 @@ namespace ProtoDock.Core {
 					_dock.RemovePanel(panels.getValue());
 					panels.update(_dock.Panels);
 				})
-				.Add("Up", () => { })
-				.Add("Down", () => { });
+				.Add("Right", () => {
+					if (panels.getValue() == null) {
+						return;
+					}
+
+					var index = IndexOf(_dock.Panels, panels.getValue());
+					_dock.MovePanel(panels.getValue(), index + 1);
+					panels.update(_dock.Panels);
+				})
+				.Add("Left", () => {
+					if (panels.getValue() == null) {
+						return;
+					}
+
+					var index = IndexOf(_dock.Panels, panels.getValue());
+					_dock.MovePanel(panels.getValue(), index - 1);
+					panels.update(_dock.Panels);
+				});
 		}
 
 		public override string ToString() {
 			return "Panels";
+		}
+
+		private static int IndexOf<T>(IReadOnlyList<T> list, T value) {
+			for (var i = 0; i < list.Count; i++) {
+				if (value.Equals(list[i])) {
+					return i;
+				}
+			}
+			return -1;
 		}
 	}
 }

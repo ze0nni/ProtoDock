@@ -132,8 +132,20 @@ namespace ProtoDock.Core
         public void RemovePanel(DockPanel panel) {
             _panels.Remove(panel);
             panel.Dispose();
+            Graphics.RemovePanel(panel);
+            
             Flush();
-            SetDirty();
+        }
+
+        public void MovePanel(DockPanel panel, int index) {
+            if (index < 0 || index > _panels.Count - 1) {
+                return;
+            }
+            _panels.Remove(panel);
+            _panels.Insert(index, panel);
+            Graphics.MovePanel(panel, index);
+
+            Flush();
         }
 
         public void SetDirty()

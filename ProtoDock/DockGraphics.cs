@@ -49,6 +49,7 @@ namespace ProtoDock
         public Screen ActiveScreen { get; private set;  }
 
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
+        private readonly Dictionary<DockPanel, DockPanelGraphics> _panelsMap = new Dictionary<DockPanel, DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;
         private DockIconGraphics _hoveredIcon;
 
@@ -110,11 +111,21 @@ namespace ProtoDock
         internal void AddPanel(DockPanel model) {
             var panel = new DockPanelGraphics(this, model);
             _panels.Add(panel);
+            _panelsMap[model] = panel; 
             SetDirty();
         }
         
-        internal void RemovePanel(DockPanel panel) {
-            throw new NotImplementedException();
+        internal void RemovePanel(DockPanel model) {
+            var panel = _panelsMap[model];
+            _panels.Remove(panel);
+            SetDirty();
+        }
+
+        internal void MovePanel(DockPanel model, int index) {
+            var panel = _panelsMap[model];
+            _panels.Remove(panel);
+            _panels.Insert(index, panel);
+            SetDirty();
         }
         
         internal void AddIcon(DockPanel panelModel, IDockIcon iconModel, bool playAppear)

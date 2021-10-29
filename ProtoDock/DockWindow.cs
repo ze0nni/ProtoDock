@@ -90,18 +90,6 @@ namespace ProtoDock
 
             _contextMenu.Items.Add(new ToolStripSeparator());
 
-            var pluginsMenu = new ToolStripMenuItem("Add panel");
-            _contextMenu.Items.Add(pluginsMenu);
-            foreach (var p in _dock.Plugins)
-            {
-                pluginsMenu.DropDownItems.Add(new ToolStripMenuItem(p.Name, null, (s, e) =>
-                {
-                    _dock.AddPanel().AddMediator(p.Create());
-                }));
-            }
-
-            _contextMenu.Items.Add(new ToolStripSeparator());
-
             _contextMenu.Items.Add(new ToolStripMenuItem("Exit", null, OnExitClick));
         }
         
