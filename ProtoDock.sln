@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Tray", "ProtoDock
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Tasks", "ProtoDock.Tasks\ProtoDock.Tasks.csproj", "{B90E8647-841C-4D91-82BD-D746873E4CE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.QuickLaunch", "ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj", "{6B7A596C-3E0A-49F1-8150-543CB20A81F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.QuickLaunch", "ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj", "{6B7A596C-3E0A-49F1-8150-543CB20A81F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.Time", "ProtoDock.Time\ProtoDock.Time.csproj", "{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Time", "ProtoDock.Time\ProtoDock.Time.csproj", "{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.Autostart", "ProtoDock.Autostart\ProtoDock.Autostart.csproj", "{E7298FEF-88F5-46AB-A99A-B20AB05130A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

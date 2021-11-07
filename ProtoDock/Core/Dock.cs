@@ -11,6 +11,7 @@ using System.Linq;
 using ProtoDock.Time;
 using System.Text.Json;
 using System.Linq;
+using ProtoDock.Autostart;
 
 namespace ProtoDock.Core
 {
@@ -46,6 +47,7 @@ namespace ProtoDock.Core
             _plugins.Add(new TasksPlugin());
             _plugins.Add(new TrayPlugin());
             _plugins.Add(new TimePlugin());
+            _plugins.Add(new AutostartPlugin());
 
             foreach (var p in _plugins) {
                 if (p.ResolveHook<IDockPlugin.IDockSetupHook>(out var dockSetupHook)) {
