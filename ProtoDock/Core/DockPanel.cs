@@ -27,8 +27,14 @@ namespace ProtoDock.Core
             var mediatorsList = new List<IDockPanelMediator>();
             foreach (var mediatorConfig in config.Mediators)
             {
-                var mediator = _dock.PluginFromGUID(mediatorConfig.PluginGUID)?.Create() ?? null;
-                mediator?.Setup(this);
+                var plugin = _dock.PluginFromGUID(mediatorConfig.PluginGUID);
+                if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook))
+                {
+                    System.Diagnostics.Debug.WriteLine($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
+                    continue;
+                }
+                var mediator = panelHook.Create();
+                mediator.Setup(this);
                 mediatorsList.Add(mediator);
                 if (mediator != null)
                 {

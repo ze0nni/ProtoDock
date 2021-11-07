@@ -9,7 +9,7 @@ using static PInvoke.User32;
 
 namespace ProtoDock.Tray
 {
-    public class TrayPlugin : IDockPlugin
+    public class TrayPlugin : IDockPlugin, IDockPlugin.IPanelHook
     {
         public static readonly string Shell_TrayWnd = "Shell_TrayWnd";
 
@@ -60,8 +60,20 @@ namespace ProtoDock.Tray
 
         public bool ResolveHook<T>(out T hook) where T : class
         {
+            switch (typeof(T))
+            {
+                case var cls when cls == typeof(IDockPlugin.IPanelHook):
+                    hook = this as T;
+                    return true;
+            }
+
             hook = default;
             return false;
+        }
+
+        public override string ToString()
+        {
+            return "Tray panel";
         }
     }
 }

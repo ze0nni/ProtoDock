@@ -1,11 +1,8 @@
 ﻿using ProtoDock.Api;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ProtoDock.Tasks
 {
-    public class TasksPlugin : IDockPlugin
+    public class TasksPlugin : IDockPlugin, IDockPlugin.IPanelHook
     {
         public string Name => "Tasks";
 
@@ -20,8 +17,20 @@ namespace ProtoDock.Tasks
         
         public bool ResolveHook<T>(out T hook) where T : class
         {
+            switch (typeof(T))
+            {
+                case var cls when cls == typeof(IDockPlugin.IPanelHook):
+                    hook = this as T;
+                    return true;
+            }
+
             hook = default;
             return false;
+        }
+
+        public override string ToString()
+        {
+            return "Tasks bar";
         }
     }
 }

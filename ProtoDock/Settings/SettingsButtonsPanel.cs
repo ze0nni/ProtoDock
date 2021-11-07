@@ -18,7 +18,9 @@ namespace ProtoDock.Settings {
 			button.Text = text;
 			button.Click += (s, e) => onClick();
 			Controls.Add(button);
-			
+			Controls.SetChildIndex(button, 0);
+
+
 			return this;
 		}
 	}

@@ -10,7 +10,12 @@ namespace ProtoDock.Time {
 		Analog
 	}
 
-	public class TimePlugin : IDockPlugin, IDockPlugin.ISettingsHook, IDockSettingsSource {
+	public class TimePlugin :
+			IDockPlugin,
+			IDockPlugin.IPanelHook,
+			IDockPlugin.ISettingsHook,
+			IDockSettingsSource 
+	{
 		private List<TimeMediator> _mediators = new List<TimeMediator>();
 		
 		public string Name => "Time";
@@ -32,6 +37,10 @@ namespace ProtoDock.Time {
 		public bool ResolveHook<T>(out T hook) where T : class {
 			switch (typeof(T))
 			{
+				case var cls when cls == typeof(IDockPlugin.IPanelHook):
+					hook = this as T;
+					return true;
+
 				case var cls when cls == typeof(IDockPlugin.ISettingsHook):
 					hook = this as T;
 					return true;

@@ -8,9 +8,12 @@ namespace ProtoDock.Api
         string GUID { get; }
         int Version { get; }
 
-        IDockPanelMediator Create();
-
         bool ResolveHook<T>(out T hook) where T : class;
+
+        public interface IPanelHook
+        {
+            IDockPanelMediator Create();
+        }
 
         public interface IDockSetupHook {
             void OnDockSetup();

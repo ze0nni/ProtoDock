@@ -11,10 +11,16 @@
     <Compile Update="SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Settings\SettingsButtonsPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Settings\SettingsCombo.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Settings\SettingsHeader.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Settings\SettingsList.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Update="Settings\SettingsNumber.cs">

@@ -24,6 +24,7 @@ namespace ProtoDock.Core
         public Position Position => Graphics.Position;
 
         public IReadOnlyList<IDockPlugin> Plugins => _plugins.AsReadOnly();
+
         public IDockPlugin PluginFromGUID(string guid) => _plugins.FirstOrDefault(p => p.GUID == guid);
 
         public readonly DockGraphics Graphics;
@@ -105,7 +106,12 @@ namespace ProtoDock.Core
 
         public DockPanel AddPanel(IDockPlugin plugin) {
             var panel = AddPanel();
-            panel.AddMediator(plugin.Create());
+            if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook))
+            {
+                throw new ArgumentException($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
+            }
+
+            panel.AddMediator(panelHook.Create());
             return panel;
         }
         

@@ -24,7 +24,7 @@ namespace ProtoDock.Core {
 			display.Combo(
 				"Plugins",
 				null,
-				_dock.Plugins,
+				_dock.Plugins.Where(p => p.ResolveHook<IDockPlugin.IPanelHook>(out _)),
 				out var plugins,
 				v => {});
 
@@ -45,6 +45,16 @@ namespace ProtoDock.Core {
 					_dock.RemovePanel(panels.getValue());
 					panels.update(_dock.Panels);
 				})
+				.Add("Left", () => {
+					if (panels.getValue() == null)
+					{
+						return;
+					}
+
+					var index = IndexOf(_dock.Panels, panels.getValue());
+					_dock.MovePanel(panels.getValue(), index - 1);
+					panels.update(_dock.Panels);
+				})
 				.Add("Right", () => {
 					if (panels.getValue() == null) {
 						return;
@@ -52,15 +62,6 @@ namespace ProtoDock.Core {
 
 					var index = IndexOf(_dock.Panels, panels.getValue());
 					_dock.MovePanel(panels.getValue(), index + 1);
-					panels.update(_dock.Panels);
-				})
-				.Add("Left", () => {
-					if (panels.getValue() == null) {
-						return;
-					}
-
-					var index = IndexOf(_dock.Panels, panels.getValue());
-					_dock.MovePanel(panels.getValue(), index - 1);
 					panels.update(_dock.Panels);
 				});
 		}
