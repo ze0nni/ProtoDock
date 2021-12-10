@@ -36,6 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
     <ProjectReference Include="..\ProtoDock.Autostart\ProtoDock.Autostart.csproj" />
+    <ProjectReference Include="..\ProtoDock.GoogleCalendar\ProtoDock.GoogleCalendar.csproj" />
     <ProjectReference Include="..\ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj" />
     <ProjectReference Include="..\ProtoDock.Tasks\ProtoDock.Tasks.csproj" />
     <ProjectReference Include="..\ProtoDock.Time\ProtoDock.Time.csproj" />

@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Time", "ProtoDock
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.Autostart", "ProtoDock.Autostart\ProtoDock.Autostart.csproj", "{E7298FEF-88F5-46AB-A99A-B20AB05130A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.GoogleCalendar", "ProtoDock.GoogleCalendar\ProtoDock.GoogleCalendar.csproj", "{0C69486F-8059-4F5C-9011-BFE03078345C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7298FEF-88F5-46AB-A99A-B20AB05130A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C69486F-8059-4F5C-9011-BFE03078345C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C69486F-8059-4F5C-9011-BFE03078345C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C69486F-8059-4F5C-9011-BFE03078345C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C69486F-8059-4F5C-9011-BFE03078345C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

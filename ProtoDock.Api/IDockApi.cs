@@ -28,9 +28,12 @@ namespace ProtoDock.Api
         IntPtr HWnd { get; }
         Position Position { get;  }
         IReadOnlyList<IDockPlugin> Plugins { get; }
+        
+        void InvokeAction(Action action);
         void SetDirty();
         void Flush();
-
+        
         void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height);
+        
     }
 }

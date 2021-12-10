@@ -57,6 +57,8 @@ namespace ProtoDock
 
         public event Action Changed;
 
+        public event Action OnUpdate;
+        
         public DockGraphics(
             DockWindow dockWindow,
             HintWindow hintWindow
@@ -169,6 +171,8 @@ namespace ProtoDock
                 panelLeft += panel.Width + IconSpace;
             }
             CalculateSize(out _dockSize, out _drawSize);
+            
+            OnUpdate?.Invoke();
         }
 
         public void MouseDown(float x, float y, MouseButtons button)

@@ -12,6 +12,7 @@ using ProtoDock.Time;
 using System.Text.Json;
 using System.Linq;
 using ProtoDock.Autostart;
+using ProtoDock.GoogleCalendar;
 
 namespace ProtoDock.Core
 {
@@ -36,7 +37,9 @@ namespace ProtoDock.Core
         private readonly List<DockPanel> _panels = new List<DockPanel>();
 
         private bool _flush;
-        
+
+        private readonly Queue<Action> _actions = new Queue<Action>();
+
         public Dock(IntPtr hInstance, IntPtr hWnd, DockGraphics graphics)
         {
             HInstance = hInstance;
@@ -48,6 +51,7 @@ namespace ProtoDock.Core
             _plugins.Add(new TrayPlugin());
             _plugins.Add(new TimePlugin());
             _plugins.Add(new AutostartPlugin());
+            _plugins.Add(new GoogleCalendarPlugin());
 
             foreach (var p in _plugins) {
                 if (p.ResolveHook<IDockPlugin.IDockSetupHook>(out var dockSetupHook)) {
@@ -67,6 +71,8 @@ namespace ProtoDock.Core
             {
                 Flush();
             };
+
+            Graphics.OnUpdate += ExecuteActions;
         }
 
         public void Dispose() {
@@ -87,6 +93,7 @@ namespace ProtoDock.Core
         }
         
         private readonly DropMediator _dropMediator = new DropMediator();
+        
         public IDropMediator GetDropMediator(DockPanel forPanel)
         {
             _dropMediator.mediators.Clear();
@@ -244,6 +251,21 @@ namespace ProtoDock.Core
             return Path.Join(root, "config.json");
         }
 
+        
+        public void InvokeAction(Action action) {
+            lock (_actions) {
+                _actions.Enqueue(action);
+            }
+        }
+
+        private void ExecuteActions() {
+            lock (_actions) {
+                while (_actions.Count > 0) {
+                    _actions.Dequeue().Invoke();
+                }
+            }
+        }
+        
         public void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height)
         {
             Graphics.SelectedSkin.Draw(element, g, x, y, width, height);
