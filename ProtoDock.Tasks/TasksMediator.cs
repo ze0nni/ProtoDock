@@ -14,7 +14,7 @@ namespace ProtoDock.Tasks
     {
         public IDockPlugin Plugin { get; private set;  }
 
-        private IDockPanelApi _api;
+        internal IDockPanelApi Api { get; private set; }
         
         private int _shellHookMsg;
 
@@ -31,7 +31,7 @@ namespace ProtoDock.Tasks
 
         public void Setup(IDockPanelApi api)
         {
-            _api = api;
+            Api = api;
         }
 
         public void RestoreIcon(int version, string data)
@@ -59,12 +59,12 @@ namespace ProtoDock.Tasks
             UpdateWindows(false);
             UpdateActiveWindow(User32.GetActiveWindow());
         }
-
+        
         public void Destroy()
         {
             foreach (var icon in _icons)
             {
-                _api.Remove(icon.Value, false);
+                Api.Remove(icon.Value, false);
                 icon.Value.Dispose();
             }
             
@@ -73,6 +73,10 @@ namespace ProtoDock.Tasks
             Dispose();
         }
 
+        public void Update() {
+            ;
+        }
+        
         public bool DragCanAccept(IDataObject data)
         {
             return false;
@@ -123,38 +127,48 @@ namespace ProtoDock.Tasks
             var wnd = m.LParam;
             switch (shellMsg) {
                 case HShellMsg.HSHELL_WINDOWCREATED:
-                    {
-                        _windows.Add(wnd);
-                        CreateIcon(wnd, true);
-                        UpdateWindows(true);
-                        break;
-                    }
+                {
+                    _windows.Add(wnd);
+                    CreateIcon(wnd, true);
+                    UpdateWindows(true);
+                    break;
+                }
 
                 case HShellMsg.HSHELL_WINDOWDESTROYED:
-                    {
-                        _windows.Remove(wnd);
-                        DestroyIcon(wnd, true);
-                        UpdateWindows(false);
+                {
+                    _windows.Remove(wnd);
+                    DestroyIcon(wnd, true);
+                    UpdateWindows(false);
 
-                        break;
-                    }
+                    break;
+                }
 
                 case HShellMsg.HSHELL_REDRAW:
-                    {
-                        if (_icons.TryGetValue(wnd, out var icon))
-                        {
-                            icon.Redraw();
-                            _api.Dock.SetDirty();
-                        }
-                        break;
+                {
+                    if (_icons.TryGetValue(wnd, out var icon)) {
+                        icon.Redraw();
+                        Api.Dock.SetDirty();
                     }
 
+                    break;
+                }
+
                 case HShellMsg.HSHELL_RUDEAPPACTIVATED:
-                    {
-                        UpdateActiveWindow(wnd);
-                        UpdateWindows(false);
-                        break;
+                {
+                    UpdateActiveWindow(wnd);
+                    UpdateWindows(false);
+                    break;
+                }
+                case HShellMsg.HSHELL_FLASH:
+                {
+                    var window = m.LParam;
+                    
+                    if (_icons.TryGetValue(window, out var icon)) {
+                        icon.Flash();
                     }
+
+                    break;
+                }
             }
         }
 
@@ -244,14 +258,14 @@ namespace ProtoDock.Tasks
             if (_icons.ContainsKey(wnd))
                 return;
             
-            var icon = new TaskIcon(this, _api.Dock, wnd);
+            var icon = new TaskIcon(this, Api.Dock, wnd);
             _icons.Add(wnd, icon);
-            _api.Add(icon, playAppear);
+            Api.Add(icon, playAppear);
         }
         
         private void DestroyIcon(IntPtr wnd, bool playDisappear) {
             if (_icons.Remove(wnd, out var icon)) {
-                _api.Remove(icon, playDisappear);
+                Api.Remove(icon, playDisappear);
                 icon.Dispose();
             }
 
@@ -263,14 +277,14 @@ namespace ProtoDock.Tasks
         private void ShowIcon(IntPtr wnd, bool playAppear) {
             if (_hiddenIcons.Remove(wnd, out var icon)) {
                 _icons.Add(wnd, icon);
-                _api.Add(icon, playAppear);
+                Api.Add(icon, playAppear);
             }
         }
 
         private void HideIcon(IntPtr wnd, bool playDisappear) {
             if (_icons.Remove(wnd, out var icon)) {
                 _hiddenIcons.Add(wnd, icon);
-                _api.Remove(icon, playDisappear);
+                Api.Remove(icon, playDisappear);
             }
         }
 

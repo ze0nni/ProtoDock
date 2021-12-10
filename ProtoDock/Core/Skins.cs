@@ -46,13 +46,13 @@ namespace ProtoDock.Core {
                         new Padding()
                     ),
                     SelectedBgOffset = new Point(0, 0),
-                    HighlightBg = new DockSkinImage(
+                    HighlightBg = null,
+                    SelectedFgOffset = new Point(0, 16),
+                    HighlightFg = new DockSkinImage(
                         DockSkinImageAlign.Bottom,
                         new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_highlight.png")),
                         new Padding(32, 32, 32, 32)
-                    ),
-                    SelectedFgOffset = new Point(0, 16),
-                    HighlightFg = null
+                    )
                 }
             );
 

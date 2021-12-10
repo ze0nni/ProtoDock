@@ -104,6 +104,14 @@ namespace ProtoDock.Core
             Dock.SetDirty();
         }
 
+        public void StartFlash(IDockIcon icon) {
+            _dock.Graphics.SetFlashIcon(this, icon, true);
+        }
+
+        public void StopFlash(IDockIcon icon) {
+            _dock.Graphics.SetFlashIcon(this, icon, false);
+        }
+        
         public bool ScreenRect(IDockIcon icon, out System.Drawing.Rectangle outRect)
         {
             if (_dock.PanelScreenPos(this, out var pos))

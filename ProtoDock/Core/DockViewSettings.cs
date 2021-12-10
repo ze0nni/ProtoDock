@@ -35,6 +35,11 @@ namespace ProtoDock.Core {
                     _graphics.SetDirty();
                 });
             
+            display.Buttons()
+                .Add("Flash", () => {
+                    display.FlashWindow();
+                });
+            
             display.Number(
                 "Icons size",
                 _graphics.IconSize,

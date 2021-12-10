@@ -149,6 +149,15 @@ namespace ProtoDock
             }
         }
 
+        internal void SetFlashIcon(DockPanel panelModel, IDockIcon iconModel, bool value) {
+            foreach (var panel in _panels) {
+                if (panel.Model == panelModel) {
+                    panel.SetFlashIcon(iconModel, value);
+                    SetDirty();
+                }
+            }
+        }
+        
         internal void Update(float dt) {
             var panelLeft = 0f;
             for (var i = 0; i < _panels.Count; i++) {

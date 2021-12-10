@@ -17,8 +17,10 @@ namespace ProtoDock.Tasks
 
         public float Width => 1;
         public bool Hovered => true;
+
+        public IDockPanelMediator Mediator => _mediator;
+        private readonly TasksMediator _mediator;
         
-        public IDockPanelMediator Mediator { get; }
         private readonly IntPtr _hWnd;
         private readonly IDockApi _api;
 
@@ -26,10 +28,13 @@ namespace ProtoDock.Tasks
 
         private IntPtr _activeWindow;
         private bool _isActive;
-
-        public TaskIcon(IDockPanelMediator mediator, IDockApi api, IntPtr hWnd)
+        
+        private bool _flashed;
+        private readonly Stopwatch _flashTime = new Stopwatch();
+        
+        public TaskIcon(TasksMediator mediator, IDockApi api, IntPtr hWnd)
         {
-            Mediator = mediator;
+            _mediator = mediator;
             _hWnd = hWnd;
             _api = api;
             Redraw();
@@ -42,7 +47,13 @@ namespace ProtoDock.Tasks
 
         public void Update()
         {
-            
+            if (_flashed) {
+                if (_flashTime.ElapsedMilliseconds > 2000) {
+                    _flashed = false;
+                    _flashTime.Stop();
+                    _mediator.Api.StopFlash(this);
+                }
+            }
         }
 
         public void MouseEnter() {
@@ -117,6 +128,13 @@ namespace ProtoDock.Tasks
             return false;
         }
 
+        internal void Flash() {
+            _flashed = true;
+            _flashTime.Reset();
+            _flashTime.Start();
+            _mediator.Api.StartFlash(this);
+        }
+        
         internal void UpdateActiveWindow(IntPtr wnd)
         {
             if (wnd == _api.HWnd)

@@ -118,7 +118,16 @@ namespace ProtoDock
         void IDockSettingsDisplay.SetDirty() {
             _dock.Graphics.SetDirty();
         }
-
+        
+        void IDockSettingsDisplay.FlashWindow() {
+            var info = new PInvoke.User32.FLASHWINFO();
+            info.cbSize = Marshal.SizeOf(info);
+            info.hwnd = Handle;
+            info.dwFlags = PInvoke.User32.FlashWindowFlags.FLASHW_ALL | PInvoke.User32.FlashWindowFlags.FLASHW_TIMER;
+            info.uCount = 3;
+            PInvoke.User32.FlashWindowEx(ref info);
+        }
+        
         void IDockSettingsDisplay.Header(string text)
         {
             Add(null, new SettingsHeader(text));

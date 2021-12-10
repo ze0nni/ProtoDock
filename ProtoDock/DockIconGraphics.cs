@@ -23,6 +23,8 @@ namespace ProtoDock
 
         public float Width => Model.Width * _size;
         public float Height => _size;
+
+        public bool Flash;
         
         private float Size
         {
@@ -120,11 +122,20 @@ namespace ProtoDock
             Model.MouseLeave();
         }
 
-        public void Render(Graphics graphics)
-        {
-            if (State == DisplayState.Display)
-            {
-                Model.Render(graphics, Width, Height, _isMouseOver);
+        public void Render(Graphics graphics) {
+            if (State != DisplayState.Display) {
+                return;
+            }
+
+            var displayFlash = DateTime.Now.Millisecond > 500;
+            if (Flash && displayFlash) {
+                _panel.Dock.SelectedSkin.Draw(SkinElement.HighlightBg,  graphics, 0, 0, Width, Height);
+            }
+            
+            Model.Render(graphics, Width, Height, _isMouseOver);
+
+            if (Flash && displayFlash) {
+                _panel.Dock.SelectedSkin.Draw(SkinElement.HighlightFg,  graphics, 0, 0, Width, Height);
             }
         }
 

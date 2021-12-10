@@ -7,5 +7,9 @@
         void Add(IDockIcon icon, bool playAppear);
         void Remove(IDockIcon icon, bool playDisappear);
         bool ScreenRect(IDockIcon icon, out System.Drawing.Rectangle rect);
+
+        void StartFlash(IDockIcon icon);
+        
+        void StopFlash(IDockIcon icon);
     }
 }

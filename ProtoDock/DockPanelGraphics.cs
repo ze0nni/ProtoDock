@@ -66,6 +66,15 @@ namespace ProtoDock {
 			Dock.SetDirty();
 		}
 
+		internal void SetFlashIcon(IDockIcon model, bool value) {
+			var index = _icons.FindIndex(d => d.Model == model);
+			if (index == -1) {
+				return;
+			}
+
+			_icons[index].Flash = value;
+		}
+
 		public void MouseDown(float x, float y, MouseButtons button)
 		{
 			GetIconFromX(x, out _draggedIcon, out _, out _);
@@ -132,6 +141,12 @@ namespace ProtoDock {
 				}
 			}
 			CalculateSize(out _drawSize);
+
+			for (var i = 0; i < _icons.Count; i++) {
+				if (_icons[i].Flash) {
+					Dock.SetDirty();
+				}
+			}
 		}
 		
 		private void SetState(State value)
