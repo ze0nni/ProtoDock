@@ -72,6 +72,7 @@ namespace ProtoDock.Core
         public void AddMediator(IDockPanelMediator mediator)
         {
             mediator.Setup(this);
+            mediator.UpdateScales(_dock.Graphics.Scales);
             mediator.Awake();
 
             _mediators.Add(mediator);

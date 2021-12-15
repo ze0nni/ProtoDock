@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,10 +26,13 @@ namespace ProtoDock.GoogleCalendar {
 		private readonly GoogleCalendarPlugin _plugin;
 		private IDockPanelApi _api;
 		private State _state;
+		private int _lastUpdateMin;
 
 		public CalendarService Service;
 
 		private readonly List<GoogleCalendarIcon> _icons = new List<GoogleCalendarIcon>();
+
+		private PanelScales _scales;
 
 		public GoogleCalendarMediator(GoogleCalendarPlugin plugin) {
 			_plugin = plugin;
@@ -40,7 +44,10 @@ namespace ProtoDock.GoogleCalendar {
 		}
 
 		public void UpdateScales(PanelScales scales) {
-			
+			_scales = scales;
+			foreach (var i in _icons) {
+				i.updateGraphics(scales);
+			}
 		}
 		
 		public void Awake() {
@@ -68,6 +75,10 @@ namespace ProtoDock.GoogleCalendar {
 					break;
 				
 				case State.Validate:
+					if (_lastUpdateMin != DateTime.Now.Minute) {
+						_state = State.Invalidate;
+						ThreadPool.QueueUserWorkItem(_ => Invalidate());
+					}
 					break;
 			}
 		}
@@ -85,8 +96,15 @@ namespace ProtoDock.GoogleCalendar {
 		}
 
 		private void UpdateEvents(IList<Google.Apis.Calendar.v3.Data.Event> events) {
+			_lastUpdateMin = DateTime.Now.Minute;
+			
+			events = events
+				.Where(e => e.Start.DateTime != null)
+				.Where(e=> e.Start.DateTime - DateTime.Now < TimeSpan.FromMinutes(15))
+				.ToList();
+			
 			while (_icons.Count < events.Count) {
-				var i = new GoogleCalendarIcon(this, _api);
+				var i = new GoogleCalendarIcon(this, _api, _scales);
 				_icons.Add(i);
 				_api.Add(i, true);
 			}
@@ -142,6 +160,7 @@ namespace ProtoDock.GoogleCalendar {
 					return;
 				}
 				_api.Dock.InvokeAction(() => {
+					_state = State.Validate;
 					UpdateEvents(events.Items);
 				});
 			}

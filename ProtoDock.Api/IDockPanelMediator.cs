@@ -19,7 +19,7 @@ namespace ProtoDock.Api
     }
 
     public struct PanelScales {
-        public float IconSize;
+        public int IconSize;
         public Position Position;
     }
 }
