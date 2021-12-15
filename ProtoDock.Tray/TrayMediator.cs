@@ -32,6 +32,10 @@ namespace ProtoDock.Tray
 
         }
 
+        public void UpdateScales(PanelScales scales) {
+			
+        }
+        
         public void Awake() {
             var trayService = new TrayService();
             var explorerTraService = new ExplorerTrayService();

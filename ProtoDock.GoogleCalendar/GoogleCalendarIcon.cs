@@ -17,7 +17,11 @@ namespace ProtoDock.GoogleCalendar {
 
 		private Event _data;
 		private Font _font;
-		
+
+		private Color _backgroundColor = Color.Gray;
+		private Color _foregroundColor = Color.White;
+		private Brush _background;
+		private Brush _foreground;
 
 		public GoogleCalendarIcon(GoogleCalendarMediator mediator, IDockPanelApi api) {
 			_mediator = mediator;
@@ -31,9 +35,15 @@ namespace ProtoDock.GoogleCalendar {
 		}
 
 		private void updateGraphics() {
+			_background?.Dispose();
 			_font?.Dispose();
+			_foreground?.Dispose();
 
-			_font = new Font(FontFamily.GenericSansSerif, 12);
+			_background = new SolidBrush(_backgroundColor);
+			_foreground = new SolidBrush(_foregroundColor);
+			_font = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Regular, GraphicsUnit.Pixel);
+			
+			_api.Dock.SetDirty();
 		}
 
 		public bool Store(out string data) {
@@ -45,7 +55,7 @@ namespace ProtoDock.GoogleCalendar {
 			_data = data;
 			_api.Dock.SetDirty();
 		}
-		
+
 		public void Update() {
 			
 		}
@@ -74,9 +84,9 @@ namespace ProtoDock.GoogleCalendar {
 			if (_data == null) {
 				return;
 			}
-			graphics.DrawRectangle(Pens.Black, 0, 0, width, height);
-			graphics.DrawString(_data.Summary, _font, Brushes.White, new PointF(0, 0));
-			graphics.DrawString(_data.Start.DateTime.ToString(), _font, Brushes.White, new PointF(0, 20));
+			graphics.FillRectangle(_background, 0, 0, width, height);
+			graphics.DrawString(_data.Summary, _font, _foreground, new RectangleF(0, 0, width, height));
+			//graphics.DrawString(_data.Start.DateTime.ToString(), _font, _foreground, new PointF(0, 20));
 		}
 	}
 }

@@ -10,10 +10,16 @@ namespace ProtoDock.Api
         IDockPlugin Plugin { get; }
         void Setup(IDockPanelApi api);
         void RestoreIcon(int version, string data);
+        void UpdateScales(PanelScales scales);
         void Awake();
-        void Destroy();        
+        void Destroy();
         void Update();
         bool DragCanAccept(IDataObject data);
         void DragAccept(int index, IDataObject data);
+    }
+
+    public struct PanelScales {
+        public float IconSize;
+        public Position Position;
     }
 }

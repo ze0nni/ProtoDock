@@ -39,6 +39,10 @@ namespace ProtoDock.Tasks
 
         }
         
+        public void UpdateScales(PanelScales scales) {
+			
+        }
+        
         public void Awake()
         {
             SetTaskmanWindow(Handle);

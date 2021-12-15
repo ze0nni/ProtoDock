@@ -30,6 +30,10 @@ namespace ProtoDock.QuickLaunch
             _icons.Add(icon);
         }
 
+        public void UpdateScales(PanelScales scales) {
+			
+        }
+        
         public void Awake()
         {
             

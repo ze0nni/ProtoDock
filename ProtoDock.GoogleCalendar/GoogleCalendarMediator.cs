@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
@@ -25,7 +26,7 @@ namespace ProtoDock.GoogleCalendar {
 		private IDockPanelApi _api;
 		private State _state;
 
-		private CalendarService _service;
+		public CalendarService Service;
 
 		private readonly List<GoogleCalendarIcon> _icons = new List<GoogleCalendarIcon>();
 
@@ -38,6 +39,10 @@ namespace ProtoDock.GoogleCalendar {
 			_api = api;
 		}
 
+		public void UpdateScales(PanelScales scales) {
+			
+		}
+		
 		public void Awake() {
 			ThreadPool.QueueUserWorkItem(_ => Login());
 		}
@@ -53,7 +58,7 @@ namespace ProtoDock.GoogleCalendar {
 		public void Update() {
 			switch (_state) {
 				case State.Loading:
-					if (_service != null) {
+					if (Service != null) {
 						_state = State.Invalidate;
 						ThreadPool.QueueUserWorkItem(_ => Invalidate());
 					}
@@ -118,13 +123,13 @@ namespace ProtoDock.GoogleCalendar {
 			});
 
 			_api.Dock.InvokeAction(() => {
-				_service = service;
+				Service = service;
 			});
 		}
 
 		private void Invalidate() {
 			try {
-				EventsResource.ListRequest request = _service.Events.List("primary");
+				EventsResource.ListRequest request = Service.Events.List("primary");
 				request.TimeMin = DateTime.Now;
 				request.ShowDeleted = false;
 				request.SingleEvents = true;

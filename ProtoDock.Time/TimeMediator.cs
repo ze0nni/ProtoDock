@@ -24,6 +24,10 @@ namespace ProtoDock.Time {
 			
 		}
 
+		public void UpdateScales(PanelScales scales) {
+			
+		}
+		
 		public void Awake() {
 			Reload();
 		}

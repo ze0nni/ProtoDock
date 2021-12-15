@@ -58,6 +58,11 @@ namespace ProtoDock
         public event Action Changed;
 
         public event Action OnUpdate;
+
+        public PanelScales Scales => new PanelScales {
+            IconSize = IconSize,
+            Position = Position
+        };
         
         public DockGraphics(
             DockWindow dockWindow,

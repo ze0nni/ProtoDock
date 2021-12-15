@@ -7,8 +7,7 @@ using System.Windows.Forms;
 
 namespace ProtoDock.Core
 {
-    public class DockPanel : IDockPanelApi, IDisposable
-    {
+    public class DockPanel : IDockPanelApi, IDisposable {
         public IDockApi Dock => _dock;
 
         private readonly Dock _dock;
@@ -17,51 +16,50 @@ namespace ProtoDock.Core
 
         private readonly HashSet<IDockIcon> _icons = new HashSet<IDockIcon>();
 
-        public DockPanel(Dock dock)
-        {
+        public DockPanel(Dock dock) {
             _dock = dock;
         }
 
-        public DockPanel(Dock dock, Config.DockPanelConfig config): this(dock)
-        {
+        public DockPanel(Dock dock, Config.DockPanelConfig config) : this(dock) {
             var mediatorsList = new List<IDockPanelMediator>();
-            foreach (var mediatorConfig in config.Mediators)
-            {
+            foreach (var mediatorConfig in config.Mediators) {
                 var plugin = _dock.PluginFromGUID(mediatorConfig.PluginGUID);
-                if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook))
-                {
+                if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook)) {
                     System.Diagnostics.Debug.WriteLine($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
                     continue;
                 }
+
                 var mediator = panelHook.Create();
                 mediator.Setup(this);
                 mediatorsList.Add(mediator);
-                if (mediator != null)
-                {
+                if (mediator != null) {
                     _mediators.Add(mediator);
                 }
             }
 
-            foreach (var iconConfig in config.Icons)
-            {
-                try
-                {
+            foreach (var iconConfig in config.Icons) {
+                try {
                     //TODO: Version
                     mediatorsList[iconConfig.MediatorId].RestoreIcon(iconConfig.PluginVersion, iconConfig.Data);
                 }
-                catch
-                {
+                catch {
                     //TODO:
                 }
             }
+        } 
+        internal void UpdateScales() {
+            foreach (var m in Mediators) {
+                m.UpdateScales(_dock.Graphics.Scales);
+            }
         }
+
 
         internal void Awake() {
             foreach (var m in Mediators) {
                 m.Awake();
             }
         }
-        
+
         public void Dispose()
         {
             foreach (var m in _mediators)

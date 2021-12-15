@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using ProtoDock.Time;
 using System.Text.Json;
-using System.Linq;
 using ProtoDock.Autostart;
 using ProtoDock.GoogleCalendar;
 
@@ -67,8 +66,8 @@ namespace ProtoDock.Core
                 }
             }
 
-            Graphics.Changed += () =>
-            {
+            Graphics.Changed += () => {
+                UpdateScales();
                 Flush();
             };
 
@@ -129,6 +128,7 @@ namespace ProtoDock.Core
             var panel = new DockPanel(this);
             _panels.Add(panel);
             Graphics.AddPanel(panel);
+            panel.UpdateScales();
             panel.Awake();
 
             Flush();
@@ -141,6 +141,7 @@ namespace ProtoDock.Core
             var panel = new DockPanel(this, config);
             _panels.Add(panel);
             Graphics.AddPanel(panel);
+            panel.UpdateScales();
             panel.Awake();
         }
 
@@ -200,6 +201,12 @@ namespace ProtoDock.Core
             }
         }
 
+        public void UpdateScales() {
+            foreach (var p in _panels) {
+                p.UpdateScales();
+            }
+        }
+        
         public void Flush() {
             _flush = true;
         }
