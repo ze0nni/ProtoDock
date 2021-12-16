@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Google.Apis.Calendar.v3.Data;
 using ProtoDock.Api;
@@ -87,7 +86,32 @@ namespace ProtoDock.GoogleCalendar {
 		}
 
 		public bool MouseUp(int x, int y, MouseButtons button) {
+			if (button != MouseButtons.Right) {
+				return false;
+			}
+
+			var menu = new ContextMenuStrip();
+			menu.Items.Add(new ToolStripMenuItem("Link", null, onLinkClick));
+			if (_data.HangoutLink != null) {
+				menu.Items.Add(new ToolStripMenuItem("Hangout", null, onHangoutClick));
+			}
+			menu.Show(Cursor.Position);
+			
 			return true;
+		}
+
+		private void onLinkClick(object sender, EventArgs e) {
+			var psi = new System.Diagnostics.ProcessStartInfo();
+			psi.UseShellExecute = true;
+			psi.FileName = _data.HtmlLink;
+			System.Diagnostics.Process.Start(psi);
+		}
+		
+		private void onHangoutClick(object sender, EventArgs e) {
+			var psi = new System.Diagnostics.ProcessStartInfo();
+			psi.UseShellExecute = true;
+			psi.FileName = _data.HangoutLink;
+			System.Diagnostics.Process.Start(psi);
 		}
 
 		public void MouseMove(int x, int y, MouseButtons button) {
@@ -99,14 +123,18 @@ namespace ProtoDock.GoogleCalendar {
 				return;
 			}
 			graphics.FillRectangle(_background, 0, 0, width, height);
-			
-			graphics.DrawString(
-				_data.Summary,
-				_font,
-				_foreground,
-				new RectangleF(0, 0, width, _fontSize * 2),
-				_titleFontFormat);
-			
+
+			if (_data.Summary != null) {
+				var size = graphics.MeasureString("@", _font);
+				
+				graphics.DrawString(
+					_data.Summary,
+					_font,
+					_foreground,
+					new RectangleF(0, 0, width, size.Height * 2),
+					_titleFontFormat);
+			}
+
 			if (_data.Start.DateTime != null) {
 				var text = _data.Start.DateTime.Value.ToString("HH:mm");
 
