@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Google.Apis.Calendar.v3.Data;
 using ProtoDock.Api;
@@ -19,6 +20,8 @@ namespace ProtoDock.GoogleCalendar {
 
 		private float _fontSize;
 		private Font _font;
+		private readonly StringFormat _titleFontFormat  = new StringFormat();
+		private readonly StringFormat _timeStampFontFormat  = new StringFormat();
 
 		private Color _backgroundColor = Color.Gray;
 		private Color _foregroundColor = Color.White;
@@ -45,8 +48,11 @@ namespace ProtoDock.GoogleCalendar {
 				return;
 			}
 			
-			_fontSize = (scales.IconSize / 3f);
+			_fontSize = scales.IconSize / 3.2f;
 			
+			_titleFontFormat.Trimming = StringTrimming.EllipsisCharacter;
+			_timeStampFontFormat.Alignment = StringAlignment.Far;
+
 			_background = new SolidBrush(_backgroundColor);
 			_foreground = new SolidBrush(_foregroundColor);
 			_font = new Font(FontFamily.GenericSansSerif, _fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
@@ -93,8 +99,26 @@ namespace ProtoDock.GoogleCalendar {
 				return;
 			}
 			graphics.FillRectangle(_background, 0, 0, width, height);
-			graphics.DrawString(_data.Summary, _font, _foreground, new RectangleF(0, 0, width, _fontSize * 2));
-			//graphics.DrawString(_data.Start.DateTime.ToString(), _font, _foreground, new PointF(0, 20));
+			
+			graphics.DrawString(
+				_data.Summary,
+				_font,
+				_foreground,
+				new RectangleF(0, 0, width, _fontSize * 2),
+				_titleFontFormat);
+			
+			if (_data.Start.DateTime != null) {
+				var text = _data.Start.DateTime.Value.ToString("HH:mm");
+
+				var size = graphics.MeasureString(text, _font);
+				
+				graphics.DrawString(
+					text,
+					_font,
+					_foreground,
+					new RectangleF(0, height - size.Height - 1, width, _fontSize + 1),
+					_timeStampFontFormat);
+			}
 		}
 	}
 }
