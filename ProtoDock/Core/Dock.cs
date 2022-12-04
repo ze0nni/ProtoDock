@@ -282,6 +282,24 @@ namespace ProtoDock.Core
             outPos = default;
             return false;
         }
+        public bool GetPanelRect(IDockPanelMediator mediator, out Rectangle screenRect)
+        {
+            var left = Graphics.SelectedSkin.Padding.Left;
+            var top = Graphics.SelectedSkin.Padding.Top;
+            foreach (var p in Graphics.Panels)
+            {
+                if (p.Model.Mediators.Contains(mediator))
+                {
+                    var pos = Graphics.DockWindow.PointToScreen(new Point((int)p.Left, (int)p.Top));
+                    screenRect = new Rectangle(pos.X, pos.Y, (int)p.Width, (int)p.Height);
+                    return true;
+                }
+            }
+            
+
+            screenRect = default;
+            return false;
+        }
     }
 
     public class DropMediator : IDropMediator

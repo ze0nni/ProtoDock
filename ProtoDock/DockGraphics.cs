@@ -52,6 +52,7 @@ namespace ProtoDock
         public bool OnScreen { get; private set; }
         public float HideFromScreenBoundRatio { get; private set; }
 
+        public IReadOnlyList<DockPanelGraphics> Panels => _panels;
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private readonly Dictionary<DockPanel, DockPanelGraphics> _panelsMap = new Dictionary<DockPanel, DockPanelGraphics>();
         private DockPanelGraphics _selectedPanel;

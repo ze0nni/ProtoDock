@@ -114,11 +114,10 @@ namespace ProtoDock.Tasks
         {   
             HSHELL_WINDOWCREATED = 1,
             HSHELL_WINDOWDESTROYED = 2,
-            HSHELL_ACTIVATESHELLWINDOW = 3,
-            HSHELL_GETMINRECT = 5,
+            HSHELL_ACTIVATESHELLWINDOW = 3,            
             //Windows N,
             HSHELL_WINDOWACTIVATED = 4,
-            HSHELL_GETM_NRECT = 5,
+            HSHELL_GETMINRECT = 5,
             HSHELL_REDRAW = 6,
             HSHELL_TASKMAN = 7,
             HSHELL_LANGUAGE = 8,
@@ -193,6 +192,19 @@ namespace ProtoDock.Tasks
 
                     break;
                 }
+                case HShellMsg.HSHELL_GETMINRECT:
+                    if (!_api.GetPanelRect(this, out var panelRect))
+                    {
+                        return;
+                    }
+                    var rect = Marshal.PtrToStructure<MINRECT>(m.LParam);
+                    rect.Left = (short)panelRect.X;
+                    rect.Top = (short)panelRect.Y;
+                    rect.Right = (short)(panelRect.X + panelRect.Height);
+                    rect.Bottom = (short)(panelRect.Y + panelRect.Height);
+                    Marshal.StructureToPtr<MINRECT>(rect, m.LParam, false);
+                    m.Result = new IntPtr(1);
+                    break;
             }
         }
 
@@ -365,6 +377,33 @@ namespace ProtoDock.Tasks
             DWMWA_CLOAKED,
             DWMWA_FREEZE_REPRESENTATION,
             DWMWA_LAST
+        }
+
+        struct MINRECT
+        {
+            public IntPtr HWND;
+            public short Left;
+            public short Top;
+            public short Right;
+            public short Bottom;
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // TasksMediator
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "TasksMediator";
+            this.Load += new System.EventHandler(this.TasksMediator_Load);
+            this.ResumeLayout(false);
+
+        }
+
+        private void TasksMediator_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

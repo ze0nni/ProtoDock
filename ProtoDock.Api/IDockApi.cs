@@ -37,5 +37,7 @@ namespace ProtoDock.Api
         void SetDirty();
         void Flush();
         void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height);
+
+        bool GetPanelRect(IDockPanelMediator mediator, out Rectangle screenRect);
     }
 }
