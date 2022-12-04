@@ -16,7 +16,6 @@ namespace ProtoDock.Api
     public interface IDockSettingsDisplay {
         void Flush();
         void SetDirty();
-
         void FlashWindow();
         void Header(string text);
         void Combo<T>(

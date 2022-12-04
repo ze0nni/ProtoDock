@@ -505,7 +505,7 @@ namespace ProtoDock
         private IntPtr _lastFullscreenWindow;
         private bool IsFullscreenWindowActive()
         {
-            if (_lastFullscreenWindow == IntPtr.Zero)
+            if (!PInvoke.User32.IsWindow(_lastFullscreenWindow))
             {
                 _lastFullscreenWindow = PInvoke.User32.GetForegroundWindow();
             }
