@@ -22,11 +22,13 @@ namespace ProtoDock.Tasks
         private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
         private readonly Dictionary<IntPtr, TaskIcon> _hiddenIcons = new Dictionary<IntPtr, TaskIcon>();
 
-        private Config _config;
+        private readonly Config _config;
+        private readonly IDockApi _api;
 
-        public TasksMediator(IDockPlugin plugin, string data): base()
+        public TasksMediator(IDockApi api, IDockPlugin plugin, string data): base()
         {
             Plugin = plugin;
+            _api = api;
             _config = Config.Read(data);
         }
 
@@ -49,6 +51,7 @@ namespace ProtoDock.Tasks
                 {
                     _config.OnlyMinimised = v;
                     display.SetDirty();
+                    UpdateWindows(true);
                 });
         }
 
@@ -66,13 +69,9 @@ namespace ProtoDock.Tasks
         public void Awake()
         {
             SetTaskmanWindow(Handle);
-            RegisterShellHookWindow(Handle);
+            RegisterShellHookWindow(Handle);   
 
             _shellHookMsg = RegisterWindowMessage("SHELLHOOK");
-
-            //var msg = User32.RegisterWindowMessage("TaskbarCreated");
-            //SendMessage(new IntPtr(0xffff), msg, IntPtr.Zero, IntPtr.Zero);
-            //SendMessage(GetDesktopWindow(), 0x0400, IntPtr.Zero, IntPtr.Zero);
 
             EnumWindows(delegate (IntPtr wnd, IntPtr param)
             {
@@ -116,6 +115,7 @@ namespace ProtoDock.Tasks
             HSHELL_WINDOWCREATED = 1,
             HSHELL_WINDOWDESTROYED = 2,
             HSHELL_ACTIVATESHELLWINDOW = 3,
+            HSHELL_GETMINRECT = 5,
             //Windows N,
             HSHELL_WINDOWACTIVATED = 4,
             HSHELL_GETM_NRECT = 5,
@@ -227,11 +227,13 @@ namespace ProtoDock.Tasks
                         visible = false;
                     }
 
-                    //!!!!
-                    //if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
-                    //{
-                    //    visible = false;
-                    //}
+                    if (_config.OnlyMinimised)
+                    {
+                        if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
+                        {
+                            visible = false;
+                        }
+                    }
                 }
                 if (visible)
                 {

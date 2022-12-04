@@ -12,7 +12,7 @@ namespace ProtoDock.Api
 
         public interface IPanelHook
         {
-            IDockPanelMediator Create(string data);
+            IDockPanelMediator Create(IDockApi api, string data);
         }
 
         public interface IDockSetupHook {

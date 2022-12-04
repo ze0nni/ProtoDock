@@ -53,7 +53,7 @@ namespace ProtoDock.Tray
 
         }
 
-        public IDockPanelMediator Create(string data)
+        public IDockPanelMediator Create(IDockApi api, string data)
         {
             return new TrayMediator(this);
         }

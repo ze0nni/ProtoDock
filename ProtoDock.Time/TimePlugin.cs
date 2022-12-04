@@ -24,7 +24,7 @@ namespace ProtoDock.Time {
 
 		public ClockType ClockType { get; private set; }
 
-		public IDockPanelMediator Create(string data) {
+		public IDockPanelMediator Create(IDockApi api, string data) {
 			var mediator = new TimeMediator(this);
 			_mediators.Add(mediator);
 			return mediator;

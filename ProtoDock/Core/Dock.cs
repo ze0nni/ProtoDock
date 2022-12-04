@@ -115,7 +115,7 @@ namespace ProtoDock.Core
                 throw new ArgumentException($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
             }
 
-            panel.AddMediator(panelHook.Create(null));
+            panel.AddMediator(panelHook.Create(this, null));
             return panel;
         }
         
