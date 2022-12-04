@@ -33,13 +33,11 @@ namespace ProtoDock
         private Size _drawSize;
 
         public int IconSize { get; private set; } = 48;
+        public int IconHoverValue { get; private set; } = 24;
         public int IconSpace { get; private set; } = 8;        
 
         public readonly DockWindow DockWindow;
         public HintWindow Hint { get; private set; }
-
-        public float ActiveIconScale = 1f;
-        public float ActiveIconScaleDistance => IconSize * 3;
         public float IconScaleSpeed => 400;
 
         public readonly Skins Skins;
@@ -77,6 +75,7 @@ namespace ProtoDock
         {
             config.Skin = SelectedSkin.Name;
             config.IconSize = IconSize;
+            config.IconHoverValue = IconHoverValue;
             config.IconSpace = IconSpace;
             config.ScreenName = _screenName;
             config.Position = Position;
@@ -99,6 +98,7 @@ namespace ProtoDock
                 var skin = Skins.List.FirstOrDefault(s => s.Name == config.Skin);
                 UpdateSkin(skin);
                 UpdateIconSize(config.IconSize);
+                UpdateIconHoverValue(config.IconHoverValue);
                 UpdateIconSpace(config.IconSpace);
 
                 UpdateScreen(config.ScreenName);
@@ -210,13 +210,13 @@ namespace ProtoDock
                 case Position.Top:
                     Hint.SetPosition(
                         screenPos.X + dx2,
-                        (int)(_dockSize.Height + IconSize * ActiveIconScale),
+                        (int)(_dockSize.Height + IconHoverValue),
                         Position);
                     break;
                 case Position.Bottom:
                     Hint.SetPosition(
                         screenPos.X + dx2,
-                        (int)(screenPos.Y + OffsetY - IconSize * ActiveIconScale),
+                        (int)(screenPos.Y + OffsetY - IconHoverValue),
                         Position
                     );
                     break;
@@ -356,6 +356,14 @@ namespace ProtoDock
         public void UpdateIconSize(int value)
         {
             IconSize = Math.Max(MIN_ICON_SIZE, Math.Min(MAX_ICON_SIZE, value));
+
+            SetDirty();
+            Changed?.Invoke();
+        }
+
+        public void UpdateIconHoverValue(int value)
+        {
+            IconHoverValue = Math.Max(0, Math.Min(MAX_ICON_SIZE, value));
 
             SetDirty();
             Changed?.Invoke();

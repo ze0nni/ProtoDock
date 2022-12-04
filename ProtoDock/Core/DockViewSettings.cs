@@ -52,6 +52,17 @@ namespace ProtoDock.Core {
                 });
 
             display.Number(
+                "Hovered icon value",
+                _graphics.IconHoverValue,
+                0,
+                DockGraphics.MAX_ICON_SIZE,
+                out _,
+                v =>
+                {
+                    _graphics.UpdateIconHoverValue(v);
+                });
+
+            display.Number(
                 "Icons space",
                 _graphics.IconSpace,
                 DockGraphics.MIN_ICON_SPACE,

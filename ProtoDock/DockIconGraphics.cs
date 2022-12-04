@@ -100,9 +100,8 @@ namespace ProtoDock
 
             if (!Model.Hovered) {
                 ratio = 0;
-            }
-            var size = _panel.Dock.IconSize * (1f + _panel.Dock.ActiveIconScale * ratio);
-
+            }            
+            var size = _panel.Dock.IconSize + (_panel.Dock.IconHoverValue * ratio);
             _targetSize = size ;
 
             if (fast) {

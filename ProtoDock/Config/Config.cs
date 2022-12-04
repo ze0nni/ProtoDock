@@ -21,6 +21,9 @@ namespace ProtoDock.Config
         [DefaultValue(48)]
         public int IconSize { get; set; }
 
+        [DefaultValue(24)]
+        public int IconHoverValue { get; set; }
+
         [DefaultValue(8)]
         public int IconSpace { get; set; }
 
