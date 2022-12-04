@@ -33,6 +33,10 @@ namespace ProtoDock.Config
         [DefaultValue(24)]
         public int HintFontSize { get; set; }
 
+        [DefaultValue(AutohideRule.OnFullscreen)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public AutohideRule Autohide { get; set; }
+
         public string ScreenName { get; set; }
         public List<DockPanelConfig> Panels { get; set; }
 

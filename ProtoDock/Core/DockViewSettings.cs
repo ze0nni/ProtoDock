@@ -114,6 +114,15 @@ namespace ProtoDock.Core {
                 {
                     _graphics.UpdatePosition(p);
                 });
+
+            display.Combo<AutohideRule>(
+                "Auto hide",
+                _graphics.Autohide,
+                out _,
+                v =>
+                {
+                    _graphics.UpdateAutoHide(v);
+                });
         }
 
         public override string ToString() {

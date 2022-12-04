@@ -56,7 +56,7 @@ namespace ProtoDock
                     Bitmap = new Bitmap(stream);
                 }
             }
-            if (Bitmap == null)
+            if (forced && Bitmap == null)
             {
                 Bitmap = new Bitmap(2, 2);
                 Bitmap.SetPixel(0, 0, Color.Red);

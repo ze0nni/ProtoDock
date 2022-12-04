@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using ProtoDock.Time;
 using System.Text.Json;
-using System.Linq;
 using ProtoDock.Autostart;
 using System.Diagnostics;
 

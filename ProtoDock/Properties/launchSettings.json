@@ -2,7 +2,8 @@
   "profiles": {
     "BBDock": {
       "commandName": "Project",
-      "workingDirectory": "./Assets"
+      "workingDirectory": "./Assets",
+      "remoteDebugEnabled": false
     }
   }
 }

@@ -29,14 +29,15 @@ namespace ProtoDock
 
         public Bitmap Bitmap { get; private set; }
         private Graphics _graphics;
-        private SizeF _dockSize;
-        private Size _drawSize;
+        public SizeF DockSize => _dockSize;
+        private SizeF _dockSize = new SizeF(1, 1);
+        private Size _drawSize = new Size(1, 1);
 
         public int IconSize { get; private set; } = 48;
         public int IconHoverValue { get; private set; } = 24;
-        public int IconSpace { get; private set; } = 8;        
+        public int IconSpace { get; private set; } = 8;
 
-        public readonly DockWindow DockWindow;
+        public readonly DockWindow DockWindow;        
 
         public bool EnableHint { get; private set; } = true;
         public HintWindow Hint { get; private set; }
@@ -47,6 +48,10 @@ namespace ProtoDock
 
         private string _screenName;
         public Screen ActiveScreen { get; private set;  }
+
+        public AutohideRule Autohide { get; private set; }
+        public bool OnScreen { get; private set; }
+        public float HideFromScreenBoundRatio { get; private set; }
 
         private readonly List<DockPanelGraphics> _panels = new List<DockPanelGraphics>();
         private readonly Dictionary<DockPanel, DockPanelGraphics> _panelsMap = new Dictionary<DockPanel, DockPanelGraphics>();
@@ -83,6 +88,7 @@ namespace ProtoDock
             config.Position = Position;
             config.EnableHint = EnableHint;
             config.HintFontSize = Hint.FontSize;
+            config.Autohide = Autohide;
         }
 
         internal void Restore(Config.DockConfig config)
@@ -109,6 +115,7 @@ namespace ProtoDock
                 UpdatePosition(config.Position);
                 UpdateEnableHint(config.EnableHint);
                 Hint.UpdateFontSize(config.HintFontSize);
+                UpdateAutoHide(config.Autohide);
             }
         }
 
@@ -173,6 +180,8 @@ namespace ProtoDock
                 
                 panelLeft += panel.Width + IconSpace;
             }
+            OnScreen = GetOnScreen();
+            UpdateHideFromScreenBoundRatio(dt);
             CalculateSize(out _dockSize, out _drawSize);
         }
 
@@ -396,6 +405,13 @@ namespace ProtoDock
             Changed?.Invoke();
         }
 
+        public void UpdateAutoHide(AutohideRule value)
+        {
+            Autohide = value;
+            SetDirty();
+            Changed?.Invoke();
+        }
+
         public float OffsetX
         {
             get
@@ -423,6 +439,136 @@ namespace ProtoDock
                 }
                 throw new ArgumentException(Position.ToString());
             }
+        }
+        private bool GetOnScreen()
+        {
+            switch (Autohide)
+            {
+                case AutohideRule.Never:
+                    {
+                        return true;
+                    }
+                    break;
+                
+                case AutohideRule.Allways:
+                    {
+                        switch (GetActiveBound())
+                        {
+                            case ActiveBound.None:
+                                return false;
+
+                            case ActiveBound.Screen:
+                            case ActiveBound.Panel:
+                                return true;
+                        }
+                    }
+                    break;
+
+                case AutohideRule.OnFullscreen:
+                    {
+                        switch (GetActiveBound())
+                        {
+                            case ActiveBound.Panel:
+                            case ActiveBound.Screen:
+                                return true;
+                            default:
+                                return !IsFullscreenWindowActive();
+                        }
+                    }
+                    break;
+            }
+            throw new ArgumentOutOfRangeException();
+        }
+        private void UpdateHideFromScreenBoundRatio(float dt)
+        {
+            var lastR = HideFromScreenBoundRatio;
+            if (OnScreen)
+            {
+                HideFromScreenBoundRatio = Math.Max(0, HideFromScreenBoundRatio - dt * 5f);
+            } else
+            {
+                HideFromScreenBoundRatio = Math.Min(1, HideFromScreenBoundRatio + dt * 5f);
+            }
+            if (lastR != HideFromScreenBoundRatio)
+            {
+                SetDirty();
+                if (HideFromScreenBoundRatio == 1)
+                {
+                    DockWindow.Visible = false;
+                } else
+                {
+                    DockWindow.Visible = true;
+                }
+            }
+        }
+
+        private IntPtr _lastFullscreenWindow;
+        private bool IsFullscreenWindowActive()
+        {
+            if (_lastFullscreenWindow == IntPtr.Zero)
+            {
+                _lastFullscreenWindow = PInvoke.User32.GetForegroundWindow();
+            }
+            if (_lastFullscreenWindow == IntPtr.Zero)
+            {
+                return false;
+            }
+            
+            PInvoke.User32.GetWindowRect(_lastFullscreenWindow, out var wndRect);
+            var scrRect = ActiveScreen.Bounds;
+
+            if (wndRect.left != scrRect.Left
+                || wndRect.top != scrRect.Top
+                || wndRect.right != scrRect.Right
+                || wndRect.bottom != scrRect.Bottom)
+            {
+                _lastFullscreenWindow = IntPtr.Zero;
+                return false;
+            }
+
+            return true;
+        }
+
+        private enum ActiveBound
+        {
+            None,
+            Panel,
+            Screen
+        }
+
+        private ActiveBound GetActiveBound()
+        {
+            var cursor = Cursor.Position;
+            if (DockWindow.Visible)
+            {
+                if (cursor.X >= DockWindow.Left
+                    && cursor.X <= DockWindow.Right
+                    && cursor.Y >= DockWindow.Top
+                    && cursor.Y < DockWindow.Bottom)
+                {
+                    return ActiveBound.Panel;
+                }
+            }
+
+            var bounds = ActiveScreen.Bounds;
+            switch (Position)
+            {
+                case Position.Top:
+                    if (cursor.Y == bounds.Top && cursor.X >= DockWindow.Left && cursor.X < DockWindow.Right)
+                    {
+                        return ActiveBound.Screen;
+                    }
+                    break;
+
+                case Position.Bottom:
+                    if (cursor.Y == bounds.Bottom - 1 && cursor.X >= DockWindow.Left && cursor.X < DockWindow.Right)
+                    {
+                        return ActiveBound.Screen;
+                    }
+                    break;
+            }
+
+            return ActiveBound.None;
         }
 
         private void CalculateSize(out SizeF dockSize, out Size drawSize) {

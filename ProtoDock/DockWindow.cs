@@ -12,7 +12,6 @@ namespace ProtoDock
 {
     public partial class DockWindow : Form
     {
-
         public IntPtr HInstance => User32.HInstance;
 
         private readonly Timer _timer;
@@ -100,26 +99,28 @@ namespace ProtoDock
             _graphics.Render();
             FormApi.SetImage(this, _graphics.Bitmap);
 
-            int left;
-            int top;
+            float left;
+            float top;
 
             left = (bounds.Width - _graphics.Bitmap.Width) / 2;
             switch (_graphics.Position)
             {
                 case Api.Position.Top:
-                    top = -_graphics.SelectedSkin.VOffset;
+                    top = -_graphics.SelectedSkin.VOffset 
+                        - _graphics.HideFromScreenBoundRatio * _graphics.DockSize.Height;
                     break;
 
                 case Api.Position.Bottom:
-                    top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset;
+                    top = (bounds.Height - _graphics.Bitmap.Height) + _graphics.SelectedSkin.VOffset 
+                        + _graphics.HideFromScreenBoundRatio * _graphics.DockSize.Height;
                     break;
 
                 default:
                     throw new ArgumentException(_graphics.Position.ToString());
             }
 
-            this.Left = bounds.X + left;
-            this.Top = bounds.Y + top;
+            this.Left = (int)(bounds.X + left);
+            this.Top = (int)(bounds.Y + top);
         }
 
         private void OnTick(Object sender, EventArgs e) {

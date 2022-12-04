@@ -22,6 +22,12 @@ namespace ProtoDock.Api
         Bottom
     }
 
+    public enum AutohideRule
+    {
+        Never,
+        Allways,
+        OnFullscreen
+    }
     public interface IDockApi
     {
         IntPtr HInstance { get; }
