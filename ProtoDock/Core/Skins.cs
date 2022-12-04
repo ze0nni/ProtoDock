@@ -18,9 +18,9 @@ namespace ProtoDock.Core {
 
         public void Reload() {
             _list.Clear();
-            
+
             _list.Add(
-                new DockSkin{
+                new DockSkin {
                     Name = "Classic",
                     VOffset = 0,
                     Padding = new Padding(14, 14, 14, 14),
@@ -33,7 +33,7 @@ namespace ProtoDock.Core {
                     Panel = new DockSkinImage(
                         DockSkinImageAlign.Scale9,
                         new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProtoDock.Embeded.Default_panel.png")),
-                        new Padding(8,8,8,8)
+                        new Padding(8, 8, 8, 8)
                     ),
                     SelectedBg = new DockSkinImage(
                         DockSkinImageAlign.Bottom,
@@ -55,16 +55,21 @@ namespace ProtoDock.Core {
                     )
                 }
             );
+            FromDir("", Path.GetDirectoryName(Application.ExecutablePath));
+            FromDir(".", "./Skins/");            
+        }
 
+        private void FromDir(string prefix, string root)
+        { 
             try
             {
-                foreach (var file in Directory.GetFiles("./Skins/", "*.json"))
+                foreach (var file in Directory.GetFiles(root, "*.json"))
                 {
                     try
                     {
                         var data = File.ReadAllText(file);
                         var skin = JsonSerializer.Deserialize<DockSkin>(data);
-                        skin.Name = file;
+                        skin.Name = prefix + "/" + file;
                         _list.Add(skin);
                     }
                     catch (Exception exc)
