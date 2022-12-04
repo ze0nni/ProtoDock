@@ -55,7 +55,7 @@ namespace ProtoDock.Core {
                     )
                 }
             );
-            FromDir("", Path.GetDirectoryName(Application.ExecutablePath));
+            FromDir("", Path.Join(Path.GetDirectoryName(Application.ExecutablePath), "Skins"));
             FromDir(".", "./Skins/");            
         }
 
@@ -69,7 +69,8 @@ namespace ProtoDock.Core {
                     {
                         var data = File.ReadAllText(file);
                         var skin = JsonSerializer.Deserialize<DockSkin>(data);
-                        skin.Name = prefix + "/" + file;
+                        skin.Name = prefix + "/" + Path.GetFileName(file);
+                        skin.Root = root;
                         _list.Add(skin);
                     }
                     catch (Exception exc)

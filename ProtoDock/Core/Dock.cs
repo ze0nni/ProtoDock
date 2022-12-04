@@ -190,7 +190,6 @@ namespace ProtoDock.Core
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
                 Graphics.Restore(null);
             }
         }

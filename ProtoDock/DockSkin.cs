@@ -1,6 +1,7 @@
 ﻿using ProtoDock.Api;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -46,7 +47,7 @@ namespace ProtoDock
         {
         }
 
-        internal void Load()
+        internal void Load(DockSkin skin, bool forced = false)
         {
             if (!string.IsNullOrEmpty(BitmapSource))
             {
@@ -54,6 +55,14 @@ namespace ProtoDock
                 using (var stream = File.Open(BitmapSource, FileMode.Open, FileAccess.Read)) {
                     Bitmap = new Bitmap(stream);
                 }
+            }
+            if (Bitmap == null)
+            {
+                Bitmap = new Bitmap(2, 2);
+                Bitmap.SetPixel(0, 0, Color.Red);
+                Bitmap.SetPixel(0, 1, Color.Red);
+                Bitmap.SetPixel(1, 0, Color.Red);
+                Bitmap.SetPixel(1, 1, Color.Red);
             }
         }
 
@@ -249,6 +258,7 @@ namespace ProtoDock
     public class DockSkin
     {
         public string Name;
+        public string Root;
 
         public int VOffset { get; set; }
         public Padding Padding { get; set; }
@@ -307,11 +317,11 @@ namespace ProtoDock
 
         public void Load()
         {
-            Dock?.Load();
-            SelectedBg?.Load();
-            SelectedFg?.Load();
-            HighlightBg?.Load();
-            HighlightFg?.Load();
+            Dock?.Load(this, true);
+            SelectedBg?.Load(this);
+            SelectedFg?.Load(this);
+            HighlightBg?.Load(this);
+            HighlightFg?.Load(this);
         }
 
         public void Unload()
