@@ -7,7 +7,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using ProtoDock.Core;
-using System.Linq;
 
 namespace ProtoDock
 {
@@ -513,7 +512,24 @@ namespace ProtoDock
         private IntPtr _lastFullscreenWindow;
         private bool IsFullscreenWindowActive()
         {
-            if (!PInvoke.User32.IsWindow(_lastFullscreenWindow) || !PInvoke.User32.IsWindowVisible(_lastFullscreenWindow))
+            if (_lastFullscreenWindow != IntPtr.Zero && !PInvoke.User32.IsWindow(_lastFullscreenWindow))
+            {
+                _lastFullscreenWindow = IntPtr.Zero;
+            }
+            if (_lastFullscreenWindow != IntPtr.Zero && !PInvoke.User32.IsWindowVisible(_lastFullscreenWindow))
+            {
+                _lastFullscreenWindow = IntPtr.Zero;
+            }
+            if (_lastFullscreenWindow != IntPtr.Zero)
+            {
+                var hRes = DwmApi.DwmGetWindowAttribute(_lastFullscreenWindow, (int)DwmApi.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out var cloakedVal, sizeof(int));
+                if (cloakedVal != IntPtr.Zero)
+                {
+                    _lastFullscreenWindow = IntPtr.Zero;
+                }
+            }
+           
+            if (_lastFullscreenWindow == IntPtr.Zero)
             {
                 _lastFullscreenWindow = PInvoke.User32.GetForegroundWindow();
             }
