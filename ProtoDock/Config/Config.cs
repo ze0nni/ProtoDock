@@ -27,6 +27,9 @@ namespace ProtoDock.Config
         [DefaultValue(8)]
         public int IconSpace { get; set; }
 
+        [DefaultValue(true)]
+        public bool EnableHint;
+
         [DefaultValue(24)]
         public int HintFontSize { get; set; }
 

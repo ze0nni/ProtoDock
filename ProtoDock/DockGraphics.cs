@@ -37,6 +37,8 @@ namespace ProtoDock
         public int IconSpace { get; private set; } = 8;        
 
         public readonly DockWindow DockWindow;
+
+        public bool EnableHint { get; private set; } = true;
         public HintWindow Hint { get; private set; }
         public float IconScaleSpeed => 400;
 
@@ -79,6 +81,7 @@ namespace ProtoDock
             config.IconSpace = IconSpace;
             config.ScreenName = _screenName;
             config.Position = Position;
+            config.EnableHint = EnableHint;
             config.HintFontSize = Hint.FontSize;
         }
 
@@ -103,6 +106,7 @@ namespace ProtoDock
 
                 UpdateScreen(config.ScreenName);
                 UpdatePosition(config.Position);
+                UpdateEnableHint(config.EnableHint);
                 Hint.UpdateFontSize(config.HintFontSize);
             }
         }
@@ -205,21 +209,28 @@ namespace ProtoDock
             var dx2 = (Bitmap.Width - (int)_dockSize.Width) / 2;
 
             var screenPos = DockWindow.PointToScreen(new Point((int)x, (int)0));
-            switch (Position)
+
+            if (EnableHint)
             {
-                case Position.Top:
-                    Hint.SetPosition(
-                        screenPos.X + dx2,
-                        (int)(_dockSize.Height + IconHoverValue),
-                        Position);
-                    break;
-                case Position.Bottom:
-                    Hint.SetPosition(
-                        screenPos.X + dx2,
-                        (int)(screenPos.Y + OffsetY - IconHoverValue),
-                        Position
-                    );
-                    break;
+                switch (Position)
+                {
+                    case Position.Top:
+                        Hint.SetPosition(
+                            screenPos.X + dx2,
+                            (int)(_dockSize.Height + IconHoverValue),
+                            Position);
+                        break;
+                    case Position.Bottom:
+                        Hint.SetPosition(
+                            screenPos.X + dx2,
+                            (int)(screenPos.Y + OffsetY - IconHoverValue),
+                            Position
+                        );
+                        break;
+                }
+            } else
+            {
+                Hint.Hide();
             }
         }
 
@@ -373,6 +384,13 @@ namespace ProtoDock
         {
             IconSpace = Math.Max(MIN_ICON_SPACE, Math.Min(MAX_ICON_SPACE, value));
 
+            SetDirty();
+            Changed?.Invoke();
+        }
+
+        public void UpdateEnableHint(bool value)
+        {
+            EnableHint = value;
             SetDirty();
             Changed?.Invoke();
         }

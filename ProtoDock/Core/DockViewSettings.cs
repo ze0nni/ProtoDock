@@ -73,6 +73,16 @@ namespace ProtoDock.Core {
                     _graphics.UpdateIconSpace(v);
                 });
 
+            display.Toggle(
+                "Enable hint",
+                _graphics.EnableHint,
+                out _,
+                out _,
+                v =>
+                {
+                    _graphics.UpdateEnableHint(v);
+                });
+
             display.Number(
                 "Hint font size",
                 _graphics.Hint.FontSize,
