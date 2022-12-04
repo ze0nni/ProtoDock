@@ -82,8 +82,10 @@ namespace ProtoDock.Core
 
         public void Update() {
             if (_flush) {
-                Store();
-                _flush = true;
+                if (Store())
+                {
+                    _flush = true;
+                }
             }
         }
         
@@ -198,9 +200,9 @@ namespace ProtoDock.Core
             _flush = true;
         }
         
-        private void Store() {
+        private bool Store() {
             if (_disposed) {
-                return;
+                return false;
             }
 
             var config = new Config.DockConfig
@@ -235,7 +237,18 @@ namespace ProtoDock.Core
             options.WriteIndented = true;
 
             var json = System.Text.Json.JsonSerializer.Serialize(config, options);
-            System.IO.File.WriteAllText(ConfigPath(), json);
+
+            try
+            {
+                System.IO.File.WriteAllText(ConfigPath(), json
+                    );
+            } catch(Exception e)
+            {
+                Debug.WriteLine(e);
+                return false;
+            }
+
+            return true;
         }
 
         private string ConfigPath()

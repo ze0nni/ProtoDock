@@ -94,6 +94,7 @@ namespace ProtoDock
                 UpdateIconSpace(8);
                 UpdateScreen(null);
                 UpdatePosition(Position.Bottom);
+                UpdateEnableHint(true);
                 Hint.UpdateFontSize(24);
             }
             else

@@ -46,7 +46,7 @@ namespace ProtoDock
         {
             Clear();
 
-            var source = (IDockSettingsSource)Category.SelectedItem;            
+            var source = (IDockSettingsSource)Category.SelectedItem;
             source.Display(this);
         }
 
@@ -85,7 +85,7 @@ namespace ProtoDock
                 label = new Label();
                 label.AutoSize = false;
                 label.Width = 200;
-                label.Text = labelText;                
+                label.Text = labelText;
                 label.Top = top;
                 label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 

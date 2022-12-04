@@ -11,6 +11,7 @@
     <PackageTags>Dock</PackageTags>
     <SignAssembly>true</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -42,12 +43,11 @@
     <ProjectReference Include="..\ProtoDock.Tray\ProtoDock.Tray.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Embeded\Default.png" />
-    <EmbeddedResource Include="Embeded\Default_panel.png" />
-    <EmbeddedResource Include="Embeded\Default_highlight.png" />
-    <EmbeddedResource Include="Embeded\Default_selected.png" />
-    <EmbeddedResource Include="Embeded\Default_selected_fg.png" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<EmbeddedResource Include="Embeded\Default.png" />
+		<EmbeddedResource Include="Embeded\Default_panel.png" />
+		<EmbeddedResource Include="Embeded\Default_highlight.png" />
+		<EmbeddedResource Include="Embeded\Default_selected.png" />
+		<EmbeddedResource Include="Embeded\Default_selected_fg.png" />
+	</ItemGroup>
 </Project>
