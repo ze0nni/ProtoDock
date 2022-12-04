@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using ProtoDock.Api;
 
@@ -20,10 +21,20 @@ namespace ProtoDock.Time {
 			Api = api;
 		}
 
+		public bool RequestSettings => false;
+		public void DisplaySettings(IDockSettingsDisplay display)
+		{
+			throw new NotImplementedException();
+		}
 		public void RestoreIcon(int version, string data) {
 			
 		}
 
+		public bool Store(out string data)
+		{
+			data = default;
+			return false;
+		}
 		public void Awake() {
 			Reload();
 		}

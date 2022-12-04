@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace ProtoDock.Api
 {
@@ -31,7 +32,7 @@ namespace ProtoDock.Api
             IEnumerable<T> items,
             out ICollectionController<T> controller,
             Action<T> onValueChanged);
-        
+
         void Toggle(
             string label,
             bool value,
@@ -63,6 +64,7 @@ namespace ProtoDock.Api
 
     public interface IButtonsPanel {
         IButtonsPanel Add(string text, Action onClick);
+        IButtonsPanel Add(string text, out Button button, Action onClick);
     }
 
     public static class IDockSettingsDisplayTools

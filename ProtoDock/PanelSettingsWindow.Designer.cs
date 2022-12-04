@@ -1,6 +1,7 @@
-﻿namespace ProtoDock
+﻿
+namespace ProtoDock.Settings
 {
-    partial class SettingsWindow
+    partial class PanelSettingsWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -28,51 +29,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Category = new System.Windows.Forms.ListBox();
             this.Content = new System.Windows.Forms.Panel();
             this.SuspendLayout();
-            // 
-            // Category
-            // 
-            this.Category.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.Category.FormattingEnabled = true;
-            this.Category.IntegralHeight = false;
-            this.Category.ItemHeight = 15;
-            this.Category.Location = new System.Drawing.Point(0, 0);
-            this.Category.Name = "Category";
-            this.Category.ScrollAlwaysVisible = true;
-            this.Category.Size = new System.Drawing.Size(228, 454);
-            this.Category.TabIndex = 0;
-            this.Category.SelectedIndexChanged += new System.EventHandler(this.Category_SelectedIndexChanged);
             // 
             // Content
             // 
             this.Content.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Content.AutoScroll = true;
-            this.Content.Location = new System.Drawing.Point(224, 0);
+            this.Content.Location = new System.Drawing.Point(0, -3);
             this.Content.Name = "Content";
-            this.Content.Size = new System.Drawing.Size(570, 454);
-            this.Content.TabIndex = 1;
+            this.Content.Size = new System.Drawing.Size(584, 332);
+            this.Content.TabIndex = 0;
             // 
-            // SettingsWindow
+            // PanelSettingsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(794, 454);
+            this.ClientSize = new System.Drawing.Size(584, 330);
             this.Controls.Add(this.Content);
-            this.Controls.Add(this.Category);
-            this.Name = "SettingsWindow";
-            this.Text = "Settings";
+            this.Name = "PanelSettingsWindow";
+            this.Text = "PanelSettings";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ListBox Category;
         private System.Windows.Forms.Panel Content;
     }
 }

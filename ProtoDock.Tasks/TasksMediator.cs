@@ -22,9 +22,12 @@ namespace ProtoDock.Tasks
         private readonly Dictionary<IntPtr, TaskIcon> _icons = new Dictionary<IntPtr, TaskIcon>();
         private readonly Dictionary<IntPtr, TaskIcon> _hiddenIcons = new Dictionary<IntPtr, TaskIcon>();
 
-        public TasksMediator(IDockPlugin plugin): base()
+        private Config _config;
+
+        public TasksMediator(IDockPlugin plugin, string data): base()
         {
             Plugin = plugin;
+            _config = Config.Read(data);
         }
 
         private Kernel32.SafeLibraryHandle _shellHookLib;
@@ -34,11 +37,32 @@ namespace ProtoDock.Tasks
             Api = api;
         }
 
+        public bool RequestSettings => true;
+        public void DisplaySettings(IDockSettingsDisplay display)
+        {
+            display.Toggle(
+                "Only minimised",
+                _config.OnlyMinimised,
+                out _,
+                out _,
+                v =>
+                {
+                    _config.OnlyMinimised = v;
+                    display.SetDirty();
+                });
+        }
+
         public void RestoreIcon(int version, string data)
         {
 
         }
         
+        public bool Store(out string data)
+        {
+            data = _config.Write();
+            return true;
+        }
+
         public void Awake()
         {
             SetTaskmanWindow(Handle);

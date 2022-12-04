@@ -13,6 +13,9 @@
     <Compile Update="SettingsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="PanelSettingsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Settings\SettingsButtonsPanel.cs">
       <SubType>Component</SubType>
     </Compile>

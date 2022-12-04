@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ManagedShell.WindowsTray;
 using NotifyIcon = ManagedShell.WindowsTray.NotifyIcon;
 using ManagedShell;
+using System;
 
 namespace ProtoDock.Tray
 {
@@ -25,6 +26,17 @@ namespace ProtoDock.Tray
         public void Setup(IDockPanelApi api)
         {
             Api = api;
+        }
+
+        public bool RequestSettings => false;
+        public void DisplaySettings(IDockSettingsDisplay display)
+        {
+            throw new NotImplementedException();
+        }
+        public bool Store(out string data)
+        {
+            data = default;
+            return false;
         }
 
         public void RestoreIcon(int version, string data)

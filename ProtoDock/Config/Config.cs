@@ -54,6 +54,7 @@ namespace ProtoDock.Config
     public class DockPluginMediatorConfig
     {
         public string PluginGUID { get; set; }
+        public string Data { get; set; }
     }
 
     [Serializable]

@@ -33,7 +33,7 @@ namespace ProtoDock.Core
                     System.Diagnostics.Debug.WriteLine($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
                     continue;
                 }
-                var mediator = panelHook.Create();
+                var mediator = panelHook.Create(mediatorConfig.Data);
                 mediator.Setup(this);
                 mediatorsList.Add(mediator);
                 if (mediator != null)
@@ -133,10 +133,12 @@ namespace ProtoDock.Core
             
             foreach (var m in _mediators)
             {
+                m.Store(out var data);
                 config.Mediators.Add(new DockPluginMediatorConfig
                 {
-                    PluginGUID = m.Plugin.GUID,         
-                });
+                    PluginGUID = m.Plugin.GUID,
+                    Data = data
+                }); ;
             }
 
             foreach (var icon in _icons)

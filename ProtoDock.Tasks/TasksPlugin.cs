@@ -10,9 +10,9 @@ namespace ProtoDock.Tasks
 
         public int Version => 1;
 
-        public IDockPanelMediator Create()
+        public IDockPanelMediator Create(string data)
         {
-            return new TasksMediator(this);
+            return new TasksMediator(this, data);
         }
         
         public bool ResolveHook<T>(out T hook) where T : class

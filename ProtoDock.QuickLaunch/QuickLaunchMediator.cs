@@ -21,6 +21,11 @@ namespace ProtoDock.QuickLaunch
         {
             _api = api;
         }
+        public bool RequestSettings => false;
+        public void DisplaySettings(IDockSettingsDisplay display)
+        {
+            throw new NotImplementedException();
+        }
 
         private readonly List<QuickLaunchIcon> _icons = new List<QuickLaunchIcon>();
 
@@ -28,6 +33,12 @@ namespace ProtoDock.QuickLaunch
             var icon = new QuickLaunchIcon(this, data);
             _api.Add(icon, false);
             _icons.Add(icon);
+        }
+
+        public bool Store(out string data)
+        {
+            data = default;
+            return false;
         }
 
         public void Awake()

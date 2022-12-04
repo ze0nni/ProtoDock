@@ -13,13 +13,17 @@ namespace ProtoDock.Settings {
 			FlowDirection = FlowDirection.RightToLeft;
 		}
 
-		public IButtonsPanel Add(string text, Action onClick) {
-			var button = new Button();
+		public IButtonsPanel Add(string text, Action onClick)
+		{
+			return Add(text, out _, onClick);
+		}
+
+		public IButtonsPanel Add(string text, out Button button, Action onClick) {
+			button = new Button();
 			button.Text = text;
 			button.Click += (s, e) => onClick();
 			Controls.Add(button);
 			Controls.SetChildIndex(button, 0);
-
 
 			return this;
 		}

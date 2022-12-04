@@ -27,7 +27,7 @@ namespace ProtoDock
 
         public bool IsDirty { get; private set; }
 
-        public Bitmap Bitmap { get; private set; }
+        public Bitmap Bitmap { get; private set; } = new Bitmap(1, 1);
         private Graphics _graphics;
         public SizeF DockSize => _dockSize;
         private SizeF _dockSize = new SizeF(1, 1);
@@ -416,6 +416,10 @@ namespace ProtoDock
         {
             get
             {
+                if (Bitmap == null)
+                {
+                    return 0;
+                }
                 switch (Position)
                 {
                     case Position.Top:
@@ -430,6 +434,10 @@ namespace ProtoDock
         {
             get
             {
+                if (Bitmap == null)
+                {
+                    return 0;
+                }
                 switch (Position)
                 {
                     case Position.Top:
