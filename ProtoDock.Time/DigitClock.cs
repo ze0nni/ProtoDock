@@ -71,7 +71,7 @@ namespace ProtoDock.Time {
 			_mediator.Api.Dock.SetDirty();
 		}
 
-		public void Render(Graphics graphics, float width, float height, bool isSelected) {
+		public void Render(Graphics graphics, float width, float height, Rectangle content) {
 			if (_width != width || _height != height) {
 				_width = width;
 				_height = height;

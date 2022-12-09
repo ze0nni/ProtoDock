@@ -44,7 +44,7 @@ namespace ProtoDock.Time {
 			}
 		}
 		
-		public void Render(Graphics graphics, float width, float height, bool isSelected) {
+		public void Render(Graphics graphics, float width, float height, Rectangle content) {
 			graphics.DrawImage(_clockBg, 0, 0, width, height);
 
 			var now = DateTime.Now;

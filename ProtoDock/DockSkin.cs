@@ -270,23 +270,16 @@ namespace ProtoDock
         public string Root;
 
         public int VOffset { get; set; }
+        public int IconPadding { get; set; }
         public Padding Padding { get; set; }
         public Padding PanelPadding { get; set; }
-
         public DockSkinImage Dock { get; set; }
-        
         public DockSkinImage Panel { get; set; }
-        
         public DockSkinImage SelectedBg { get; set; }
-
-        public Point SelectedBgOffset { get; set; }
-        
+        public Point SelectedBgOffset { get; set; }        
         public DockSkinImage SelectedFg { get; set; }
-        
         public Point SelectedFgOffset { get; set; }
-
         public DockSkinImage HighlightBg { get; set; }
-
         public DockSkinImage HighlightFg { get; set; }
 
         public DockSkin(

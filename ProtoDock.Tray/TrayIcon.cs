@@ -86,7 +86,7 @@ namespace ProtoDock.Tray
             Graphics graphics,
             float width,
             float height,
-            bool isSelected
+            Rectangle content
         ) {
 
             if (_iconBitmap != null)

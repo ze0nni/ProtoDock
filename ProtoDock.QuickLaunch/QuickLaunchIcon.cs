@@ -50,9 +50,9 @@ namespace ProtoDock.QuickLaunch
         public void MouseMove(int x, int y, MouseButtons button) {
         }
 
-        public void Render(Graphics graphics, float width, float height, bool isSelected)
+        public void Render(Graphics graphics, float width, float height, Rectangle content)
         {
-            graphics.DrawIcon(_icon, new Rectangle(0, 0, (int)width, (int)height));
+            graphics.DrawIcon(_icon, content);
         }
 
         public bool Store(out string data)

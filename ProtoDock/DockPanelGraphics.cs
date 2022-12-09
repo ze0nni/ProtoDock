@@ -30,7 +30,7 @@ namespace ProtoDock {
 		public float Bottom => _position.Y + Height;
 		
 		public float Width => _drawSize.Width;
-		public float Height => Dock.SelectedSkin.PanelPadding.Top + Dock.IconSize + Dock.SelectedSkin.PanelPadding.Bottom;
+		public float Height => Dock.SelectedSkin.PanelPadding.Top + Dock.IconSlotSize + Dock.SelectedSkin.PanelPadding.Bottom;
 		
 		private SizeF _drawSize;
 		public float DrawWidth => _drawSize.Width;
@@ -103,7 +103,7 @@ namespace ProtoDock {
 					break;
 				
 				case State.LeftDown:
-					if (MathF.Abs(_mouseDownPoint.X - x) > Dock.IconSize * 0.5f) {
+					if (MathF.Abs(_mouseDownPoint.X - x) > Dock.IconSlotSize * 0.5f) {
 						SetState(State.DragIcon);
 					}
 					break;
@@ -189,7 +189,7 @@ namespace ProtoDock {
 				panelWidth = 0;
 			}
 				
-			var panelHeight = Math.Max(Dock.IconSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
+			var panelHeight = Math.Max(Dock.IconSlotSize + Dock.SelectedSkin.PanelPadding.Vertical, maxIconHeight + Dock.SelectedSkin.PanelPadding.Vertical);
 			dockSize = new SizeF(
 				panelWidth,
 				panelHeight
@@ -231,7 +231,7 @@ namespace ProtoDock {
                         break;
 
                     case Position.Bottom:
-                        var vOffset = icon.Height - Dock.IconSize;
+                        var vOffset = icon.Height - Dock.IconSlotSize;
                         graphics.TranslateTransform(0, -vOffset);
                         icon.Render(graphics);
                         graphics.TranslateTransform(0, vOffset);
@@ -263,14 +263,14 @@ namespace ProtoDock {
                 x - 1,
                 1,
                 4,
-                Dock.IconSize);
+                Dock.IconSlotSize);
 
             graphics.FillRectangle(
                 SystemBrushes.Highlight, 
                 x-2,
                 0,
                 4,
-                Dock.IconSize);
+                Dock.IconSlotSize);
         }
         
         
@@ -317,11 +317,11 @@ namespace ProtoDock {
             switch (Dock.Position)
             {
                 case Position.Top:
-                    top = 0;                    
+                    top = 0;
                     break;
 
                 case Position.Bottom:
-                    var vOffset = value.Height - Dock.IconSize;
+                    var vOffset = value.Height - Dock.IconSlotSize;
                     top = -vOffset;
                     break;
 

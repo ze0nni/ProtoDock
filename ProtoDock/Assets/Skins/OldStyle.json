@@ -1,10 +1,11 @@
 {
 	"VOffset": 0,
+	"IconPadding": 2,
 	"Padding": {
-		"Left": 6,
-		"Top": 6,
-		"Right": 6,
-		"Bottom": 6
+		"Left": 4,
+		"Top": 4,
+		"Right": 4,
+		"Bottom": 4
 	},
 	"Dock" : {
 		"BitmapSource": "Skins/OldStyle/Default.png",

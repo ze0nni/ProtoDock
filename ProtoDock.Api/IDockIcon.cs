@@ -19,7 +19,7 @@ namespace ProtoDock.Api
         bool MouseUp(int x, int y, MouseButtons button);
         void MouseMove(int x, int y, MouseButtons button);
 
-        void Render(Graphics graphics, float width, float height, bool isSelected);        
+        void Render(Graphics graphics, float width, float height, Rectangle content);
         bool Store(out string data);
     }
 }

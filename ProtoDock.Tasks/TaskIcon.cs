@@ -105,11 +105,11 @@ namespace ProtoDock.Tasks
                 return _sb.ToString();
             }
         }
-        public void Render(Graphics graphics, float width, float height, bool isSelected)
+        public void Render(Graphics graphics, float width, float height, Rectangle content)
         {
             if (_isActive)
             {
-                _api.DrawSkin(SkinElement.SelectedBg, graphics, 0, 0, width, height);
+                _api.DrawSkin(SkinElement.SelectedBg, graphics, content);
             }
 
             if (_icon != null)
@@ -119,7 +119,7 @@ namespace ProtoDock.Tasks
 
             if (_isActive)
             {
-                _api.DrawSkin(SkinElement.SelectedFg, graphics, 0, 0, width, height);
+                _api.DrawSkin(SkinElement.SelectedFg, graphics, content);
             }
         }
 

@@ -271,6 +271,11 @@ namespace ProtoDock.Core
             Graphics.SelectedSkin.Draw(element, g, x, y, width, height);
         }
 
+        public void DrawSkin(SkinElement element, Graphics g, Rectangle rect)
+        {
+            Graphics.SelectedSkin.Draw(element, g, rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
         public bool PanelScreenPos(DockPanel panel, out Point outPos)
         {
             var left = Graphics.SelectedSkin.Padding.Left;

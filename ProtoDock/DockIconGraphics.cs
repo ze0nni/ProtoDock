@@ -46,7 +46,7 @@ namespace ProtoDock
             _panel = panel;
             Model = model;
 
-            _targetSize = _panel.Dock.IconSize;
+            _targetSize = _panel.Dock.IconSlotSize;
             if (!playAppear) {
                 _size = _targetSize;
             }
@@ -101,7 +101,7 @@ namespace ProtoDock
             if (!Model.Hovered) {
                 ratio = 0;
             }            
-            var size = _panel.Dock.IconSize + (_panel.Dock.IconHoverValue * ratio);
+            var size = _panel.Dock.IconSlotSize + (_panel.Dock.IconHoverValue * ratio);
             _targetSize = size ;
 
             if (fast) {
@@ -130,8 +130,9 @@ namespace ProtoDock
             if (Flash && displayFlash) {
                 _panel.Dock.SelectedSkin.Draw(SkinElement.HighlightBg,  graphics, 0, 0, Width, Height);
             }
-            
-            Model.Render(graphics, Width, Height, _isMouseOver);
+
+            var padding = _panel.Dock.SelectedSkin.IconPadding;
+            Model.Render(graphics, Width, Height, new Rectangle(-padding, -padding, (int)Width + padding * 2, (int)Height + padding * 2));
 
             if (Flash && displayFlash) {
                 _panel.Dock.SelectedSkin.Draw(SkinElement.HighlightFg,  graphics, 0, 0, Width, Height);

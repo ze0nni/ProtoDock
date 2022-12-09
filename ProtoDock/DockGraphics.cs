@@ -33,6 +33,7 @@ namespace ProtoDock
         private Size _drawSize = new Size(1, 1);
 
         public int IconSize { get; private set; } = 48;
+        public int IconSlotSize => IconSize + SelectedSkin.IconPadding * 2;
         public int IconHoverValue { get; private set; } = 24;
         public int IconSpace { get; private set; } = 8;
 
@@ -609,16 +610,16 @@ namespace ProtoDock
 
             var width =
                 MathF.Max(
-                    SelectedSkin.Padding.Horizontal+ IconSize,
+                    SelectedSkin.Padding.Horizontal+ IconSlotSize,
                     SelectedSkin.Padding.Horizontal + panelsWidth);
             
             dockSize = new SizeF(
                 width,
-                SelectedSkin.Padding.Vertical + SelectedSkin.PanelPadding.Vertical + IconSize
+                SelectedSkin.Padding.Vertical + SelectedSkin.PanelPadding.Vertical + IconSlotSize
             );
 
             var drawHeight = MathF.Max(
-                SelectedSkin.Padding.Top + IconSize + SelectedSkin.Padding.Bottom,
+                SelectedSkin.Padding.Top + IconSlotSize + SelectedSkin.Padding.Bottom,
                 SelectedSkin.Padding.Top + panelsDrawHeight + SelectedSkin.Padding.Bottom);
 
             drawSize = new Size(
@@ -710,7 +711,7 @@ namespace ProtoDock
                     var distance = MathF.Abs(iconCenter - panelX);
                     float ratio;
 
-                    var effectDistance = IconSize * 2f;
+                    var effectDistance = IconSlotSize * 2f;
                     if (distance > effectDistance) {
                         ratio = 0;
                     }
