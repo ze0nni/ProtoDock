@@ -343,18 +343,9 @@ namespace ProtoDock.Tasks
         private static extern IntPtr SendMessage(IntPtr hwnd, int message, IntPtr wparam, IntPtr lparam);
         
         [DllImport("user32.dll")]
-        private static extern IntPtr GetDesktopWindow();
-        
-        [DllImport("user32.dll")]
         private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
         
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
         [DllImport("dwmapi.dll")]
         private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out IntPtr pvAttribute, int cbAttribute);
@@ -396,13 +387,7 @@ namespace ProtoDock.Tasks
             // 
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "TasksMediator";
-            this.Load += new System.EventHandler(this.TasksMediator_Load);
             this.ResumeLayout(false);
-
-        }
-
-        private void TasksMediator_Load(object sender, EventArgs e)
-        {
 
         }
     }

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ProtoDock.Tasks
@@ -20,7 +21,7 @@ namespace ProtoDock.Tasks
 
         public IDockPanelMediator Mediator => _mediator;
         private readonly TasksMediator _mediator;
-        
+
         private readonly IntPtr _hWnd;
         private readonly IDockApi _api;
 
@@ -28,10 +29,10 @@ namespace ProtoDock.Tasks
 
         private IntPtr _activeWindow;
         private bool _isActive;
-        
+
         private bool _flashed;
         private readonly Stopwatch _flashTime = new Stopwatch();
-        
+
         public TaskIcon(TasksMediator mediator, IDockApi api, IntPtr hWnd)
         {
             _mediator = mediator;
@@ -60,7 +61,7 @@ namespace ProtoDock.Tasks
         }
 
         public void MouseLeave() {
-            
+
         }
 
         public void MouseDown(int x, int y, MouseButtons button) {
@@ -75,7 +76,7 @@ namespace ProtoDock.Tasks
 
         public void MouseMove(int x, int y, MouseButtons button) {
         }
-        
+
         private void Click()
         {
             var style = (User32.WindowStyles)User32.GetWindowLong(_hWnd, User32.WindowLongIndexFlags.GWL_STYLE);
@@ -134,7 +135,7 @@ namespace ProtoDock.Tasks
             _flashTime.Start();
             _mediator.Api.StartFlash(this);
         }
-        
+
         internal void UpdateActiveWindow(IntPtr wnd)
         {
             if (wnd == _api.HWnd)
@@ -146,41 +147,58 @@ namespace ProtoDock.Tasks
             _isActive = _hWnd == wnd;
             _api.SetDirty();
         }
-
+        private bool _isRedrawRunned;
         internal void Redraw()
         {
-
-            _icon?.Dispose();
-            _icon = null;
-
-            var hIcon = PInvoke.User32.SendMessage(_hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
-            if (hIcon != IntPtr.Zero)
+            if (_isRedrawRunned)
             {
-                _icon = Icon.FromHandle(hIcon).ToBitmap();
+                return;
             }
-            else
+            ThreadPool.QueueUserWorkItem(RedrawTask, null);
+        }
+        private void RedrawTask(object state)
+        {
+            _isRedrawRunned = true;
+
+            var icon = default(Icon);
+            try
             {
-                User32.GetWindowThreadProcessId(_hWnd, out var processId);
-                var hProcess = Kernel32.OpenProcess(0x0400, false, processId);
-                uint size = (uint)_sb.Capacity;
-                try
+                var hIcon = PInvoke.User32.SendMessage(_hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
+                if (hIcon != IntPtr.Zero)
                 {
-                    var result = QueryFullProcessImageName(hProcess, 0, _sb, ref size);
-
-                    var icon = Icon.ExtractAssociatedIcon(_sb.ToString());
-                    _icon = icon.ToBitmap();
-                    icon.Dispose();
+                    icon = Icon.FromHandle(hIcon);
                 }
-                catch
+                else
                 {
-                    //
+                    User32.GetWindowThreadProcessId(_hWnd, out var processId);
+                    var hProcess = Kernel32.OpenProcess(0x0400, false, processId);
+                    uint size = (uint)_sb.Capacity;
+                    try
+                    {
+                        var result = QueryFullProcessImageName(hProcess, 0, _sb, ref size);
+                        icon = Icon.ExtractAssociatedIcon(_sb.ToString());
+                    }
+                    catch
+                    {
+                        //
+                    }
+                    finally
+                    {
+                        hProcess.Dispose();
+                    }
                 }
-                finally
-                {
-                    hProcess.Dispose();
-                }
-
+            } finally
+            {
+                _isRedrawRunned = false;
             }
+
+            _api.Invoke(() =>
+            {
+                _icon?.Dispose();
+                _icon = icon.ToBitmap();
+                icon.Dispose();
+                _api.SetDirty();
+            });
         }
 
         public const int GCL_HICONSM = -34;

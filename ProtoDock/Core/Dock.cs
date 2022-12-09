@@ -12,6 +12,7 @@ using ProtoDock.Time;
 using System.Text.Json;
 using ProtoDock.Autostart;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace ProtoDock.Core
 {
@@ -22,6 +23,9 @@ namespace ProtoDock.Core
 
         public IntPtr HWnd { get; }
 
+        private readonly ConcurrentQueue<Action> _actions = new ConcurrentQueue<Action>();
+        public void Invoke(Action action) => _actions.Enqueue(action);
+
         public Position Position => Graphics.Position;
 
         public IReadOnlyList<IDockPlugin> Plugins => _plugins.AsReadOnly();
@@ -30,7 +34,7 @@ namespace ProtoDock.Core
 
         public readonly DockGraphics Graphics;
 
-        private readonly List<IDockPlugin> _plugins = new List<IDockPlugin>();        
+        private readonly List<IDockPlugin> _plugins = new List<IDockPlugin>();
 
         public IReadOnlyList<DockPanel> Panels => _panels;
         private readonly List<DockPanel> _panels = new List<DockPanel>();
@@ -80,6 +84,11 @@ namespace ProtoDock.Core
         }
 
         public void Update() {
+            while (_actions.TryDequeue(out var action))
+            {
+                action.Invoke();
+            }
+
             if (_flush) {
                 if (Store())
                 {

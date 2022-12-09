@@ -10,6 +10,7 @@ namespace ProtoDock
         [STAThread]
         static void Main()
         {
+            BugReport.SetHooks();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

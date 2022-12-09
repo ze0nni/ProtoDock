@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -32,12 +33,12 @@ namespace ProtoDock.Api
     {
         IntPtr HInstance { get; }
         IntPtr HWnd { get; }
-        Position Position { get;  }
+        void Invoke(Action action);
+        Position Position { get; }
         IReadOnlyList<IDockPlugin> Plugins { get; }
         void SetDirty();
         void Flush();
         void DrawSkin(SkinElement element, Graphics g, float x, float y, float width, float height);
-
         bool GetPanelRect(IDockPanelMediator mediator, out Rectangle screenRect);
     }
 }
