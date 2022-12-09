@@ -132,7 +132,11 @@ namespace ProtoDock
             }
 
             var padding = _panel.Dock.SelectedSkin.IconPadding;
-            Model.Render(graphics, Width, Height, new Rectangle(-padding, -padding, (int)Width + padding * 2, (int)Height + padding * 2));
+
+            var state = graphics.Save();
+            graphics.TranslateTransform(padding, padding);
+            Model.Render(graphics, Width - padding * 2, Height - padding * 2, new Rectangle(-padding, -padding, (int)Width, (int)Height));
+            graphics.Restore(state);
 
             if (Flash && displayFlash) {
                 _panel.Dock.SelectedSkin.Draw(SkinElement.HighlightFg,  graphics, 0, 0, Width, Height);
