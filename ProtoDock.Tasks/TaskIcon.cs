@@ -160,13 +160,15 @@ namespace ProtoDock.Tasks
         {
             _isRedrawRunned = true;
 
-            var icon = default(Icon);
+            var newIcon = default(Bitmap);
             try
             {
                 var hIcon = PInvoke.User32.SendMessage(_hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
                 if (hIcon != IntPtr.Zero)
                 {
-                    icon = Icon.FromHandle(hIcon);
+                    var i = Icon.FromHandle(hIcon);
+                    newIcon = i.ToBitmap();
+                    i.Dispose();
                 }
                 else
                 {
@@ -176,7 +178,9 @@ namespace ProtoDock.Tasks
                     try
                     {
                         var result = QueryFullProcessImageName(hProcess, 0, _sb, ref size);
-                        icon = Icon.ExtractAssociatedIcon(_sb.ToString());
+                        var i = Icon.ExtractAssociatedIcon(_sb.ToString());
+                        newIcon = i.ToBitmap();
+                        i.Dispose();
                     }
                     catch
                     {
@@ -195,14 +199,7 @@ namespace ProtoDock.Tasks
             _api.Invoke(() =>
             {
                 _icon?.Dispose();
-                if (icon != null)
-                {
-                    _icon = icon.ToBitmap();
-                    icon.Dispose();
-                } else
-                {
-                    _icon = null;
-                }
+                _icon = newIcon;
                 _api.SetDirty();
             });
         }
