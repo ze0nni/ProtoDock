@@ -174,39 +174,48 @@ namespace ProtoDock
             var s9 = Scale9;
             var bmp = Bitmap;
 
-            var centerWidth = size.Width - s9.Left - s9.Right;
-            var centerHeight = size.Height - s9.Top - s9.Bottom;
+            var scaleX = Math.Min(1f, size.Width / s9.Horizontal);
+            var scaleY = Math.Min(1f, size.Height / s9.Vertical);
+            var scale = MathF.Min(scaleX, scaleY);
+            var d9 = new Padding(
+                (int)MathF.Ceiling(s9.Left * scale),
+                (int)MathF.Ceiling(s9.Top * scale),
+                (int)MathF.Ceiling(s9.Right * scale),
+                (int)MathF.Ceiling(s9.Bottom * scale));
 
+            var centerWidth = size.Width - d9.Left - d9.Right;
+            var centerHeight = size.Height - d9.Top - d9.Bottom;
             var skinCenterWidth = bmp.Width - s9.Left - s9.Right;
             var skinCenterHeight = bmp.Height - s9.Top - s9.Bottom;
 
+
             //Top Left
             g.DrawImage(bmp,
-                new RectangleF(0, 0, s9.Left, s9.Top),
+                new RectangleF(0, 0, d9.Left, d9.Top),
                 new RectangleF(0, 0, s9.Left, s9.Top),
                 GraphicsUnit.Pixel
              );
-
+            
             //Top Middle
             if (centerWidth > 0)
             {
                 g.DrawImage(bmp,
-                    new RectangleF(s9.Left, 0, centerWidth, s9.Top),
+                    new RectangleF(d9.Left, 0, centerWidth, d9.Top),
                     new RectangleF(s9.Left, 0, skinCenterWidth, s9.Top),
                     GraphicsUnit.Pixel
                  );
             }
-
+            
             //Top Right
             g.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, 0, s9.Right, s9.Top),
+                new RectangleF(size.Width - d9.Right, 0, d9.Right, d9.Top),
                 new RectangleF(bmp.Width - s9.Right, 0, s9.Right, s9.Top),
                 GraphicsUnit.Pixel
              );
 
             //Center left
             g.DrawImage(bmp,
-                new RectangleF(0, s9.Top, s9.Left, centerHeight),
+                new RectangleF(0, d9.Top, d9.Left, centerHeight),
                 new RectangleF(0, s9.Top, s9.Left, skinCenterHeight),
                 GraphicsUnit.Pixel
              );
@@ -215,7 +224,7 @@ namespace ProtoDock
             if (centerWidth > 0)
             {
                 g.DrawImage(bmp,
-                    new RectangleF(s9.Left, s9.Top, centerWidth, centerHeight),
+                    new RectangleF(d9.Left, d9.Top, centerWidth, centerHeight),
                     new RectangleF(s9.Left, s9.Top, skinCenterWidth, skinCenterHeight),
                     GraphicsUnit.Pixel
                  );
@@ -223,23 +232,23 @@ namespace ProtoDock
 
             //Center Right
             g.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, s9.Top, s9.Right, centerHeight),
+                new RectangleF(size.Width - d9.Right, d9.Top, d9.Right, centerHeight),
                 new RectangleF(bmp.Width - s9.Right, s9.Top, s9.Right, skinCenterHeight),
                 GraphicsUnit.Pixel
              );
 
+
             //Bottom Left
             g.DrawImage(bmp,
-                new RectangleF(0, size.Height - s9.Bottom, s9.Left, s9.Bottom),
+                new RectangleF(0, size.Height - d9.Bottom, d9.Left, d9.Bottom),
                 new RectangleF(0, bmp.Height - s9.Bottom, s9.Left, s9.Bottom),
                 GraphicsUnit.Pixel
              );
-
             //Bottom Middle
             if (centerWidth > 0)
             {
                 g.DrawImage(bmp,
-                    new RectangleF(s9.Left, size.Height - s9.Bottom, centerWidth, s9.Bottom),
+                    new RectangleF(d9.Left, size.Height - d9.Bottom, centerWidth, d9.Bottom),
                     new RectangleF(s9.Left, bmp.Height - s9.Bottom, skinCenterWidth, s9.Bottom),
                     GraphicsUnit.Pixel
                  );
@@ -247,7 +256,7 @@ namespace ProtoDock
 
             //Bottom Right
             g.DrawImage(bmp,
-                new RectangleF(size.Width - s9.Right, size.Height - s9.Bottom, s9.Right, s9.Bottom),
+                new RectangleF(size.Width - d9.Right, size.Height - d9.Bottom, d9.Right, d9.Bottom),
                 new RectangleF(bmp.Width - s9.Right, bmp.Height - s9.Bottom, s9.Right, s9.Bottom),
                 GraphicsUnit.Pixel
              );
