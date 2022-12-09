@@ -1,0 +1,36 @@
+{
+	"VOffset": 0,
+	"Padding": {
+		"Left": 6,
+		"Top": 6,
+		"Right": 6,
+		"Bottom": 6
+	},
+	"Dock" : {
+		"BitmapSource": "Skins/OldStyle/Default.png",
+		"Scale9": {
+			"Left": 2,
+			"Top": 2,
+			"Right": 4,
+			"Bottom": 4
+		}
+	},
+	"SelectedBg": {		
+		"BitmapSource": "Skins/OldStyle/Default_selected.png",
+		"Scale9": {
+			"Left": 2,
+			"Top": 2,
+			"Right": 2,
+			"Bottom": 2
+		}
+	},
+	"HighlightFg": {
+		"BitmapSource": "Skins/OldStyle/Default_highlight.png",
+		"Scale9": {
+			"Left": 2,
+			"Top": 2,
+			"Right": 2,
+			"Bottom": 6
+		}		
+	}
+}	
