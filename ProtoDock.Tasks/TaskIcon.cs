@@ -195,8 +195,14 @@ namespace ProtoDock.Tasks
             _api.Invoke(() =>
             {
                 _icon?.Dispose();
-                _icon = icon.ToBitmap();
-                icon.Dispose();
+                if (icon != null)
+                {
+                    _icon = icon.ToBitmap();
+                    icon.Dispose();
+                } else
+                {
+                    _icon = null;
+                }
                 _api.SetDirty();
             });
         }
