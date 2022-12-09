@@ -17,7 +17,7 @@ namespace ProtoDock.Tray
         public IDockPanelMediator Mediator => _mediator;
         private TrayMediator _mediator;
 
-        public string Title => _icon.Title;
+        public string Title => _icon?.Title;
         public float Width => 1;
         public bool Hovered => true;
 
@@ -114,24 +114,32 @@ namespace ProtoDock.Tray
         }
 
         private void UpdateView() {
-            //ERROR
-            if (_iconBitmap == null  || _iconBitmap.Width != _icon.Icon.Width || _iconBitmap.Height != _icon.Icon.Height)
-            _iconBitmap?.Dispose();
-            _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);
-            using (var g = Graphics.FromImage(_iconBitmap)) {
-                g.Clear(Color.Transparent);
+            if (_iconBitmap == null || _iconBitmap.Width != _icon.Icon.Width || _iconBitmap.Height != _icon.Icon.Height)
+            {
+                _iconBitmap?.Dispose();
+                _iconBitmap = null;
+                if (_icon.Icon == null)
+                {
+                    return;
+                }
 
-                switch (_icon.Icon) {
-                    case InteropBitmap iBitmap:
+                _iconBitmap = new Bitmap((int)_icon.Icon.Width, (int)_icon.Icon.Height);
+                using (var g = Graphics.FromImage(_iconBitmap))
+                {
+                    g.Clear(Color.Transparent);
+
+                    switch (_icon.Icon)
                     {
-                        using var bitmap = GetBitmap(iBitmap);
-                        g.DrawImage(bitmap, 0, 0, _iconBitmap.Width, _iconBitmap.Height);
-                        break;
+                        case InteropBitmap iBitmap:
+                            {
+                                using var bitmap = GetBitmap(iBitmap);
+                                g.DrawImage(bitmap, 0, 0, _iconBitmap.Width, _iconBitmap.Height);
+                                break;
+                            }
                     }
                 }
+                _mediator.Api.Dock.SetDirty();
             }
-            
-            _mediator.Api.Dock.SetDirty();
         }
         
         Bitmap GetBitmap(BitmapSource source)
