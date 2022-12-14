@@ -4,7 +4,6 @@ using ProtoDock.Api;
 using System.Windows.Forms;
 using ManagedShell.WindowsTray;
 using NotifyIcon = ManagedShell.WindowsTray.NotifyIcon;
-using ManagedShell;
 using System;
 
 namespace ProtoDock.Tray

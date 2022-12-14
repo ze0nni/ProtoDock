@@ -11,11 +11,6 @@
 
 
   <ItemGroup>
-    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
   </ItemGroup>
 </Project>

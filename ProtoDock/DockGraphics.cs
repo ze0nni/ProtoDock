@@ -514,11 +514,11 @@ namespace ProtoDock
         private IntPtr _lastFullscreenWindow;
         private bool IsFullscreenWindowActive()
         {
-            if (_lastFullscreenWindow != IntPtr.Zero && !PInvoke.User32.IsWindow(_lastFullscreenWindow))
+            if (_lastFullscreenWindow != IntPtr.Zero && !User32.IsWindow(_lastFullscreenWindow))
             {
                 _lastFullscreenWindow = IntPtr.Zero;
             }
-            if (_lastFullscreenWindow != IntPtr.Zero && !PInvoke.User32.IsWindowVisible(_lastFullscreenWindow))
+            if (_lastFullscreenWindow != IntPtr.Zero && !User32.IsWindowVisible(_lastFullscreenWindow))
             {
                 _lastFullscreenWindow = IntPtr.Zero;
             }
@@ -533,20 +533,20 @@ namespace ProtoDock
            
             if (_lastFullscreenWindow == IntPtr.Zero)
             {
-                _lastFullscreenWindow = PInvoke.User32.GetForegroundWindow();
+                _lastFullscreenWindow = User32.GetForegroundWindow();
             }
             if (_lastFullscreenWindow == IntPtr.Zero)
             {
                 return false;
             }
             
-            PInvoke.User32.GetWindowRect(_lastFullscreenWindow, out var wndRect);
+            User32.GetWindowRect(_lastFullscreenWindow, out var wndRect);
             var scrRect = ActiveScreen.Bounds;
 
-            if (wndRect.left != scrRect.Left
-                || wndRect.top != scrRect.Top
-                || wndRect.right != scrRect.Right
-                || wndRect.bottom != scrRect.Bottom)
+            if (wndRect.Left != scrRect.Left
+                || wndRect.Top != scrRect.Top
+                || wndRect.Right != scrRect.Right
+                || wndRect.Bottom != scrRect.Bottom)
             {
                 _lastFullscreenWindow = IntPtr.Zero;
                 return false;

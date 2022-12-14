@@ -1,8 +1,7 @@
 ﻿using ProtoDock.Api;
-using PInvoke;
+
 using System;
 using System.Collections.Generic;
-using static PInvoke.User32;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -31,8 +30,6 @@ namespace ProtoDock.Tasks
             _api = api;
             _config = Config.Read(data);
         }
-
-        private Kernel32.SafeLibraryHandle _shellHookLib;
 
         public void Setup(IDockPanelApi api)
         {
@@ -80,7 +77,7 @@ namespace ProtoDock.Tasks
             }, IntPtr.Zero);
 
             UpdateWindows(false);
-            UpdateActiveWindow(User32.GetActiveWindow());
+            UpdateActiveWindow(GetActiveWindow());
         }
         
         public void Destroy()
@@ -227,7 +224,7 @@ namespace ProtoDock.Tasks
                 }
                 
                 if (visible) {
-                    var style = GetWindowLong(wnd, WindowLongIndexFlags.GWL_STYLE);
+                    var style = User32.GetWindowLong(wnd, GWL.GWL_STYLE);
                     if ((style & (int) WindowStyles.WS_CHILD) != 0)
                     {
                         visible = false;
@@ -249,7 +246,7 @@ namespace ProtoDock.Tasks
                 }
                 if (visible)
                 {
-                    var styleEx = GetWindowLong(wnd, WindowLongIndexFlags.GWL_EXSTYLE);
+                    var styleEx = User32.GetWindowLong(wnd, GWL.GWL_EXSTYLE);
                     if ((styleEx & (int) WindowStylesEx.WS_EX_TOOLWINDOW) != 0 &&
                         (styleEx & (int)WindowStylesEx.WS_EX_APPWINDOW) == 0 )
                     {
@@ -326,6 +323,10 @@ namespace ProtoDock.Tasks
             }
         }
 
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+
         [DllImport("user32.dll")]
         private static extern bool SetTaskmanWindow(IntPtr hWnd);
 
@@ -349,6 +350,15 @@ namespace ProtoDock.Tasks
 
         [DllImport("dwmapi.dll")]
         private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out IntPtr pvAttribute, int cbAttribute);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern int RegisterWindowMessage(string lpString);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr GetActiveWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool IsWindowVisible(IntPtr hWnd);
 
         enum DWMWINDOWATTRIBUTE
         {
@@ -377,18 +387,6 @@ namespace ProtoDock.Tasks
             public short Top;
             public short Right;
             public short Bottom;
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            // 
-            // TasksMediator
-            // 
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Name = "TasksMediator";
-            this.ResumeLayout(false);
-
         }
     }
 }

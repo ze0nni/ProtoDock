@@ -11,7 +11,7 @@
     <PackageTags>Dock</PackageTags>
     <SignAssembly>true</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,16 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
     <ProjectReference Include="..\ProtoDock.Autostart\ProtoDock.Autostart.csproj" />
     <ProjectReference Include="..\ProtoDock.QuickLaunch\ProtoDock.QuickLaunch.csproj" />
     <ProjectReference Include="..\ProtoDock.Tasks\ProtoDock.Tasks.csproj" />
     <ProjectReference Include="..\ProtoDock.Time\ProtoDock.Time.csproj" />
     <ProjectReference Include="..\ProtoDock.Tray\ProtoDock.Tray.csproj" />
+    <ProjectReference Include="..\User32\User32.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

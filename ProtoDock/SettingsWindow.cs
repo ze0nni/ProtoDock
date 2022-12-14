@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using System.Diagnostics;
+using static ProtoDock.User32;
 
 namespace ProtoDock
 {
@@ -61,12 +62,12 @@ namespace ProtoDock
         }
 
         private void FlashWindow() {
-            var info = new PInvoke.User32.FLASHWINFO();
+            var info = new User32.FLASHWINFO();
             info.cbSize = Marshal.SizeOf(info);
             info.hwnd = Handle;
-            info.dwFlags = PInvoke.User32.FlashWindowFlags.FLASHW_ALL | PInvoke.User32.FlashWindowFlags.FLASHW_TIMER;
+            info.dwFlags = (int)(FlashWindowFlags.FLASHW_ALL | FlashWindowFlags.FLASHW_TIMER);
             info.uCount = 3;
-            PInvoke.User32.FlashWindowEx(ref info);
+            User32.FlashWindowEx(ref info);
         }
     }
 }

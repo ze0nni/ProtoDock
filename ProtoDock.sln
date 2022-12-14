@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.QuickLaunch", "Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Time", "ProtoDock.Time\ProtoDock.Time.csproj", "{14F0B398-4A0A-4E91-9493-F2EAFA13FBF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtoDock.Autostart", "ProtoDock.Autostart\ProtoDock.Autostart.csproj", "{E7298FEF-88F5-46AB-A99A-B20AB05130A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtoDock.Autostart", "ProtoDock.Autostart\ProtoDock.Autostart.csproj", "{E7298FEF-88F5-46AB-A99A-B20AB05130A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

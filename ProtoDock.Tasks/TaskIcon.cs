@@ -1,7 +1,5 @@
-﻿using PInvoke;
-using ProtoDock.Api;
+﻿using ProtoDock.Api;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -79,20 +77,20 @@ namespace ProtoDock.Tasks
 
         private void Click()
         {
-            var style = (User32.WindowStyles)User32.GetWindowLong(_hWnd, User32.WindowLongIndexFlags.GWL_STYLE);
-            var minimized = style.HasFlag(User32.WindowStyles.WS_MINIMIZE);
+            var style = (WindowStyles)User32.GetWindowLong(_hWnd, GWL.GWL_STYLE);
+            var minimized = style.HasFlag(WindowStyles.WS_MINIMIZE);
             if (minimized)
             {
-                User32.ShowWindow(_hWnd, User32.WindowShowStyle.SW_RESTORE);
-                PInvoke.User32.SetForegroundWindow(_hWnd);
+                User32.ShowWindow(_hWnd, WindowShowCommand.SW_RESTORE);
+                User32.SetForegroundWindow(_hWnd);
             }
             else if (_activeWindow != _hWnd)
             {
-                PInvoke.User32.SetForegroundWindow(_hWnd);
+                User32.SetForegroundWindow(_hWnd);
             }
             else
             {
-                User32.ShowWindow(_hWnd, User32.WindowShowStyle.SW_MINIMIZE);
+                User32.ShowWindow(_hWnd, WindowShowCommand.SW_MINIMIZE);
             }
         }
 
@@ -163,7 +161,7 @@ namespace ProtoDock.Tasks
             var newIcon = default(Bitmap);
             try
             {
-                var hIcon = PInvoke.User32.SendMessage(_hWnd, PInvoke.User32.WindowMessage.WM_GETICON, new IntPtr(1), IntPtr.Zero);
+                var hIcon = User32.SendMessage(_hWnd, WM_GETICON, 1, 0);
                 if (hIcon != IntPtr.Zero)
                 {
                     var i = Icon.FromHandle(hIcon);
@@ -174,7 +172,7 @@ namespace ProtoDock.Tasks
                 {
                     User32.GetWindowThreadProcessId(_hWnd, out var processId);
                     var hProcess = Kernel32.OpenProcess(0x0400, false, processId);
-                    uint size = (uint)_sb.Capacity;
+                    int size = _sb.Capacity;
                     try
                     {
                         var result = QueryFullProcessImageName(hProcess, 0, _sb, ref size);
@@ -188,7 +186,7 @@ namespace ProtoDock.Tasks
                     }
                     finally
                     {
-                        hProcess.Dispose();
+                        Kernel32.CloseHandle(hProcess);
                     }
                 }
             } finally
@@ -206,12 +204,13 @@ namespace ProtoDock.Tasks
 
         public const int GCL_HICONSM = -34;
         public const int GCL_HICON = -14;
+        public const uint WM_GETICON = 0x007F;
 
         [DllImport("user32.dll", EntryPoint = "GetClassLong")]
         public static extern uint GetClassLongPtr32(IntPtr hWnd, int nIndex);
 
-        [DllImport("Kernel32.dll")]
-        private static extern bool QueryFullProcessImageName([In] Kernel32.SafeObjectHandle hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] int dwFlags, [Out] StringBuilder lpExeName, ref int lpdwSize);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetActiveWindow(IntPtr hWnd);
