@@ -92,7 +92,7 @@ namespace ProtoDock.Core
             if (_flush) {
                 if (Store())
                 {
-                    _flush = true;
+                    _flush = false;
                 }
             }
         }
