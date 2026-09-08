@@ -1,7 +1,6 @@
 ﻿using ProtoDock.Api;
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Forms;
 
 namespace ProtoDock.Settings

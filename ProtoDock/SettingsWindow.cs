@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using System.Linq;
 using ProtoDock.Api;
-using System.Windows.Documents;
 using ProtoDock.Settings;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
