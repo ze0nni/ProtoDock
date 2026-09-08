@@ -16,6 +16,7 @@ namespace ProtoDock.Tray
         public uint CallbackMessage { get; set; }
         public uint Version { get; set; }
         public string Title { get; set; }
+        public string ProcessPath { get; set; }
         public bool IsHidden { get; set; }
         public Bitmap Image { get; private set; }
         public Rectangle Placement { get; set; }
@@ -58,24 +59,56 @@ namespace ProtoDock.Tray
                 return;
             }
 
-            var copy = Win32.CopyIcon(hIcon);
-            if (copy == IntPtr.Zero)
+            Image = CreateBestBitmap(hIcon);
+            NotifyChanged();
+        }
+
+        private static Bitmap CreateBestBitmap(IntPtr hIcon)
+        {
+            Bitmap best = null;
+            var bestArea = 0;
+
+            foreach (var size in new[] { 48, 32 })
             {
-                NotifyChanged();
-                return;
+                var copy = Win32.CopyImage(hIcon, Win32.IMAGE_ICON, size, size, Win32.LR_COPYFROMRESOURCE);
+                if (TryTakeBitmap(copy, ref best, ref bestArea))
+                {
+                    continue;
+                }
+            }
+
+            var fallback = Win32.CopyIcon(hIcon);
+            TryTakeBitmap(fallback, ref best, ref bestArea);
+            return best;
+        }
+
+        private static bool TryTakeBitmap(IntPtr hIcon, ref Bitmap best, ref int bestArea)
+        {
+            if (hIcon == IntPtr.Zero)
+            {
+                return false;
             }
 
             try
             {
-                using var icon = Icon.FromHandle(copy);
-                Image = icon.ToBitmap();
+                var size = Win32.GetIconSize(hIcon);
+                var area = size.IsEmpty ? 1 : Math.Max(0, size.Width * size.Height);
+                if (best != null && area <= bestArea)
+                {
+                    return false;
+                }
+
+                using var icon = Icon.FromHandle(hIcon);
+                var bitmap = icon.ToBitmap();
+                best?.Dispose();
+                best = bitmap;
+                bestArea = area;
+                return true;
             }
             finally
             {
-                Win32.DestroyIcon(copy);
+                Win32.DestroyIcon(hIcon);
             }
-
-            NotifyChanged();
         }
 
         public void NotifyChanged()

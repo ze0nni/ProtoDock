@@ -12,7 +12,7 @@ namespace ProtoDock.Tray
 
         public IDockPanelMediator Create(IDockApi api, string data)
         {
-            return new TrayMediator(this);
+            return new TrayMediator(this, data);
         }
 
         public bool ResolveHook<T>(out T hook) where T : class

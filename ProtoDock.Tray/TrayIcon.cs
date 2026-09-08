@@ -1,6 +1,7 @@
 ﻿using System;
 using ProtoDock.Api;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace ProtoDock.Tray
@@ -66,10 +67,14 @@ namespace ProtoDock.Tray
         {
             if (_icon.Image != null)
             {
+                var state = graphics.Save();
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 graphics.DrawImage(
                     _icon.Image,
                     new Rectangle(0, 0, (int)width, (int)height)
                 );
+                graphics.Restore(state);
             }
 
             if (_mediator.Api.ScreenRect(this, out var screenRect))

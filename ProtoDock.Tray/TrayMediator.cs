@@ -12,11 +12,14 @@ namespace ProtoDock.Tray
         public IDockPanelApi Api { get; private set; }
 
         private readonly Dictionary<TrayNotifyIcon, TrayIcon> _icons = new Dictionary<TrayNotifyIcon, TrayIcon>();
+        private readonly Config _config;
         private bool _alive;
+        private long _lastPinCheck;
 
-        public TrayMediator(IDockPlugin plugin)
+        public TrayMediator(IDockPlugin plugin, string data)
         {
             Plugin = plugin;
+            _config = Config.Read(data);
         }
 
         public void Setup(IDockPanelApi api)
@@ -24,17 +27,27 @@ namespace ProtoDock.Tray
             Api = api;
         }
 
-        public bool RequestSettings => false;
+        public bool RequestSettings => true;
 
         public void DisplaySettings(IDockSettingsDisplay display)
         {
-            throw new NotImplementedException();
+            display.Toggle(
+                "Only pinned",
+                _config.OnlyPinned,
+                out _,
+                out _,
+                v =>
+                {
+                    _config.OnlyPinned = v;
+                    display.SetDirty();
+                    ApplyFilter();
+                });
         }
 
         public bool Store(out string data)
         {
-            data = default;
-            return false;
+            data = _config.Write();
+            return true;
         }
 
         public void RestoreIcon(int version, string data)
@@ -74,6 +87,19 @@ namespace ProtoDock.Tray
 
         public void Update()
         {
+            if (!_alive || !_config.OnlyPinned)
+            {
+                return;
+            }
+
+            var now = DateTime.UtcNow.Ticks;
+            if (now - _lastPinCheck < TimeSpan.TicksPerSecond * 2)
+            {
+                return;
+            }
+
+            _lastPinCheck = now;
+            ApplyFilter();
         }
 
         public bool DragCanAccept(IDataObject data)
@@ -92,19 +118,7 @@ namespace ProtoDock.Tray
 
         private void OnIconUpdated(TrayNotifyIcon icon)
         {
-            RunOnDock(() =>
-            {
-                if (icon.IsHidden)
-                {
-                    RemoveView(icon);
-                    return;
-                }
-
-                if (!_icons.ContainsKey(icon))
-                {
-                    AddView(icon);
-                }
-            });
+            RunOnDock(() => ApplyVisibility(icon));
         }
 
         private void OnIconRemoved(TrayNotifyIcon icon)
@@ -123,16 +137,56 @@ namespace ProtoDock.Tray
             });
         }
 
-        private void AddView(TrayNotifyIcon icon)
+        private void ApplyFilter()
         {
-            if (!_alive || icon.IsHidden || _icons.ContainsKey(icon))
+            foreach (var icon in TrayHost.Instance.Snapshot())
+            {
+                ApplyVisibility(icon, playAppear: false);
+            }
+        }
+
+        private void ApplyVisibility(TrayNotifyIcon icon, bool playAppear = true)
+        {
+            if (ShouldShow(icon))
+            {
+                AddView(icon, playAppear);
+            }
+            else
+            {
+                RemoveView(icon);
+            }
+        }
+
+        private bool ShouldShow(TrayNotifyIcon icon)
+        {
+            if (icon.IsHidden)
+            {
+                return false;
+            }
+
+            if (!_config.OnlyPinned)
+            {
+                return true;
+            }
+
+            if (string.IsNullOrEmpty(icon.ProcessPath))
+            {
+                icon.ProcessPath = NotifyIconPinning.GetProcessPath(icon.HWnd);
+            }
+
+            return NotifyIconPinning.IsPromoted(icon);
+        }
+
+        private void AddView(TrayNotifyIcon icon, bool playAppear = true)
+        {
+            if (!_alive || !ShouldShow(icon) || _icons.ContainsKey(icon))
             {
                 return;
             }
 
             var view = new TrayIcon(this, icon);
             _icons[icon] = view;
-            Api.Add(view, true);
+            Api.Add(view, playAppear);
         }
 
         private void RemoveView(TrayNotifyIcon icon)

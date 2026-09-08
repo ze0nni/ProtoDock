@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace ProtoDock.Tray
@@ -232,14 +233,96 @@ namespace ProtoDock.Tray
         [DllImport("user32.dll")]
         public static extern bool AllowSetForegroundWindow(uint dwProcessId);
 
+        public const uint IMAGE_ICON = 1;
+        public const uint LR_COPYFROMRESOURCE = 0x4000;
+
         [DllImport("user32.dll")]
         public static extern IntPtr CopyIcon(IntPtr hIcon);
 
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr CopyImage(IntPtr hImage, uint type, int cx, int cy, uint flags);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool DestroyIcon(IntPtr hIcon);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetIconInfo(IntPtr hIcon, out ICONINFO piconinfo);
+
+        [DllImport("gdi32.dll")]
+        public static extern int GetObject(IntPtr hgdiobj, int cbBuffer, ref BITMAP lpvObject);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ICONINFO
+        {
+            [MarshalAs(UnmanagedType.Bool)]
+            public bool fIcon;
+            public int xHotspot;
+            public int yHotspot;
+            public IntPtr hbmMask;
+            public IntPtr hbmColor;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct BITMAP
+        {
+            public int bmType;
+            public int bmWidth;
+            public int bmHeight;
+            public int bmWidthBytes;
+            public ushort bmPlanes;
+            public ushort bmBitsPixel;
+            public IntPtr bmBits;
+        }
+
+        public static Size GetIconSize(IntPtr hIcon)
+        {
+            if (hIcon == IntPtr.Zero || !GetIconInfo(hIcon, out var info))
+            {
+                return Size.Empty;
+            }
+
+            try
+            {
+                var bitmap = info.hbmColor != IntPtr.Zero ? info.hbmColor : info.hbmMask;
+                var bm = new BITMAP();
+                if (bitmap == IntPtr.Zero || GetObject(bitmap, Marshal.SizeOf<BITMAP>(), ref bm) == 0)
+                {
+                    return Size.Empty;
+                }
+
+                var height = info.hbmColor == IntPtr.Zero ? bm.bmHeight / 2 : bm.bmHeight;
+                return new Size(bm.bmWidth, height);
+            }
+            finally
+            {
+                if (info.hbmColor != IntPtr.Zero)
+                {
+                    DeleteObject(info.hbmColor);
+                }
+
+                if (info.hbmMask != IntPtr.Zero)
+                {
+                    DeleteObject(info.hbmMask);
+                }
+            }
+        }
 
         [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
         public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
+
+        public const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, System.Text.StringBuilder lpExeName, ref int lpdwSize);
 
         public static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
         {

@@ -420,6 +420,7 @@ namespace ProtoDock.Tray
             {
                 icon.HWnd = Win32.ToHandle(nid.hWnd);
                 icon.Uid = nid.uID;
+                icon.ProcessPath ??= NotifyIconPinning.GetProcessPath(icon.HWnd);
             }
 
             if ((nid.uFlags & Win32.NIF_GUID) != 0)
