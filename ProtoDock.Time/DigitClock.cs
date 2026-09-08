@@ -27,7 +27,8 @@ namespace ProtoDock.Time {
 		}
 
 		public void Dispose() {
-			
+			_font?.Dispose();
+			_font = null;
 		}
 
 		public void Update() {

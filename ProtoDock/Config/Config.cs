@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace ProtoDock.Config
 {
@@ -12,7 +10,6 @@ namespace ProtoDock.Config
     public class DockConfig
     {
         [DefaultValue(nameof(Position.Bottom))]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Position Position { get; set; }
 
         [DefaultValue(null)]
@@ -34,7 +31,6 @@ namespace ProtoDock.Config
         public int HintFontSize { get; set; }
 
         [DefaultValue(AutohideRule.OnFullscreen)]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public AutohideRule Autohide { get; set; }
 
         public string ScreenName { get; set; }

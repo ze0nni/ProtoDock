@@ -2,8 +2,6 @@
 using ProtoDock.Config;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace ProtoDock.Core
 {
@@ -25,33 +23,54 @@ namespace ProtoDock.Core
         public DockPanel(Dock dock, Config.DockPanelConfig config): this(dock)
         {
             var mediatorsList = new List<IDockPanelMediator>();
-            foreach (var mediatorConfig in config.Mediators)
+            if (config.Mediators != null)
             {
-                var plugin = _dock.PluginFromGUID(mediatorConfig.PluginGUID);
-                if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook))
+                foreach (var mediatorConfig in config.Mediators)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
-                    continue;
-                }
-                var mediator = panelHook.Create(_dock, mediatorConfig.Data);
-                mediator.Setup(this);
-                mediatorsList.Add(mediator);
-                if (mediator != null)
-                {
+                    var plugin = _dock.PluginFromGUID(mediatorConfig.PluginGUID);
+                    if (plugin == null)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Plugin {mediatorConfig.PluginGUID} not found");
+                        continue;
+                    }
+
+                    if (!plugin.ResolveHook<IDockPlugin.IPanelHook>(out var panelHook))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Plugin {plugin} not resolve {nameof(IDockPlugin.IPanelHook)}");
+                        continue;
+                    }
+
+                    var mediator = panelHook.Create(_dock, mediatorConfig.Data);
+                    if (mediator == null)
+                    {
+                        continue;
+                    }
+
+                    mediator.Setup(this);
+                    mediatorsList.Add(mediator);
                     _mediators.Add(mediator);
                 }
+            }
+
+            if (config.Icons == null)
+            {
+                return;
             }
 
             foreach (var iconConfig in config.Icons)
             {
                 try
                 {
-                    //TODO: Version
+                    if (iconConfig.MediatorId < 0 || iconConfig.MediatorId >= mediatorsList.Count)
+                    {
+                        continue;
+                    }
+
                     mediatorsList[iconConfig.MediatorId].RestoreIcon(iconConfig.PluginVersion, iconConfig.Data);
                 }
-                catch
+                catch (Exception e)
                 {
-                    //TODO:
+                    System.Diagnostics.Debug.WriteLine(e);
                 }
             }
         }

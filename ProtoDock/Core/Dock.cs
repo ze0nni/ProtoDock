@@ -174,33 +174,78 @@ namespace ProtoDock.Core
 
         public void Restore()
         {
+            Config.DockConfig config;
             try
             {
-                var json = File.ReadAllText(ConfigPath());
-                var config = System.Text.Json.JsonSerializer.Deserialize<Config.DockConfig>(json);
-
-                if (config.Plugins != null)
+                var path = ConfigPath();
+                if (!File.Exists(path))
                 {
-                    foreach (var p in Plugins)
-                    {
-                        if (p.ResolveHook<IDockPlugin.ISettingsHook>(out var settingsHook) &&
-                            config.Plugins.TryGetValue(p.GUID, out var pluginData))
-                        {
-                            settingsHook.OnSettingsRestore(pluginData.PluginVersion, pluginData.Data);
-                        }
-                    }
+                    Graphics.Restore(null);
+                    return;
                 }
 
-                Graphics.Restore(config);
-
-                foreach (var panelConfig in config.Panels)
-                {
-                    AddPanel(panelConfig);
-                }                
+                var json = File.ReadAllText(path);
+                config = JsonSerializer.Deserialize(json, DockJsonContext.Default.DockConfig);
             }
             catch (Exception e)
             {
+                Debug.WriteLine(e);
                 Graphics.Restore(null);
+                return;
+            }
+
+            if (config == null)
+            {
+                Graphics.Restore(null);
+                return;
+            }
+
+            RestorePluginSettings(config);
+            Graphics.Restore(config);
+            RestorePanels(config);
+        }
+
+        private void RestorePluginSettings(Config.DockConfig config)
+        {
+            if (config.Plugins == null)
+            {
+                return;
+            }
+
+            foreach (var p in Plugins)
+            {
+                try
+                {
+                    if (p.ResolveHook<IDockPlugin.ISettingsHook>(out var settingsHook) &&
+                        config.Plugins.TryGetValue(p.GUID, out var pluginData))
+                    {
+                        settingsHook.OnSettingsRestore(pluginData.PluginVersion, pluginData.Data);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"Failed to restore settings for plugin {p.Name}: {e}");
+                }
+            }
+        }
+
+        private void RestorePanels(Config.DockConfig config)
+        {
+            if (config.Panels == null)
+            {
+                return;
+            }
+
+            foreach (var panelConfig in config.Panels)
+            {
+                try
+                {
+                    AddPanel(panelConfig);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"Failed to restore panel: {e}");
+                }
             }
         }
 
@@ -241,16 +286,13 @@ namespace ProtoDock.Core
                 config.Panels.Add(panel.Store());
             }
 
-            var options = new JsonSerializerOptions();
-            options.WriteIndented = true;
-
-            var json = System.Text.Json.JsonSerializer.Serialize(config, options);
+            var json = JsonSerializer.Serialize(config, DockJsonContext.Default.DockConfig);
 
             try
             {
-                System.IO.File.WriteAllText(ConfigPath(), json
-                    );
-            } catch(Exception e)
+                File.WriteAllText(ConfigPath(), json);
+            }
+            catch (Exception e)
             {
                 Debug.WriteLine(e);
                 return false;

@@ -197,7 +197,7 @@ namespace ProtoDock
         public bool MouseUp(float x, float y, MouseButtons button) {
             bool result;
             if (_selectedPanel != null) {
-                result = _selectedPanel.MouseUp(x - _selectedPanel.Left, x - _selectedPanel.Top, button);
+                result = _selectedPanel.MouseUp(x - _selectedPanel.Left, y - _selectedPanel.Top, button);
             }
             else {
                 result = false;

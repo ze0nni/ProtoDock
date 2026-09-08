@@ -1,19 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ProtoDock.Api\ProtoDock.Api.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Embeded\Analog_bg.png" />
     <None Remove="Embeded\Analog_fg.png" />
   </ItemGroup>
 
-   <ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Embeded\Analog_bg.png" />
     <EmbeddedResource Include="Embeded\Analog_fg.png" />
   </ItemGroup>

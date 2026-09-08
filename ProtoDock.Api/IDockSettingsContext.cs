@@ -74,14 +74,14 @@ namespace ProtoDock.Api
             string label,
             T selected,
             out ICollectionController<T> controller,
-            Action<T> onValueChanged) where T: Enum
+            Action<T> onValueChanged) where T : struct, Enum
         {
             controller = default;
 
             display.Combo<T>(
                 label,
                 selected,
-                (T[])Enum.GetValues(typeof(T)),
+                Enum.GetValues<T>(),
                 out controller,
                 onValueChanged);
         }

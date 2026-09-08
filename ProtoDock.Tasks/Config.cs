@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProtoDock.Tasks
 {
@@ -10,19 +9,29 @@ namespace ProtoDock.Tasks
 
         public string Write()
         {
-            return System.Text.Json.JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this, ConfigJsonContext.Default.Config);
         }
 
         public static Config Read(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                return new Config();
+            }
+
             try
             {
-                return System.Text.Json.JsonSerializer.Deserialize<Config>(data);
+                return JsonSerializer.Deserialize(data, ConfigJsonContext.Default.Config) ?? new Config();
             }
             catch
             {
                 return new Config();
             }
         }
+    }
+
+    [JsonSerializable(typeof(Config))]
+    internal partial class ConfigJsonContext : JsonSerializerContext
+    {
     }
 }

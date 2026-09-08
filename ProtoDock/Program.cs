@@ -5,8 +5,6 @@ namespace ProtoDock
 {
     static class Program
     {
-        public static object Marshall { get; private set; }
-
         [STAThread]
         static void Main()
         {

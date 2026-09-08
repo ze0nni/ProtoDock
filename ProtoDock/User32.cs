@@ -5,7 +5,7 @@ namespace ProtoDock
 {
     static class User32
     {
-        public static IntPtr HInstance => Marshal.GetHINSTANCE(typeof(User32).Module);
+        public static IntPtr HInstance => NativeLibrary.GetMainProgramHandle();
 
         public const int LWA_ALPHA = 0x2;
 

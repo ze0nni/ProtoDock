@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace ProtoDock.Tray
 {
     class Config
@@ -6,7 +9,7 @@ namespace ProtoDock.Tray
 
         public string Write()
         {
-            return System.Text.Json.JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this, ConfigJsonContext.Default.Config);
         }
 
         public static Config Read(string data)
@@ -18,12 +21,17 @@ namespace ProtoDock.Tray
 
             try
             {
-                return System.Text.Json.JsonSerializer.Deserialize<Config>(data) ?? new Config();
+                return JsonSerializer.Deserialize(data, ConfigJsonContext.Default.Config) ?? new Config();
             }
             catch
             {
                 return new Config();
             }
         }
+    }
+
+    [JsonSerializable(typeof(Config))]
+    internal partial class ConfigJsonContext : JsonSerializerContext
+    {
     }
 }

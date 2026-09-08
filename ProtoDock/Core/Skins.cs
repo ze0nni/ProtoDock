@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows.Forms;
+using ProtoDock.Config;
 
 namespace ProtoDock.Core {
 	public sealed class Skins {
@@ -68,7 +69,11 @@ namespace ProtoDock.Core {
                     try
                     {
                         var data = File.ReadAllText(file);
-                        var skin = JsonSerializer.Deserialize<DockSkin>(data);
+                        var skin = JsonSerializer.Deserialize(data, DockJsonContext.Default.DockSkin);
+                        if (skin == null)
+                        {
+                            continue;
+                        }
                         skin.Name = prefix + "/" + Path.GetFileName(file);
                         skin.Root = root;
                         _list.Add(skin);

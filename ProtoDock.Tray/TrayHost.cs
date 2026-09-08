@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -19,7 +20,7 @@ namespace ProtoDock.Tray
 
         private readonly object _sync = new object();
         private readonly List<TrayNotifyIcon> _icons = new List<TrayNotifyIcon>();
-        private readonly IntPtr _hInstance = Marshal.GetHINSTANCE(typeof(TrayHost).Module);
+        private readonly IntPtr _hInstance = NativeLibrary.GetMainProgramHandle();
 
         private Win32.WndProc _wndProc;
         private Timer _monitor;
@@ -606,7 +607,7 @@ namespace ProtoDock.Tray
             return Rectangle.FromLTRB(screenWidth - 200, 0, screenWidth - 177, 23);
         }
 
-        private static T ReadStructure<T>(IntPtr source, int cbData) where T : struct
+        private static T ReadStructure<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] T>(IntPtr source, int cbData) where T : struct
         {
             var size = Marshal.SizeOf<T>();
             var buffer = Marshal.AllocHGlobal(size);

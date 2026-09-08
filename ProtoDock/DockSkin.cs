@@ -28,8 +28,9 @@ namespace ProtoDock
     [Serializable]
     public class DockSkinImage
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public DockSkinImageAlign Align { get; set; }
+
+        [JsonIgnore]
         public Bitmap Bitmap { get; private set; }
 
         public string BitmapSource { get; set; }
