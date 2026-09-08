@@ -48,6 +48,24 @@ namespace ProtoDock
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        public static extern bool IsIconic(IntPtr hWnd);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
+        public const int GWL_STYLE = -16;
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        public static string GetWindowClass(IntPtr hWnd)
+        {
+            var className = new System.Text.StringBuilder(256);
+            GetClassName(hWnd, className, className.Capacity);
+            return className.ToString();
+        }
         
         [DllImport("user32.dll")]
         public static extern bool FlashWindowEx(ref FLASHWINFO pwfi);

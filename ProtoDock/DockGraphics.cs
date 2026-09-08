@@ -511,48 +511,55 @@ namespace ProtoDock
             }
         }
 
-        private IntPtr _lastFullscreenWindow;
         private bool IsFullscreenWindowActive()
         {
-            if (_lastFullscreenWindow != IntPtr.Zero && !User32.IsWindow(_lastFullscreenWindow))
-            {
-                _lastFullscreenWindow = IntPtr.Zero;
-            }
-            if (_lastFullscreenWindow != IntPtr.Zero && !User32.IsWindowVisible(_lastFullscreenWindow))
-            {
-                _lastFullscreenWindow = IntPtr.Zero;
-            }
-            if (_lastFullscreenWindow != IntPtr.Zero)
-            {
-                var hRes = DwmApi.DwmGetWindowAttribute(_lastFullscreenWindow, (int)DwmApi.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED, out var cloakedVal, sizeof(int));
-                if (cloakedVal != IntPtr.Zero)
-                {
-                    _lastFullscreenWindow = IntPtr.Zero;
-                }
-            }
-           
-            if (_lastFullscreenWindow == IntPtr.Zero)
-            {
-                _lastFullscreenWindow = User32.GetForegroundWindow();
-            }
-            if (_lastFullscreenWindow == IntPtr.Zero)
+            var hwnd = User32.GetForegroundWindow();
+            if (hwnd == IntPtr.Zero || hwnd == DockWindow.Handle)
             {
                 return false;
             }
-            
-            User32.GetWindowRect(_lastFullscreenWindow, out var wndRect);
-            var scrRect = ActiveScreen.Bounds;
 
-            if (wndRect.Left != scrRect.Left
-                || wndRect.Top != scrRect.Top
-                || wndRect.Right != scrRect.Right
-                || wndRect.Bottom != scrRect.Bottom)
+            if (!User32.IsWindow(hwnd) || !User32.IsWindowVisible(hwnd) || User32.IsIconic(hwnd))
             {
-                _lastFullscreenWindow = IntPtr.Zero;
                 return false;
             }
 
-            return true;
+            switch (User32.GetWindowClass(hwnd))
+            {
+                case "Progman":
+                case "WorkerW":
+                case "Shell_TrayWnd":
+                case "Shell_SecondaryTrayWnd":
+                case "NotifyIconOverflowWindow":
+                    return false;
+            }
+
+            if (DwmApi.DwmGetWindowAttribute(
+                    hwnd,
+                    (int)DwmApi.DWMWINDOWATTRIBUTE.DWMWA_CLOAKED,
+                    out int cloaked,
+                    sizeof(int)) == 0 && cloaked != 0)
+            {
+                return false;
+            }
+
+            var style = User32.GetWindowLong(hwnd, User32.GWL_STYLE);
+            if ((style & (int)User32.WindowStyles.WS_CAPTION) != 0 ||
+                (style & (int)User32.WindowStyles.WS_MAXIMIZE) != 0)
+            {
+                return false;
+            }
+
+            if (!User32.GetWindowRect(hwnd, out var wndRect))
+            {
+                return false;
+            }
+
+            var screen = ActiveScreen.Bounds;
+            return wndRect.Left <= screen.Left
+                && wndRect.Top <= screen.Top
+                && wndRect.Right >= screen.Right
+                && wndRect.Bottom >= screen.Bottom;
         }
 
         private enum ActiveBound
