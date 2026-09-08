@@ -170,13 +170,15 @@ namespace ProtoDock.Tasks
                         Api.Dock.SetDirty();
                     }
 
+                    QueueUpdateWindows(true);
                     break;
                 }
 
+                case HShellMsg.HSHELL_WINDOWACTIVATED:
                 case HShellMsg.HSHELL_RUDEAPPACTIVATED:
                 {
                     UpdateActiveWindow(wnd);
-                    UpdateWindows(false);
+                    QueueUpdateWindows(true);
                     break;
                 }
                 case HShellMsg.HSHELL_FLASH:
@@ -190,19 +192,35 @@ namespace ProtoDock.Tasks
                     break;
                 }
                 case HShellMsg.HSHELL_GETMINRECT:
-                    if (!_api.GetPanelRect(this, out var panelRect))
+                    if (_api.GetPanelRect(this, out var panelRect))
                     {
-                        return;
+                        var rect = Marshal.PtrToStructure<MINRECT>(m.LParam);
+                        rect.Left = (short)panelRect.X;
+                        rect.Top = (short)panelRect.Y;
+                        rect.Right = (short)(panelRect.X + panelRect.Height);
+                        rect.Bottom = (short)(panelRect.Y + panelRect.Height);
+                        Marshal.StructureToPtr<MINRECT>(rect, m.LParam, false);
+                        m.Result = new IntPtr(1);
                     }
-                    var rect = Marshal.PtrToStructure<MINRECT>(m.LParam);
-                    rect.Left = (short)panelRect.X;
-                    rect.Top = (short)panelRect.Y;
-                    rect.Right = (short)(panelRect.X + panelRect.Height);
-                    rect.Bottom = (short)(panelRect.Y + panelRect.Height);
-                    Marshal.StructureToPtr<MINRECT>(rect, m.LParam, false);
-                    m.Result = new IntPtr(1);
+                    QueueUpdateWindows(true);
                     break;
             }
+        }
+
+        private void QueueUpdateWindows(bool playAnimation)
+        {
+            if (!IsHandleCreated || IsDisposed)
+            {
+                return;
+            }
+
+            BeginInvoke(new Action(() =>
+            {
+                if (!IsDisposed)
+                {
+                    UpdateWindows(playAnimation);
+                }
+            }));
         }
 
         private void UpdateWindows(bool playAnimation) {
@@ -236,12 +254,9 @@ namespace ProtoDock.Tasks
                         visible = false;
                     }
 
-                    if (_config.OnlyMinimised)
+                    if (_config.OnlyMinimised && !IsIconic(wnd))
                     {
-                        if ((style & (int)WindowStyles.WS_MINIMIZE) == 0)
-                        {
-                            visible = false;
-                        }
+                        visible = false;
                     }
                 }
                 if (visible)
@@ -359,6 +374,9 @@ namespace ProtoDock.Tasks
 
         [DllImport("user32.dll")]
         static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        static extern bool IsIconic(IntPtr hWnd);
 
         enum DWMWINDOWATTRIBUTE
         {
